@@ -8,16 +8,31 @@
 
 /* Begin PBXBuildFile section */
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
+		792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8952DCFB7FE0074FB34 /* Config.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		792CF87E2DCFB3880074FB34 /* FLOV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FLOV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		792CF8932DCFB6BE0074FB34 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		792CF8952DCFB7FE0074FB34 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		792CF8982DCFB8E90074FB34 /* Exceptions for "FLOV" folder in "FLOV" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 792CF87D2DCFB3880074FB34 /* FLOV */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		792CF8802DCFB3880074FB34 /* FLOV */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				792CF8982DCFB8E90074FB34 /* Exceptions for "FLOV" folder in "FLOV" target */,
+			);
 			path = FLOV;
 			sourceTree = "<group>";
 		};
@@ -37,6 +52,7 @@
 		792CF8752DCFB3880074FB34 = {
 			isa = PBXGroup;
 			children = (
+				792CF8952DCFB7FE0074FB34 /* Config.xcconfig */,
 				792CF8932DCFB6BE0074FB34 /* .gitignore */,
 				792CF8802DCFB3880074FB34 /* FLOV */,
 				792CF87F2DCFB3880074FB34 /* Products */,
@@ -115,6 +131,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */,
 				792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,6 +151,7 @@
 /* Begin XCBuildConfiguration section */
 		792CF88A2DCFB3890074FB34 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 792CF8952DCFB7FE0074FB34 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -262,12 +280,13 @@
 				DEVELOPMENT_TEAM = MXGCKXDXUM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FLOV/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FLOV;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -297,12 +316,13 @@
 				DEVELOPMENT_TEAM = MXGCKXDXUM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FLOV/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FLOV;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
