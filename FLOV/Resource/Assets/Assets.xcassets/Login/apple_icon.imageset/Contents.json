@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "size=md, width=wide, align=left.png",
+      "filename" : ".png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "size=md, width=wide, align=left@2x.png",
+      "filename" : "@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "size=md, width=wide, align=left@3x.png",
+      "filename" : "@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
