@@ -8,5 +8,12 @@
 	<string>$(KAKAO_NATIVE_APP_KEY)</string>
 	<key>SESAC_KEY</key>
 	<string>$(SESAC_KEY)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Pretendard-Regular.ttf</string>
+		<string>Pretendard-Medium.ttf</string>
+		<string>Pretendard-Bold.ttf</string>
+		<string>Paperlogy-9Black.ttf</string>
+	</array>
 </dict>
 </plist>
