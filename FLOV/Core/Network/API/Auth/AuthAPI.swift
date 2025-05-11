@@ -31,7 +31,7 @@ extension AuthAPI: Router {
         switch self {
         case .refresh:
             return [
-                "accept": "application/json",
+                "Content-Type": "application/json",
                 "RefreshToken": TokenManager.shared.refreshToken ?? "",
                 "Authorization": TokenManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
