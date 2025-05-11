@@ -18,7 +18,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		792CF8982DCFB8E90074FB34 /* Exceptions for "FLOV" folder in "FLOV" target */ = {
+		792CF9B32DD0790A0074FB34 /* Exceptions for "FLOV" folder in "FLOV" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -31,7 +31,7 @@
 		792CF8802DCFB3880074FB34 /* FLOV */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				792CF8982DCFB8E90074FB34 /* Exceptions for "FLOV" folder in "FLOV" target */,
+				792CF9B32DD0790A0074FB34 /* Exceptions for "FLOV" folder in "FLOV" target */,
 			);
 			path = FLOV;
 			sourceTree = "<group>";
