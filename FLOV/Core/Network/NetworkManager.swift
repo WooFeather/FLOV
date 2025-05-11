@@ -14,6 +14,10 @@ protocol NetworkManagerType {
         _ api: U,
         formDataBuilder: @escaping (MultipartFormData) -> Void
     ) async throws -> T
+    func callWithRefresh<T: Decodable>(
+        _ api: Router,
+        as type: T.Type
+    ) async throws -> T
 }
 
 final class NetworkManager: NetworkManagerType {
@@ -78,6 +82,28 @@ final class NetworkManager: NetworkManagerType {
             } else {
                 throw NetworkError.statusCode(status)
             }
+        }
+    }
+}
+
+extension NetworkManager {
+    /// 액세스 토큰을 갱신한 이후 요청하는 메서드
+    func callWithRefresh<T: Decodable>(
+        _ api: Router,
+        as type: T.Type
+    ) async throws -> T {
+        do {
+            return try await self.callRequest(api)
+        }
+        catch NetworkError.statusCode(let code) where code == 419 {
+            // refresh
+            let tokens = try await AuthRepository.shared.refresh()
+            TokenManager.shared.updateAuthTokens(
+                access: tokens.accessToken,
+                refresh: tokens.refreshToken
+            )
+            // retry
+            return try await self.callRequest(api)
         }
     }
 }

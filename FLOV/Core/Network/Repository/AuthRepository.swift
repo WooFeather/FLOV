@@ -13,16 +13,17 @@ protocol AuthRepositoryType {
 
 final class AuthRepository: AuthRepositoryType {
     enum AuthError: Error {
-        case invalidToken
-        case tokenExpired
         case server(message: String)
+        case network
+        case decoding
+        case statusCode(Int)
         case unknown
     }
     
     static let shared: AuthRepositoryType = AuthRepository()
     private let networkManager: NetworkManagerType = NetworkManager.shared
     
-    private init() { }
+    private init() {}
     
     func refresh() async throws -> RefreshResponse {
         do {
@@ -30,10 +31,12 @@ final class AuthRepository: AuthRepositoryType {
             return result
         } catch NetworkError.apiError(let msg) {
             throw AuthError.server(message: msg)
-        } catch NetworkError.statusCode(401) {
-            throw AuthError.invalidToken
-        } catch NetworkError.statusCode(418) {
-            throw AuthError.tokenExpired
+        } catch NetworkError.transport {
+            throw AuthError.network
+        } catch NetworkError.decoding {
+            throw AuthError.decoding
+        } catch NetworkError.statusCode(let code) {
+            throw AuthError.statusCode(code)
         } catch {
             throw AuthError.unknown
         }
