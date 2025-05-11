@@ -1,6 +1,5 @@
 FLOVRouter.swift
 *.xcconfig
-info.plist
 googleService.plist
 
 # Created by https://www.toptal.com/developers/gitignore/api/cocoapods,swift,xcode
