@@ -33,6 +33,7 @@ protocol Router: URLRequestConvertible {
     var headers: HTTPHeaders { get }
     var params: Parameters { get }
     var encoding: ParameterEncoding? { get }
+    var requestBody: Encodable? { get }
 }
 
 // 공통 로직을 위한 기본 구현
@@ -59,27 +60,13 @@ extension Router {
             throw RouterError.invalidURLError
         }
         var request = URLRequest(url: url)
-        request.method = method
+        request.method  = method
         request.headers = headers
         
-        return request
-    }
-}
-
-// request body를 가진 라우터를 위한 프로토콜
-protocol EncodableRouter: Router {
-    var requestBody: Encodable? { get }
-}
-
-// request body가 있는 라우터를 위한 기본 구현
-extension EncodableRouter {
-    func asURLRequest() throws -> URLRequest {
-        var request = try (self as Router).asURLRequest()
-        
         if let body = requestBody {
-            request = try JSONParameterEncoder.default.encode(body, into: request)
+            request = try JSONParameterEncoder.default
+                .encode(body, into: request)
         }
-        
         return request
     }
 }

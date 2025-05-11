@@ -58,9 +58,7 @@ extension UserAPI: Router {
             ]
         }
     }
-}
-
-extension UserAPI: EncodableRouter {
+    
     var requestBody: Encodable? {
         switch self {
         case .emailValidate(let request):

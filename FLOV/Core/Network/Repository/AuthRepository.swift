@@ -22,13 +22,20 @@ final class AuthRepository: AuthRepositoryType {
     
     static let shared: AuthRepositoryType = AuthRepository()
     private let networkManager: NetworkManagerType = NetworkManager.shared
+    private let tokenManager = TokenManager.shared
     
     private init() {}
     
     func refresh() async throws -> RefreshResponse {
         do {
-            let result: RefreshResponse = try await networkManager.callRequest(AuthAPI.refresh)
-            return result
+            let response: RefreshResponse = try await networkManager.callRequest(AuthAPI.refresh)
+            
+            tokenManager.updateAuthTokens(
+                access: response.accessToken,
+                refresh: response.refreshToken
+            )
+            
+            return response
         } catch NetworkError.apiError(let msg) {
             throw AuthError.server(message: msg)
         } catch NetworkError.transport {

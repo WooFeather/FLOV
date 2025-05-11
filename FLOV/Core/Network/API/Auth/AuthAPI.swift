@@ -38,4 +38,8 @@ extension AuthAPI: Router {
             ]
         }
     }
+    
+    var requestBody: Encodable? {
+        return nil
+    }
 }
