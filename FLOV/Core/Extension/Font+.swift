@@ -23,7 +23,7 @@ extension Font {
     }
     
     enum Caption {
-        static let caption0: Font = .custom("Paperlogy-9Black", size: 14)
+        static let caption0: Font = .custom("Paperlogy-9Black", size: 16)
         
         static let caption1: Font = .custom("Pretendard-Regular", size: 12)
         static let caption2: Font = .custom("Pretendard-Regular", size: 10)
