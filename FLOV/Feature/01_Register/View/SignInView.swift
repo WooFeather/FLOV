@@ -20,6 +20,8 @@ struct SignInView: View {
                 loginButtonView()
                 Spacer()
             }
+            .padding(.top, 88)
+            .padding(.horizontal)
             .asNavigationToolbar()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -53,7 +55,6 @@ private extension SignInView {
                 .resizable()
                 .frame(width: 75, height: 22)
         }
-        .padding(.top, 88)
     }
 }
 
@@ -66,7 +67,6 @@ private extension SignInView {
             emailLoginView()
         }
         .padding(.top, 114)
-        .padding(.horizontal)
     }
 }
 
