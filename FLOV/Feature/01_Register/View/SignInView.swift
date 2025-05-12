@@ -7,28 +7,160 @@
 
 import SwiftUI
 import AuthenticationServices
+import KakaoSDKUser
 
 struct SignInView: View {
     private let userRepository: UserRepositoryType = UserRepository.shared
-    private let authRepository: AuthRepositoryType = AuthRepository.shared
+    private let tokenManager = TokenManager()
     
     var body: some View {
         VStack {
+            kakaoLoginView()
+            appleLoginView()
+            emailLoginView()
+        }
+        .padding()
+    }
+}
+
+// MARK: - KakaoLogin
+
+extension SignInView {
+    // TODO: 추후 viewModel로 뺄때는 withCheckedThrowingContinuation를 통해 oauthToken을 바로 kakaoLoginAPI로 넘겨서 처리
+    // => TokenManager에 카카오, 애플 토큰 저장 로직 삭제
+    func kakaoLogin() {
+        // 카카오톡 실행 가능 여부 확인
+        if UserApi.isKakaoTalkLoginAvailable() {
+            // 카카오톡 로그인
+            UserApi.shared.loginWithKakaoTalk { oauthToken, error in
+                if let error {
+                    print(error)
+                } else {
+                    print("카카오톡 로그인 성공")
+                    
+                    tokenManager.kakaoToken = oauthToken?.accessToken
+                }
+            }
+        } else {
+            UserApi.shared.loginWithKakaoAccount { oauthToken, error in
+                if let error {
+                    print(error)
+                } else {
+                    print("카카오톡 로그인 성공")
+                    
+                    tokenManager.kakaoToken = oauthToken?.accessToken
+                    print("OAuth Token: \(String(describing: oauthToken))")
+                }
+            }
+        }
+        
+        Task {
+            do {
+                try await kakaoRequest()
+            } catch {
+                print(error)
+            }
+        }
+        fetchKakaoUserinfo()
+    }
+    
+    /// 카카오톡 유저정보
+    func fetchKakaoUserinfo() {
+        UserApi.shared.me { user, error in
+            if let email = user?.kakaoAccount?.email {
+                print("Email: \(email)")
+            }
+        }
+        // 닉네임과 프로필사진도 처리 가능
+    }
+    
+    /// 카카오톡 연결해제
+    func unlikKakao() {
+        UserApi.shared.unlink { error in
+            if let error {
+                print(error)
+            } else {
+                print("연결해제 성공")
+            }
+        }
+    }
+    
+    func kakaoRequest() async throws {
+        do {
+            let response = try await userRepository.kakaoLogin(request: KakaoLoginRequest(oauthToken: tokenManager.kakaoToken ?? "", deviceToken: nil))
+            
+            dump(response)
+        } catch {
+            print(error)
+        }
+    }
+    
+    func kakaoLoginView() -> some View {
+        VStack {
             KakaoLoginButton {
-                print("카카오버튼 탭")
+                kakaoLogin()
             }
             
-            AppleLoginButton()
-                .overlay {
-                    SignInWithAppleButton { request in
-                        print(request)
-                        print("애플버튼 탭")
-                    } onCompletion: { result in
-                        print(result)
+            Button {
+                unlikKakao()
+            } label: {
+                Text("연결 끊기")
+            }
+        }
+    }
+}
+
+// MARK: - 애플로그인
+extension SignInView {
+    func appleLoginView() -> some View {
+        AppleLoginButton()
+            .overlay {
+                SignInWithAppleButton { request in
+                    request.requestedScopes = [.email, .fullName]
+                } onCompletion: { result in
+                    switch result {
+                    case .success(let authResults):
+                        print("애플로그인 성공")
+                        
+                        switch authResults.credential {
+                        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+                            let idToken = String(data: appleIDCredential.identityToken!, encoding: .utf8)
+                            let email = appleIDCredential.email
+                            let fullName = appleIDCredential.fullName
+                            let name =  (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
+                            
+                            Task {
+                                do {
+                                    let response = try await userRepository.appleLogin(
+                                        request: AppleLoginRequest(
+                                            idToken: idToken ?? "",
+                                            deviceToken: nil,
+                                            nick: name
+                                        )
+                                    )
+                                    
+                                    dump(response)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        default:
+                            break
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
                     }
-                    .blendMode(.overlay)
                 }
-            
+                .blendMode(.overlay)
+            }
+    }
+}
+
+// MARK: - 이메일로그인
+
+extension SignInView {
+    func emailLoginView() -> some View {
+        VStack {
             Button {
                 Task {
                     do {
@@ -97,21 +229,7 @@ struct SignInView: View {
             } label: {
                 Text("프로필조회")
             }
-            
-            Button {
-                Task {
-                    do {
-                        let response = try await authRepository.refresh()
-                        dump(response)
-                    } catch {
-                        print(error)
-                    }
-                }
-            } label: {
-                Text("토큰갱신")
-            }
         }
-        .padding()
     }
 }
 

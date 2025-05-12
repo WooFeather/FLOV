@@ -10,6 +10,9 @@
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
 		792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8952DCFB7FE0074FB34 /* Config.xcconfig */; };
 		792CFA432DD094150074FB34 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 792CFA422DD094150074FB34 /* Alamofire */; };
+		79ED5CD32DD1EE8E006D3033 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79ED5CD22DD1EE8E006D3033 /* KakaoSDKAuth */; };
+		79ED5CD52DD1EE8E006D3033 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 79ED5CD42DD1EE8E006D3033 /* KakaoSDKCommon */; };
+		79ED5CD72DD1EE8E006D3033 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 79ED5CD62DD1EE8E006D3033 /* KakaoSDKUser */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,7 +47,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79ED5CD72DD1EE8E006D3033 /* KakaoSDKUser in Frameworks */,
 				792CFA432DD094150074FB34 /* Alamofire in Frameworks */,
+				79ED5CD52DD1EE8E006D3033 /* KakaoSDKCommon in Frameworks */,
+				79ED5CD32DD1EE8E006D3033 /* KakaoSDKAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +96,9 @@
 			name = FLOV;
 			packageProductDependencies = (
 				792CFA422DD094150074FB34 /* Alamofire */,
+				79ED5CD22DD1EE8E006D3033 /* KakaoSDKAuth */,
+				79ED5CD42DD1EE8E006D3033 /* KakaoSDKCommon */,
+				79ED5CD62DD1EE8E006D3033 /* KakaoSDKUser */,
 			);
 			productName = FLOV;
 			productReference = 792CF87E2DCFB3880074FB34 /* FLOV.app */;
@@ -121,6 +130,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				792CFA412DD094150074FB34 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				79ED5CD12DD1EE8E006D3033 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 792CF87F2DCFB3880074FB34 /* Products */;
@@ -280,6 +290,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FLOV/FLOV.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FLOV/Preview Content\"";
@@ -317,6 +328,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FLOV/FLOV.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FLOV/Preview Content\"";
@@ -381,6 +393,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		79ED5CD12DD1EE8E006D3033 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.24.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -388,6 +408,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 792CFA412DD094150074FB34 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		79ED5CD22DD1EE8E006D3033 /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79ED5CD12DD1EE8E006D3033 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		79ED5CD42DD1EE8E006D3033 /* KakaoSDKCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79ED5CD12DD1EE8E006D3033 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCommon;
+		};
+		79ED5CD62DD1EE8E006D3033 /* KakaoSDKUser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79ED5CD12DD1EE8E006D3033 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKUser;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

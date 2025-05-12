@@ -6,12 +6,24 @@
 //
 
 import SwiftUI
+import KakaoSDKAuth
+import KakaoSDKCommon
 
 @main
 struct FLOVApp: App {
+    init() {
+        /// KakaoSDK 초기화
+        KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
+    }
+    
     var body: some Scene {
         WindowGroup {
             SignInView()
+                .onOpenURL { url in
+                    if AuthApi.isKakaoTalkLoginUrl(url) {
+                        _ = AuthController.handleOpenUrl(url: url)
+                    }
+                }
         }
     }
 }
