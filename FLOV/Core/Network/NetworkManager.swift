@@ -10,14 +10,8 @@ import Alamofire
 
 protocol NetworkManagerType {
     func callRequest<T: Decodable, U: Router>(_ api: U) async throws -> T
-    func uploadMultipart<T: Decodable, U: Router>(
-        _ api: U,
-        formDataBuilder: @escaping (MultipartFormData) -> Void
-    ) async throws -> T
-    func callWithRefresh<T: Decodable>(
-        _ api: Router,
-        as type: T.Type
-    ) async throws -> T
+    func uploadMultipart<T: Decodable, U: Router>(_ api: U, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T
+    func callWithRefresh<T: Decodable>(_ api: Router, as type: T.Type) async throws -> T
 }
 
 final class NetworkManager: NetworkManagerType {
@@ -51,10 +45,7 @@ final class NetworkManager: NetworkManagerType {
         }
     }
     
-    func uploadMultipart<T: Decodable, U: Router>(
-        _ api: U,
-        formDataBuilder: @escaping (MultipartFormData) -> Void
-    ) async throws -> T {
+    func uploadMultipart<T: Decodable, U: Router>(_ api: U, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T {
         // Multipart 업로드 요청 → Data + HTTPURLResponse 수신
         let dataResponse = await AF.upload(
             multipartFormData: formDataBuilder,
@@ -88,14 +79,10 @@ final class NetworkManager: NetworkManagerType {
 
 extension NetworkManager {
     /// 액세스 토큰을 갱신한 이후 요청하는 메서드
-    func callWithRefresh<T: Decodable>(
-        _ api: Router,
-        as type: T.Type
-    ) async throws -> T {
+    func callWithRefresh<T: Decodable>(_ api: Router, as type: T.Type) async throws -> T {
         do {
             return try await self.callRequest(api)
-        }
-        catch NetworkError.statusCode(let code) where code == 419 {
+        } catch NetworkError.statusCode(let code) where code == 419 {
             // refresh
             let tokens = try await AuthRepository.shared.refresh()
             TokenManager.shared.updateAuthTokens(
