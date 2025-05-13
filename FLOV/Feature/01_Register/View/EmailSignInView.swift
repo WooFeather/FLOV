@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct EmailSignInView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @State private var email = ""
+    @State private var password = ""
     
     var body: some View {
         NavigationStack {
@@ -44,40 +44,8 @@ struct EmailSignInView: View {
 private extension EmailSignInView {
     func inputFieldsView() -> some View {
         VStack(spacing: 18) {
-            emailField()
-            passwordField()
-        }
-    }
-}
-
-private extension EmailSignInView {
-    func emailField() -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("이메일")
-                .font(.Body.body2)
-                .foregroundStyle(.gray90)
-            TextField("", text: $email)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .padding()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(.colBlack, lineWidth: 1)
-                )
-        }
-    }
-    
-    func passwordField() -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("비밀번호")
-                .font(.Body.body2)
-                .foregroundStyle(.gray90)
-            SecureField("", text: $password)
-                .padding()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(.colBlack, lineWidth: 1)
-                )
+            RoundedTextField(fieldTitle: "이메일", text: $email, placeholder: "이메일을 입력해주세요")
+            RoundedTextField(fieldTitle: "비밀번호", text: $password, placeholder: "비밀번호를 입력해주세요", isSecureField: true)
         }
     }
 }
@@ -90,7 +58,7 @@ private extension EmailSignInView {
                 // TODO: 로그인 로직
             }
             
-            ActionButton(text: "이메일로 가입하기", color: .colLight) {
+            ActionButton(text: "이메일로 가입하기", backgroundColor: .colLight) {
                 // TODO: SignUpView로 이동
             }
         }

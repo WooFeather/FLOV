@@ -8,19 +8,13 @@
 import SwiftUI
 
 struct ActionButton: View {
-    var tapAction: () -> Void
     var text: String
-    var backgroundColor: Color
-    
-    init(text: String, color: Color = .colBlack, tapAction: @escaping () -> Void) {
-        self.text = text
-        self.backgroundColor = color
-        self.tapAction = tapAction
-    }
+    var backgroundColor: Color = .colBlack
+    var tapAction: () -> Void
     
     var body: some View {
         Button {
-            
+            tapAction()
         } label: {
             Text(text)
                 .font(.Title.title1)
@@ -37,6 +31,6 @@ struct ActionButton: View {
 #if DEBUG
 #Preview {
     ActionButton(text: "로그인하기") { }
-    ActionButton(text: "가입하기", color: .colLight) { }
+    ActionButton(text: "가입하기", backgroundColor: .colLight) { }
 }
 #endif
