@@ -54,7 +54,6 @@ extension SignUpView {
                 validatePasswordFieldView()
                 nicknameFieldView()
             }
-            .padding(.top, 70)
         }
     }
 }
