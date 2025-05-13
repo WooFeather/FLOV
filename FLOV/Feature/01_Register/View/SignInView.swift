@@ -14,17 +14,63 @@ struct SignInView: View {
     private let tokenManager = TokenManager()
     
     var body: some View {
-        VStack {
+        NavigationStack {
+            VStack {
+                logoView()
+                loginButtonView()
+                Spacer()
+            }
+            .padding(.top, 88)
+            .padding(.horizontal)
+            .asNavigationToolbar()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        // TODO: PathModel 적용
+                        // pathModel.dismissFullScreenCover()
+                    } label: {
+                        Image(.icnClose)
+                    }
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    Text("Sign In")
+                        .foregroundStyle(.colDeep)
+                        .font(.Caption.caption0)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Logo
+private extension SignInView {
+    func logoView() -> some View {
+        VStack(spacing: 16) {
+            Text("액티비티에 빠지다")
+                .font(.Body.body0)
+                .foregroundStyle(.colDeep)
+            
+            Image(.flovLogo)
+                .resizable()
+                .frame(width: 75, height: 22)
+        }
+    }
+}
+
+// MARK: - LoginButton
+private extension SignInView {
+    func loginButtonView() -> some View {
+        VStack(spacing: 16) {
             kakaoLoginView()
             appleLoginView()
             emailLoginView()
         }
-        .padding()
+        .padding(.top, 114)
     }
 }
 
 // MARK: - KakaoLogin
-
 extension SignInView {
     // TODO: 추후 viewModel로 뺄때는 withCheckedThrowingContinuation를 통해 oauthToken을 바로 kakaoLoginAPI로 넘겨서 처리
     // => TokenManager에 카카오, 애플 토큰 저장 로직 삭제
@@ -101,11 +147,11 @@ extension SignInView {
                 kakaoLogin()
             }
             
-            Button {
-                unlikKakao()
-            } label: {
-                Text("연결 끊기")
-            }
+//            Button {
+//                unlikKakao()
+//            } label: {
+//                Text("연결 끊기")
+//            }
         }
     }
 }
@@ -125,7 +171,6 @@ extension SignInView {
                         switch authResults.credential {
                         case let appleIDCredential as ASAuthorizationAppleIDCredential:
                             let idToken = String(data: appleIDCredential.identityToken!, encoding: .utf8)
-                            let email = appleIDCredential.email
                             let fullName = appleIDCredential.fullName
                             let name =  (fullName?.familyName ?? "") + (fullName?.givenName ?? "")
                             
@@ -151,88 +196,96 @@ extension SignInView {
                         print(error.localizedDescription)
                     }
                 }
-                .blendMode(.overlay)
+                .blendMode(.color)
             }
     }
 }
 
 // MARK: - 이메일로그인
-
 extension SignInView {
     func emailLoginView() -> some View {
         VStack {
             Button {
-                Task {
-                    do {
-                        let response = try await userRepository.emailValidate(request: EmailValidateRequest(email: "usertest456@test.com"))
-                        
-                        dump(response)
-                    } catch {
-                        print(error)
-                    }
-                }
+                
             } label: {
-                Text("이메일유효성 검사")
+                Text("이메일로 시작하기")
+                    .font(.Body.body1.bold())
+                    .foregroundStyle(.colDeep)
             }
-            
-            Button {
-                Task {
-                    do {
-                        let response = try await userRepository.join(
-                            request: JoinRequest(
-                                email: "usertest456@test.com",
-                                password: "woohyun123@",
-                                nick: "으하하하",
-                                phoneNum: nil,
-                                introduction: nil,
-                                deviceToken: nil
-                            )
-                        )
-                        
-                        dump(response)
-                    } catch {
-                        print(error)
-                    }
-                }
-            } label: {
-                Text("회원가입")
-            }
-            
-            Button {
-                Task {
-                    do {
-                        let response = try await userRepository.login(
-                            request: LoginRequest(
-                                email: "usertest456@test.com",
-                                password: "woohyun123@",
-                                deviceToken: nil
-                            )
-                        )
-                        dump(response)
-                    } catch {
-                        print(error)
-                    }
-                }
-            } label: {
-                Text("로그인")
-            }
-            
-            Button {
-                Task {
-                    do {
-                        let response = try await userRepository.profileLookup()
-                        dump(response)
-                    } catch {
-                        print(error)
-                    }
-                }
-            } label: {
-                Text("프로필조회")
-            }
+//            Button {
+//                Task {
+//                    do {
+//                        let response = try await userRepository.emailValidate(request: EmailValidateRequest(email: "usertest456@test.com"))
+//                        
+//                        dump(response)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            } label: {
+//                Text("이메일유효성 검사")
+//            }
+//            
+//            Button {
+//                Task {
+//                    do {
+//                        let response = try await userRepository.join(
+//                            request: JoinRequest(
+//                                email: "usertest456@test.com",
+//                                password: "woohyun123@",
+//                                nick: "으하하하",
+//                                phoneNum: nil,
+//                                introduction: nil,
+//                                deviceToken: nil
+//                            )
+//                        )
+//                        
+//                        dump(response)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            } label: {
+//                Text("회원가입")
+//            }
+//            
+//            Button {
+//                Task {
+//                    do {
+//                        let response = try await userRepository.login(
+//                            request: LoginRequest(
+//                                email: "usertest456@test.com",
+//                                password: "woohyun123@",
+//                                deviceToken: nil
+//                            )
+//                        )
+//                        dump(response)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            } label: {
+//                Text("로그인")
+//            }
+//            
+//            Button {
+//                Task {
+//                    do {
+//                        let response = try await userRepository.profileLookup()
+//                        dump(response)
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            } label: {
+//                Text("프로필조회")
+//            }
         }
     }
 }
 
+#if DEBUG
 #Preview {
     SignInView()
 }
+#endif

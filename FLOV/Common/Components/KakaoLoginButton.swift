@@ -36,6 +36,8 @@ struct KakaoLoginButton: View {
     }
 }
 
+#if DEBUG
 #Preview {
     KakaoLoginButton(tapAction: {})
 }
+#endif
