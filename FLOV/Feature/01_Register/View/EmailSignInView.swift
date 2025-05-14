@@ -62,6 +62,8 @@ private extension EmailSignInView {
                 text: $viewModel.input.email,
                 placeholder: "이메일을 입력해주세요"
             )
+            
+            // TODO: 비밀번호 보기버튼 추가
             RoundedTextField(
                 fieldTitle: "비밀번호",
                 text: $viewModel.input.password,
