@@ -94,15 +94,7 @@ extension EmailSignInViewModel {
         do {
             try await action()
             output.loginSuccess.send(())
-        } catch let userError as UserRepository.UserError {
-            switch userError {
-            case .server(let message):
-                output.alertMessage.send(message)
-            default:
-                output.alertMessage.send(userError.localizedDescription)
-            }
-        }
-        catch {
+        } catch {
             output.alertMessage.send(error.localizedDescription)
         }
         output.isLoading.send(false)
