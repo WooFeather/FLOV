@@ -70,6 +70,11 @@ extension EmailSignInViewModel {
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 
+                if !isValidEmail(input.email) {
+                    output.alertMessage.send("올바른 이메일 형식이 아닙니다.")
+                    return
+                }
+                
                 Task {
                     await self.handleLogin {
                         try await self.emailLogin()
@@ -87,6 +92,15 @@ extension EmailSignInViewModel {
             }
             .store(in: &cancellables)
     }
+}
+
+// MARK: - Functions
+extension EmailSignInViewModel {
+    private func emailLogin() async throws {
+        let response = try await userRepository.login(request: .init(email: input.email, password: input.password, deviceToken: nil))
+        
+        dump(response)
+    }
     
     @MainActor
     private func handleLogin(action: () async throws -> Void) async {
@@ -99,13 +113,10 @@ extension EmailSignInViewModel {
         }
         output.isLoading.send(false)
     }
-}
-
-// MARK: - Functions
-extension EmailSignInViewModel {
-    func emailLogin() async throws {
-        let response = try await userRepository.login(request: .init(email: input.email, password: input.password, deviceToken: nil))
-        
-        dump(response)
+    
+    private func isValidEmail(_ email: String) -> Bool {
+        let pattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        return NSPredicate(format: "SELF MATCHES %@", pattern)
+            .evaluate(with: email)
     }
 }

@@ -107,24 +107,12 @@ extension SignInViewModel {
             }
             .store(in: &cancellables)
     }
-    
-    @MainActor
-    private func handleLogin(action: () async throws -> Void) async {
-        output.isLoading.send(true)
-        do {
-            try await action()
-            output.loginSuccess.send(())
-        } catch {
-            output.alertMessage.send(error.localizedDescription)
-        }
-        output.isLoading.send(false)
-    }
 }
 
 // MARK: - Function
 @MainActor
 extension SignInViewModel {
-    func kakaoLogin() async throws {
+    private func kakaoLogin() async throws {
         let oauth = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<OAuthToken, Error>) in
             let callback: (OAuthToken?, Error?) -> Void = { token, error in
                 if let error {
@@ -149,7 +137,7 @@ extension SignInViewModel {
         dump(response)
     }
     
-    func appleLogin(result: Result<ASAuthorization, Error>) async throws {
+    private func appleLogin(result: Result<ASAuthorization, Error>) async throws {
         switch result {
         case .success(let auth):
             guard let appleID = auth.credential as? ASAuthorizationAppleIDCredential,
@@ -172,5 +160,16 @@ extension SignInViewModel {
         case .failure(let error):
             throw error
         }
+    }
+    
+    private func handleLogin(action: () async throws -> Void) async {
+        output.isLoading.send(true)
+        do {
+            try await action()
+            output.loginSuccess.send(())
+        } catch {
+            output.alertMessage.send(error.localizedDescription)
+        }
+        output.isLoading.send(false)
     }
 }
