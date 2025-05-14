@@ -13,7 +13,7 @@ import KakaoSDKCommon
 struct FLOVApp: App {
     init() {
         /// KakaoSDK 초기화
-        KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
+        KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey) // TODO: DIContainer 적용
     }
     
     var body: some Scene {

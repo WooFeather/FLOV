@@ -66,55 +66,66 @@ extension SignInViewModel {
 // MARK: - Transform
 extension SignInViewModel {
     func transform() {
+        setupKakaoLogin()
+        setupAppleLogin()
+        setupEmailLogin()
+    }
+    
+    private func setupKakaoLogin() {
         input.kakaoLoginButtonTapped
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 
                 Task {
-                    await MainActor.run { self.output.isLoading.send(true) }
-                    
-                    do {
+                    await self.handleLogin {
                         try await self.kakaoLogin()
-                        await MainActor.run { self.output.loginSuccess.send(()) }
-                    } catch {
-                        let msg: String
-                        if case let NetworkError.apiError(message) = error {
-                            msg = message
-                        } else {
-                            msg = error.localizedDescription
-                        }
-                        await MainActor.run { self.output.alertMessage.send(msg) }
                     }
-                    
-                    await MainActor.run { self.output.isLoading.send(false) }
                 }
             }
             .store(in: &cancellables)
-        
+    }
+    
+    private func setupAppleLogin() {
         input.appleLoginButtonTapped
             .sink { [weak self] result in
                 guard let self = self else { return }
+                
                 Task {
-                    await MainActor.run { self.output.isLoading.send(true) }
-                    
-                    do {
+                    await self.handleLogin {
                         try await self.appleLogin(result: result)
-                        
-                        await MainActor.run { self.output.loginSuccess.send(()) }
-                    } catch {
-                        let msg: String
-                        if case let NetworkError.apiError(message) = error {
-                            msg = message
-                        } else {
-                            msg = error.localizedDescription
-                        }
-                        await MainActor.run { self.output.alertMessage.send(msg) }
                     }
-                    
-                    await MainActor.run { self.output.isLoading.send(false) }
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func setupEmailLogin() {
+        input.emailLoginButtonTapped
+            .sink {
+                // TODO: 화면전환을 위한 트리깅
+                print("EmailSignUpView 화면전환")
+            }
+            .store(in: &cancellables)
+    }
+    
+    @MainActor
+    private func handleLogin(action: () async throws -> Void) async {
+        output.isLoading.send(true)
+        
+        do {
+            try await action()
+            output.loginSuccess.send(())
+        } catch {
+            let msg: String
+            if case let NetworkError.apiError(message) = error {
+                msg = message
+            } else {
+                msg = error.localizedDescription
+            }
+            output.alertMessage.send(msg)
+        }
+        
+        output.isLoading.send(false)
     }
 }
 
@@ -161,17 +172,13 @@ extension SignInViewModel {
                 .compactMap { $0 }
                 .joined()
             
-            do {
-                let response = try await userRepository.appleLogin(
-                    request: .init(idToken: idToken, deviceToken: nil, nick: name)
-                )
-                print("애플 로그인 성공:", response)
-            } catch {
-                print("애플 로그인 실패:", error)
-            }
+            let response = try await userRepository.appleLogin(
+                request: .init(idToken: idToken, deviceToken: nil, nick: name)
+            )
+            print("애플 로그인 성공:", response)
             
         case .failure(let error):
-            print("Apple 로그인 에러:", error.localizedDescription)
+            throw error
         }
     }
 }

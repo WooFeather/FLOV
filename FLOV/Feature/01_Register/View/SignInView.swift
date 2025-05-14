@@ -10,10 +10,12 @@ import AuthenticationServices
 
 struct SignInView: View {
     @StateObject var viewModel: SignInViewModel
-    private let userRepository: UserRepositoryType = UserRepository.shared
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         NavigationStack {
+            
             VStack {
                 logoView()
                 loginButtonView()
@@ -24,10 +26,16 @@ struct SignInView: View {
             .asNavigationToolbar()
             .onReceive(viewModel.output.loginSuccess) { _ in
                 // TODO: PathModel을 통해 fullScreen 닫기
-                print("성공")
+                print("로그인 성공")
             }
             .onReceive(viewModel.output.alertMessage) { message in
-                // TODO: Message 기반으로 alert 띄우기
+                alertMessage = message
+                showAlert = true
+            }
+            .alert("알림", isPresented: $showAlert) {
+                Button("확인", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -72,41 +80,26 @@ private extension SignInView {
                 viewModel.action(.kakaoLogin)
             }
             
-            appleLoginView()
-            emailLoginView()
-        }
-        .padding(.top, 114)
-    }
-}
-
-
-// MARK: - 애플로그인
-extension SignInView {
-    func appleLoginView() -> some View {
-        AppleLoginButton()
-            .overlay {
-                SignInWithAppleButton { request in
-                    request.requestedScopes = [.email, .fullName]
-                } onCompletion: { result in
-                    viewModel.action(.appleLogin(result: result))
+            AppleLoginButton()
+                .overlay {
+                    SignInWithAppleButton { request in
+                        request.requestedScopes = [.email, .fullName]
+                    } onCompletion: { result in
+                        viewModel.action(.appleLogin(result: result))
+                    }
+                    .blendMode(.color)
                 }
-                .blendMode(.color)
-            }
-    }
-}
-
-// MARK: - 이메일로그인
-extension SignInView {
-    func emailLoginView() -> some View {
-        VStack {
+            
             Button {
                 // TODO: 화면전환 -> 굳이 viewModel로 넘겨야하나?
+                viewModel.action(.emailLogin)
             } label: {
                 Text("이메일로 시작하기")
                     .font(.Body.body1.bold())
                     .foregroundStyle(.colDeep)
             }
         }
+        .padding(.top, 114)
     }
 }
 
