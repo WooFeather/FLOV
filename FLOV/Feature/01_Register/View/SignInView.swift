@@ -32,10 +32,8 @@ struct SignInView: View {
                 alertMessage = message
                 showAlert = true
             }
-            .alert("알림", isPresented: $showAlert) {
-                Button("확인", role: .cancel) {}
-            } message: {
-                Text(alertMessage)
+            .alert(alertMessage, isPresented: $showAlert) {
+                Button("확인", role: .cancel) { }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

@@ -8,19 +8,32 @@
 import SwiftUI
 
 struct EmailSignInView: View {
-    @State private var email = ""
-    @State private var password = ""
+    @StateObject var viewModel: EmailSignInViewModel
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         NavigationStack {
-            VStack {
-                inputFieldsView()
-                buttonsStackView()
-                Spacer()
+            ScrollView {
+                VStack {
+                    inputFieldsView()
+                    buttonsStackView()
+                    Spacer()
+                }
+                .padding(.top, 70)
+                .padding(.horizontal)
             }
-            .padding(.top, 70)
-            .padding(.horizontal)
             .asNavigationToolbar()
+            .onReceive(viewModel.output.loginSuccess) { _ in
+                // TODO: dismiss
+            }
+            .onReceive(viewModel.output.alertMessage) { message in
+                alertMessage = message
+                showAlert = true
+            }
+            .alert(alertMessage, isPresented: $showAlert) {
+                Button("확인", role: .cancel) { }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -44,8 +57,17 @@ struct EmailSignInView: View {
 private extension EmailSignInView {
     func inputFieldsView() -> some View {
         VStack(spacing: 18) {
-            RoundedTextField(fieldTitle: "이메일", text: $email, placeholder: "이메일을 입력해주세요")
-            RoundedTextField(fieldTitle: "비밀번호", text: $password, placeholder: "비밀번호를 입력해주세요", isSecureField: true)
+            RoundedTextField(
+                fieldTitle: "이메일",
+                text: $viewModel.input.email,
+                placeholder: "이메일을 입력해주세요"
+            )
+            RoundedTextField(
+                fieldTitle: "비밀번호",
+                text: $viewModel.input.password,
+                placeholder: "비밀번호를 입력해주세요",
+                isSecureField: true
+            )
         }
     }
 }
@@ -55,20 +77,20 @@ private extension EmailSignInView {
     func buttonsStackView() -> some View {
         VStack(spacing: 16) {
             ActionButton(text: "로그인하기") {
-                // TODO: 로그인 로직
+                viewModel.action(.login)
             }
             
             ActionButton(text: "이메일로 가입하기", backgroundColor: .colLight) {
-                // TODO: SignUpView로 이동
+                // TODO: 화면전환
+                viewModel.action(.signUp)
             }
         }
         .padding(.top, 36)
     }
 }
 
-
 #if DEBUG
 #Preview {
-    EmailSignInView()
+    EmailSignInView(viewModel: EmailSignInViewModel(userRepository: UserRepository.shared))
 }
 #endif

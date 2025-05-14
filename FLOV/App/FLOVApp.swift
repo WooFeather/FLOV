@@ -18,7 +18,7 @@ struct FLOVApp: App {
     
     var body: some Scene {
         WindowGroup {
-            SignInView(viewModel: SignInViewModel(userRepository: UserRepository.shared))
+            EmailSignInView(viewModel: EmailSignInViewModel(userRepository: UserRepository.shared))
                 .onOpenURL { url in
                     if AuthApi.isKakaoTalkLoginUrl(url) {
                         _ = AuthController.handleOpenUrl(url: url)

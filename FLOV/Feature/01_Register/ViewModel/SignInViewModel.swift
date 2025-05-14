@@ -111,20 +111,20 @@ extension SignInViewModel {
     @MainActor
     private func handleLogin(action: () async throws -> Void) async {
         output.isLoading.send(true)
-        
         do {
             try await action()
             output.loginSuccess.send(())
-        } catch {
-            let msg: String
-            if case let NetworkError.apiError(message) = error {
-                msg = message
-            } else {
-                msg = error.localizedDescription
+        } catch let userError as UserRepository.UserError {
+            switch userError {
+            case .server(let message):
+                output.alertMessage.send(message)
+            default:
+                output.alertMessage.send(userError.localizedDescription)
             }
-            output.alertMessage.send(msg)
         }
-        
+        catch {
+            output.alertMessage.send(error.localizedDescription)
+        }
         output.isLoading.send(false)
     }
 }
