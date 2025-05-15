@@ -16,14 +16,10 @@ struct SignUpView: View {
                 inputFieldView()
                 joinButtonView()
             }
+            // TODO: viewModel.output.loginSuccess가 true일때 화면전환
             .padding()
             .asNavigationToolbar()
-            .onReceive(viewModel.output.loginSuccess) { _ in
-                // TODO: PathModel을 통해 fullScreen 닫기
-                // TODO: 토스트메세지 띄우기
-                print("로그인 성공")
-            }
-            .alert(viewModel.alertMessage, isPresented: $viewModel.showAlert) {
+            .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
                 Button("확인", role: .cancel) { }
             }
             .toolbar {
@@ -66,11 +62,11 @@ extension SignUpView {
             RoundedTextField(fieldTitle: "이메일", text: $viewModel.input.email)
             
             HStack {
-                if !viewModel.output.isValidEmail.value {
+                if !viewModel.output.isValidEmail {
                     Text("올바른 이메일 형식이 아닙니다.")
                         .font(.Body.body3)
                         .foregroundStyle(.colRosy)
-                } else if viewModel.output.isValidEmail.value {
+                } else if viewModel.output.isValidEmail {
                     Text("이메일 중복확인을 해주세요.")
                         .font(.Body.body3)
                         .foregroundStyle(.gray90)
@@ -99,11 +95,11 @@ extension SignUpView {
             RoundedTextField(fieldTitle: "비밀번호", text: $viewModel.input.password, isSecureField: true)
             
             HStack {
-                if !viewModel.output.isEnoughPasswordLength.value {
+                if !viewModel.output.isEnoughPasswordLength {
                     Text("비밀번호는 8자 이상이어야 합니다.")
                         .font(.Body.body3)
                         .foregroundStyle(.colRosy)
-                } else if !viewModel.output.isValidPassword.value {
+                } else if !viewModel.output.isValidPassword {
                     Text("영문, 숫자, 특수문자를 각 1개 이상 포함해야 합니다.")
                         .font(.Body.body3)
                         .foregroundStyle(.colRosy)
@@ -123,7 +119,7 @@ extension SignUpView {
             RoundedTextField(fieldTitle: "비밀번호 확인", text: $viewModel.input.confirmPassword, isSecureField: true)
             
             HStack {
-                if viewModel.output.isConfirmPassword.value {
+                if viewModel.output.isConfirmPassword {
                     Text("비밀번호가 일치합니다.")
                         .font(.Body.body3)
                         .foregroundStyle(.colDeep)
@@ -146,7 +142,7 @@ extension SignUpView {
             RoundedTextField(fieldTitle: "닉네임", text: $viewModel.input.nickname)
             
             HStack {
-                if viewModel.output.isValidNickname.value {
+                if viewModel.output.isValidNickname {
                     Text("사용 가능한 닉네입 입니다.")
                         .font(.Body.body3)
                         .foregroundStyle(.colDeep)

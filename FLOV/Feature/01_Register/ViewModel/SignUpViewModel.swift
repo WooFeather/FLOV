@@ -13,8 +13,6 @@ final class SignUpViewModel: ViewModelType {
     var cancellables: Set<AnyCancellable>
     var input: Input
     @Published var output: Output
-    @Published var showAlert = false
-    @Published var alertMessage = ""
     
     init(
         userRepository: UserRepositoryType,
@@ -39,17 +37,19 @@ final class SignUpViewModel: ViewModelType {
     }
     
     struct Output {
-        let isLoading = CurrentValueSubject<Bool, Never>(false)
+        var isLoading = false
         
         // TODO: 텍스트필드에 입력을 시작했을때 상태변경
-        let isValidEmail = CurrentValueSubject<Bool, Never>(false)
-        let isUniqueEmail = CurrentValueSubject<Bool, Never>(false)
-        let isEnoughPasswordLength = CurrentValueSubject<Bool, Never>(false)
-        let isValidPassword = CurrentValueSubject<Bool, Never>(false)
-        let isConfirmPassword = CurrentValueSubject<Bool, Never>(false)
-        let isValidNickname = CurrentValueSubject<Bool, Never>(false)
+        var isValidEmail = false
+        var isUniqueEmail = false
+        var isEnoughPasswordLength = false
+        var isValidPassword = false
+        var isConfirmPassword = false
+        var isValidNickname = false
         
-        let loginSuccess = PassthroughSubject<Void, Never>()
+        var loginSuccess = false
+        var showAlert = false
+        var alertMessage = ""
     }
 }
 

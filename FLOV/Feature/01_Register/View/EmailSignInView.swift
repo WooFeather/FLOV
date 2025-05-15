@@ -22,12 +22,13 @@ struct EmailSignInView: View {
                 .padding(.horizontal)
             }
             .asNavigationToolbar()
-            .onReceive(viewModel.output.loginSuccess) { _ in
-                // TODO: dismiss
-                // TODO: 토스트메세지 띄우기
-                print("로그인성공")
-            }
-            .alert(viewModel.alertMessage, isPresented: $viewModel.showAlert) {
+            // TODO: viewModel.output.loginSuccess가 true일때 화면전환
+//            .onReceive(viewModel.output.loginSuccess) { _ in
+//                // TODO: dismiss
+//                // TODO: 토스트메세지 띄우기
+//                print("로그인성공")
+//            }
+            .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
                 Button("확인", role: .cancel) { }
             }
             .toolbar {
