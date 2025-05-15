@@ -13,12 +13,12 @@ import KakaoSDKCommon
 struct FLOVApp: App {
     init() {
         /// KakaoSDK 초기화
-        KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
+        KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey) // TODO: DIContainer 적용
     }
     
     var body: some Scene {
         WindowGroup {
-            SignUpView()
+            EmailSignInView(viewModel: EmailSignInViewModel(userRepository: UserRepository.shared))
                 .onOpenURL { url in
                     if AuthApi.isKakaoTalkLoginUrl(url) {
                         _ = AuthController.handleOpenUrl(url: url)

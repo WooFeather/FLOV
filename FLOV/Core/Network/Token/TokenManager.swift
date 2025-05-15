@@ -9,43 +9,47 @@ import Foundation
 
 final class TokenManager {
     static let shared = TokenManager()
-    private let defaults = UserDefaults.standard
+    private let keychain = KeychainManager.shared
 
     private enum Key: String {
-        case kakaoToken, appleToken, accessToken, refreshToken
+        case accessToken, refreshToken
     }
 
-    // Social Tokens
-    var kakaoToken: String? {
-        get { defaults.string(forKey: Key.kakaoToken.rawValue) }
-        set { defaults.setValue(newValue, forKey: Key.kakaoToken.rawValue) }
-    }
-
-    var appleToken: String? {
-        get { defaults.string(forKey: Key.appleToken.rawValue) }
-        set { defaults.setValue(newValue, forKey: Key.appleToken.rawValue) }
-    }
-
-    // Auth Tokens
     var accessToken: String? {
-        get { defaults.string(forKey: Key.accessToken.rawValue) }
-        set { defaults.setValue(newValue, forKey: Key.accessToken.rawValue) }
+        get {
+            keychain.read(Key.accessToken.rawValue)
+        }
+        set {
+            if let token = newValue {
+                keychain.save(token, forKey: Key.accessToken.rawValue)
+            } else {
+                keychain.delete(Key.accessToken.rawValue)
+            }
+        }
     }
 
     var refreshToken: String? {
-        get { defaults.string(forKey: Key.refreshToken.rawValue) }
-        set { defaults.setValue(newValue, forKey: Key.refreshToken.rawValue) }
+        get {
+            keychain.read(Key.refreshToken.rawValue)
+        }
+        set {
+            if let token = newValue {
+                keychain.save(token, forKey: Key.refreshToken.rawValue)
+            } else {
+                keychain.delete(Key.refreshToken.rawValue)
+            }
+        }
     }
 
     // 로그인 후 토큰 업데이트
     func updateAuthTokens(access: String, refresh: String) {
-        accessToken  = access
+        accessToken = access
         refreshToken = refresh
     }
 
     // 로그아웃 시 토큰 삭제
     func clearAuthTokens() {
-        defaults.removeObject(forKey: Key.accessToken.rawValue)
-        defaults.removeObject(forKey: Key.refreshToken.rawValue)
+        keychain.delete(Key.accessToken.rawValue)
+        keychain.delete(Key.refreshToken.rawValue)
     }
 }
