@@ -13,6 +13,8 @@ final class SignUpViewModel: ViewModelType {
     var cancellables: Set<AnyCancellable>
     var input: Input
     @Published var output: Output
+    @Published var showAlert = false
+    @Published var alertMessage = ""
     
     init(
         userRepository: UserRepositoryType,
@@ -47,7 +49,7 @@ final class SignUpViewModel: ViewModelType {
         let isConfirmPassword = CurrentValueSubject<Bool, Never>(false)
         let isValidNickname = CurrentValueSubject<Bool, Never>(false)
         
-        let alertMessage = PassthroughSubject<String, Never>()
+        let loginSuccess = PassthroughSubject<Void, Never>()
     }
 }
 

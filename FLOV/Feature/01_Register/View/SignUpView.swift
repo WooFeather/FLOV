@@ -16,7 +16,16 @@ struct SignUpView: View {
                 inputFieldView()
                 joinButtonView()
             }
-            .padding(.horizontal)
+            .padding()
+            .asNavigationToolbar()
+            .onReceive(viewModel.output.loginSuccess) { _ in
+                // TODO: PathModel을 통해 fullScreen 닫기
+                // TODO: 토스트메세지 띄우기
+                print("로그인 성공")
+            }
+            .alert(viewModel.alertMessage, isPresented: $viewModel.showAlert) {
+                Button("확인", role: .cancel) { }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -160,7 +169,6 @@ extension SignUpView {
             // TODO: 가입처리 및 로그인
             viewModel.action(.join)
         }
-        .padding(.bottom, 18)
     }
 }
 

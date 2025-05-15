@@ -13,6 +13,8 @@ final class EmailSignInViewModel: ViewModelType {
     var cancellables: Set<AnyCancellable>
     var input: Input
     @Published var output: Output
+    @Published var showAlert = false
+    @Published var alertMessage = ""
     
     init(
         userRepository: UserRepositoryType,
@@ -37,7 +39,6 @@ final class EmailSignInViewModel: ViewModelType {
     struct Output {
         let isLoading = CurrentValueSubject<Bool, Never>(false)
         let loginSuccess = PassthroughSubject<Void, Never>()
-        let alertMessage = PassthroughSubject<String, Never>()
     }
 }
 
@@ -71,7 +72,8 @@ extension EmailSignInViewModel {
                 guard let self = self else { return }
                 
                 if !isValidEmail(input.email) {
-                    output.alertMessage.send("올바른 이메일 형식이 아닙니다.")
+                    showAlert = true
+                    alertMessage = "올바른 이메일 형식이 아닙니다."
                     return
                 }
                 
@@ -109,7 +111,8 @@ extension EmailSignInViewModel {
             try await action()
             output.loginSuccess.send(())
         } catch {
-            output.alertMessage.send(error.localizedDescription)
+            showAlert = true
+            alertMessage = error.localizedDescription
         }
         output.isLoading.send(false)
     }

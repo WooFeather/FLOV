@@ -16,6 +16,8 @@ final class SignInViewModel: ViewModelType {
     var cancellables: Set<AnyCancellable>
     var input: Input
     @Published var output: Output
+    @Published var showAlert = false
+    @Published var alertMessage = ""
     
     init(
         userRepository: UserRepositoryType,
@@ -39,7 +41,6 @@ final class SignInViewModel: ViewModelType {
     struct Output {
         let isLoading = CurrentValueSubject<Bool, Never>(false)
         let loginSuccess = PassthroughSubject<Void, Never>()
-        let alertMessage = PassthroughSubject<String, Never>()
     }
 }
 
@@ -168,7 +169,8 @@ extension SignInViewModel {
             try await action()
             output.loginSuccess.send(())
         } catch {
-            output.alertMessage.send(error.localizedDescription)
+            showAlert = true
+            alertMessage = error.localizedDescription
         }
         output.isLoading.send(false)
     }
