@@ -173,10 +173,10 @@ extension SignUpViewModel {
     private func join() async throws {
         _ = try await userRepository.join(
             request: .init(
-                email       : input.email,
-                password    : input.password,
-                nick        : input.nickname,
-                phoneNum    : nil,
+                email : input.email,
+                password : input.password,
+                nick : input.nickname,
+                phoneNum : nil,
                 introduction: nil,
                 deviceToken : nil
             )
@@ -184,8 +184,8 @@ extension SignUpViewModel {
         
         _ = try await userRepository.login(
             request: .init(
-                email      : input.email,
-                password   : input.password,
+                email : input.email,
+                password : input.password,
                 deviceToken: nil
             )
         )
