@@ -12,36 +12,26 @@ struct SignUpView: View {
     @StateObject var viewModel: SignUpViewModel
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                inputFieldView()
-                joinButtonView()
+        VStack {
+            inputFieldView()
+            joinButtonView()
+        }
+        .onChange(of: viewModel.output.loginSuccess) { success in
+            if success {
+                // TODO: 토스트메세지 띄우기
+                pathModel.dismissFullScreenCover()
             }
-            .onChange(of: viewModel.output.loginSuccess) { success in
-                if success {
-                    // TODO: 토스트메세지 띄우기
-                    pathModel.dismissFullScreenCover()
-                }
-            }
-            .padding()
-            .asNavigationToolbar()
-            .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
-                Button("확인", role: .cancel) { }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        pathModel.pop()
-                    } label: {
-                        Image(.icnChevron)
-                    }
-                }
-                
-                ToolbarItem(placement: .principal) {
-                    Text("Sign Up")
-                        .foregroundStyle(.colDeep)
-                        .font(.Caption.caption0)
-                }
+        }
+        .padding()
+        .asNavigationToolbar()
+        .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
+            Button("확인", role: .cancel) { }
+        }
+        .toolbar {   
+            ToolbarItem(placement: .principal) {
+                Text("Sign Up")
+                    .foregroundStyle(.colDeep)
+                    .font(.Caption.caption0)
             }
         }
     }
@@ -145,6 +135,7 @@ extension SignUpView {
     func joinButtonView() -> some View {
         ActionButton(text: "가입하기") {
             viewModel.action(.join)
+            pathModel.dismissFullScreenCover()
         }
         .disabled(!viewModel.output.isJoinButtonEnabled)
     }

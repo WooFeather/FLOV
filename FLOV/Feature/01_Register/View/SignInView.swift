@@ -13,38 +13,36 @@ struct SignInView: View {
     @StateObject var viewModel: SignInViewModel
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                logoView()
-                loginButtonView()
-                Spacer()
+        VStack {
+            logoView()
+            loginButtonView()
+            Spacer()
+        }
+        .padding(.top, 88)
+        .padding(.horizontal)
+        .asNavigationToolbar()
+        .onChange(of: viewModel.output.loginSuccess) { success in
+            if success {
+                // TODO: 토스트메세지 띄우기
+                pathModel.dismissFullScreenCover()
             }
-            .padding(.top, 88)
-            .padding(.horizontal)
-            .asNavigationToolbar()
-            .onChange(of: viewModel.output.loginSuccess) { success in
-                if success {
-                    // TODO: 토스트메세지 띄우기
+        }
+        .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
+            Button("확인", role: .cancel) { }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
                     pathModel.dismissFullScreenCover()
+                } label: {
+                    Image(.icnClose)
                 }
             }
-            .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
-                Button("확인", role: .cancel) { }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        pathModel.dismissFullScreenCover()
-                    } label: {
-                        Image(.icnClose)
-                    }
-                }
-                
-                ToolbarItem(placement: .principal) {
-                    Text("Sign In")
-                        .foregroundStyle(.colDeep)
-                        .font(.Caption.caption0)
-                }
+            
+            ToolbarItem(placement: .principal) {
+                Text("Sign In")
+                    .foregroundStyle(.colDeep)
+                    .font(.Caption.caption0)
             }
         }
     }
@@ -84,7 +82,7 @@ private extension SignInView {
                 }
             
             Button {
-                pathModel.push(.emailSignIn)
+                pathModel.pushToCover(.emailSignIn)
             } label: {
                 Text("이메일로 시작하기")
                     .font(.Body.body1.bold())

@@ -12,7 +12,6 @@ struct FlovTabView: View {
     @State private var selectedTab: FlovTab = .activity
     
     var body: some View {
-        
         NavigationStack(path: $pathModel.path) {
             TabView(selection: $selectedTab) {
                 pathModel.build(.activity)
@@ -31,7 +30,12 @@ struct FlovTabView: View {
                 pathModel.build(screen)
             }
             .fullScreenCover(item: $pathModel.fullScreenCover) { fullScreenCover in
-                pathModel.build(fullScreenCover)
+                NavigationStack(path: $pathModel.coverNavigationPath) {
+                    pathModel.build(fullScreenCover)
+                        .navigationDestination(for: FullScreenCover.self) { cover in
+                            pathModel.build(cover)
+                        }
+                }
             }
         }
     }

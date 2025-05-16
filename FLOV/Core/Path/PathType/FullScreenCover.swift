@@ -11,6 +11,8 @@ enum FullScreenCover: Identifiable, Hashable {
     
     // 01_Register
     case signIn
+    case emailSignIn
+    case signUp
     
     // 03_Post
     case postWrite

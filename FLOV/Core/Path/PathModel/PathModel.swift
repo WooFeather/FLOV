@@ -10,20 +10,23 @@ import SwiftUI
 protocol PathModelType: ObservableObject {
     var path: NavigationPath { get set }
     var fullScreenCover: FullScreenCover? { get set }
+    var coverNavigationPath: NavigationPath { get set }
     
     func push(_ screen: Screen)
     func presentFullScreenCover(_ cover: FullScreenCover)
+    func pushToCover(_ cover: FullScreenCover)
     func pop()
+    func popFromCover()
     func popToRoot()
     func dismissFullScreenCover()
 }
 
 final class PathModel: PathModelType {
-    
     let container: DIContainer
     
     @Published var path: NavigationPath = NavigationPath()
     @Published var fullScreenCover: FullScreenCover?
+    @Published var coverNavigationPath: NavigationPath = NavigationPath()
     
     init(container: DIContainer) {
         self.container = container
@@ -35,10 +38,23 @@ final class PathModel: PathModelType {
     
     func presentFullScreenCover(_ cover: FullScreenCover) {
         self.fullScreenCover = cover
+        self.coverNavigationPath = NavigationPath()
+    }
+    
+    func pushToCover(_ cover: FullScreenCover) {
+        coverNavigationPath.append(cover)
     }
     
     func pop() {
-        path.removeLast()
+        if !path.isEmpty {
+            path.removeLast()
+        }
+    }
+    
+    func popFromCover() {
+        if !coverNavigationPath.isEmpty {
+            coverNavigationPath.removeLast()
+        }
     }
     
     func popToRoot() {
@@ -47,5 +63,6 @@ final class PathModel: PathModelType {
     
     func dismissFullScreenCover() {
         self.fullScreenCover = nil
+        self.coverNavigationPath = NavigationPath()
     }
 }
