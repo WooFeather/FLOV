@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EmailSignInView: View {
+    @EnvironmentObject private var pathModel: PathModel
     @StateObject var viewModel: EmailSignInViewModel
     
     var body: some View {
@@ -22,19 +23,19 @@ struct EmailSignInView: View {
                 .padding(.horizontal)
             }
             .asNavigationToolbar()
-            // TODO: viewModel.output.loginSuccess가 true일때 화면전환
-//            .onReceive(viewModel.output.loginSuccess) { _ in
-//                // TODO: dismiss
-//                // TODO: 토스트메세지 띄우기
-//                print("로그인성공")
-//            }
+            .onChange(of: viewModel.output.loginSuccess) { success in
+                if success {
+                    // TODO: 토스트메세지 띄우기
+                    pathModel.dismissFullScreenCover()
+                }
+            }
             .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
                 Button("확인", role: .cancel) { }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        // TODO: PathModel 적용
+                        pathModel.pop()
                     } label: {
                         Image(.icnChevron)
                     }
@@ -80,8 +81,7 @@ private extension EmailSignInView {
             }
             
             ActionButton(text: "이메일로 가입하기", backgroundColor: .colLight) {
-                // TODO: 화면전환
-                viewModel.action(.signUp)
+                pathModel.push(.signUp)
             }
         }
         .padding(.top, 36)

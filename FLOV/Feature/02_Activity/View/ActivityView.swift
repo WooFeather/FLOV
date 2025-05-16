@@ -8,11 +8,18 @@
 import SwiftUI
 
 struct ActivityView: View {
+    @EnvironmentObject private var pathModel: PathModel
+    
     var body: some View {
-        Text("ActivitiView")
+        Button {
+            pathModel.presentFullScreenCover(.signIn)
+        } label: {
+            Text("ActivityView")
+        }
     }
 }
 
 #Preview {
     ActivityView()
+        .injectDIContainer()
 }

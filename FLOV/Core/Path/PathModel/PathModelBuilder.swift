@@ -12,9 +12,11 @@ extension PathModel {
     func build(_ screen: Screen) -> some View {
         switch screen {
         case .emailSignIn:
-            EmailSignInView(viewModel: EmailSignInViewModel(userRepository: self.userRepository))
+            let vm = EmailSignInViewModel(userRepository: container.userRepository)
+            EmailSignInView(viewModel: vm)
         case .signUp:
-            SignUpView(viewModel: SignUpViewModel(userRepository: self.userRepository))
+            let vm = SignUpViewModel(userRepository: container.userRepository)
+            SignUpView(viewModel: vm)
         case .activity:
             ActivityView()
         case .activityDetail:
@@ -38,7 +40,8 @@ extension PathModel {
     func build(_ fullScreenCover: FullScreenCover) -> some View {
         switch fullScreenCover {
         case .signIn:
-            SignInView(viewModel: SignInViewModel(userRepository: self.userRepository))
+            let vm = SignInViewModel(userRepository: container.userRepository)
+            SignInView(viewModel: vm)
         case .postWrite:
             PostWriteView()
         }

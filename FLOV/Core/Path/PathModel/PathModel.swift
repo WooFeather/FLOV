@@ -8,8 +8,6 @@
 import SwiftUI
 
 protocol PathModelType: ObservableObject {
-    var userRepository: UserRepositoryType { get set }
-    
     var path: NavigationPath { get set }
     var fullScreenCover: FullScreenCover? { get set }
     
@@ -22,11 +20,14 @@ protocol PathModelType: ObservableObject {
 
 final class PathModel: PathModelType {
     
-    // TODO: 추후 DIContainer 로 분리
-    var userRepository: UserRepositoryType = UserRepository.shared
+    let container: DIContainer
     
     @Published var path: NavigationPath = NavigationPath()
     @Published var fullScreenCover: FullScreenCover?
+    
+    init(container: DIContainer) {
+        self.container = container
+    }
     
     func push(_ screen: Screen) {
         path.append(screen)

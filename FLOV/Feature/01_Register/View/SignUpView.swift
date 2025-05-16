@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @EnvironmentObject private var pathModel: PathModel
     @StateObject var viewModel: SignUpViewModel
     
     var body: some View {
@@ -16,10 +17,10 @@ struct SignUpView: View {
                 inputFieldView()
                 joinButtonView()
             }
-            // viewModel.output.loginSuccess가 true일때 화면전환
             .onChange(of: viewModel.output.loginSuccess) { success in
                 if success {
-                    // TODO: PathModel 적용하여 화면 전환
+                    // TODO: 토스트메세지 띄우기
+                    pathModel.dismissFullScreenCover()
                 }
             }
             .padding()
@@ -30,7 +31,7 @@ struct SignUpView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        // TODO: PathModel 적용
+                        pathModel.pop()
                     } label: {
                         Image(.icnChevron)
                     }
