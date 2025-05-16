@@ -22,7 +22,6 @@ struct SignUpView: View {
                 pathModel.dismissFullScreenCover()
             }
         }
-        .padding()
         .asNavigationToolbar()
         .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
             Button("확인", role: .cancel) { }
@@ -47,6 +46,7 @@ extension SignUpView {
                 validatePasswordFieldView()
                 nicknameFieldView()
             }
+            .padding()
         }
     }
 }
@@ -137,6 +137,7 @@ extension SignUpView {
             viewModel.action(.join)
             pathModel.dismissFullScreenCover()
         }
+        .padding()
         .disabled(!viewModel.output.isJoinButtonEnabled)
     }
 }

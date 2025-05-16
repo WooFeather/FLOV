@@ -18,8 +18,7 @@ struct EmailSignInView: View {
                 buttonsStackView()
                 Spacer()
             }
-            .padding(.top, 70)
-            .padding(.horizontal)
+            .padding()
         }
         .asNavigationToolbar()
         .onChange(of: viewModel.output.loginSuccess) { success in
