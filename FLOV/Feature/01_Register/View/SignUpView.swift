@@ -67,20 +67,10 @@ extension SignUpView {
             RoundedTextField(fieldTitle: "이메일", text: $viewModel.input.email)
 
             HStack {
-                if viewModel.output.isEmailEdited {
-                    if !viewModel.output.isValidEmail {
-                        Text("올바른 이메일 형식이 아닙니다.")
-                            .font(.Body.body3)
-                            .foregroundStyle(.colRosy)
-                    } else if viewModel.output.isUniqueEmail {
-                        Text("사용 가능한 이메일 입니다.")
-                            .font(.Body.body3)
-                            .foregroundStyle(.colDeep)
-                    } else {
-                        Text("이메일 중복확인을 해주세요.")
-                            .font(.Body.body3)
-                            .foregroundStyle(.gray90)
-                    }
+                if !viewModel.output.emailStatusMessage.message.isEmpty {
+                    Text(viewModel.output.emailStatusMessage.message)
+                        .font(.Body.body3)
+                        .foregroundStyle(viewModel.output.emailStatusMessage.isValid ? .colDeep : .colRosy)
                 }
                 
                 Spacer()
@@ -88,7 +78,7 @@ extension SignUpView {
                 UnderlineTextButton("이메일 중복확인") {
                     viewModel.action(.validateEmail)
                 }
-                .disabled(!viewModel.output.isValidEmail || viewModel.output.isUniqueEmail)
+                .disabled(!viewModel.output.isEmailValidationButtonEnabled)
             }
         }
     }
@@ -100,25 +90,13 @@ extension SignUpView {
         VStack {
             RoundedTextField(fieldTitle: "비밀번호", text: $viewModel.input.password, isSecureField: true)
             
-            if !viewModel.input.password.isEmpty {
+            if !viewModel.output.passwordStatusMessage.message.isEmpty {
                 HStack {
-                    if viewModel.output.isPasswordEdited {
-                        if !viewModel.output.isEnoughPasswordLength {
-                            Text("비밀번호는 8자 이상이어야 합니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colRosy)
-                        } else if !viewModel.output.isValidPassword {
-                            Text("영문, 숫자, 특수문자를 각 1개 이상 포함해야 합니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colRosy)
-                        } else {
-                            Text("사용 가능한 비밀번호 입니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colDeep)
-                        }
-                        
-                        Spacer()
-                    }
+                    Text(viewModel.output.passwordStatusMessage.message)
+                        .font(.Body.body3)
+                        .foregroundStyle(viewModel.output.passwordStatusMessage.isValid ? .colDeep : .colRosy)
+                    
+                    Spacer()
                 }
             }
         }
@@ -128,21 +106,13 @@ extension SignUpView {
         VStack {
             RoundedTextField(fieldTitle: "비밀번호 확인", text: $viewModel.input.confirmPassword, isSecureField: true)
             
-            if !viewModel.input.confirmPassword.isEmpty {
+            if !viewModel.output.confirmPasswordStatusMessage.message.isEmpty {
                 HStack {
-                    if viewModel.output.isConfirmPasswordEdited {
-                        if viewModel.output.isConfirmPassword {
-                            Text("비밀번호가 일치합니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colDeep)
-                        } else {
-                            Text("비밀번호가 일치하지 않습니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colRosy)
-                        }
-                        
-                        Spacer()
-                    }
+                    Text(viewModel.output.confirmPasswordStatusMessage.message)
+                        .font(.Body.body3)
+                        .foregroundStyle(viewModel.output.confirmPasswordStatusMessage.isValid ? .colDeep : .colRosy)
+                    
+                    Spacer()
                 }
             }
         }
@@ -155,21 +125,13 @@ extension SignUpView {
         VStack {
             RoundedTextField(fieldTitle: "닉네임", text: $viewModel.input.nickname)
             
-            if !viewModel.input.nickname.isEmpty {
+            if !viewModel.output.nicknameStatusMessage.message.isEmpty {
                 HStack {
-                    if viewModel.output.isNicknameEdited {
-                        if viewModel.output.isValidNickname {
-                            Text("사용 가능한 닉네임 입니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colDeep)
-                        } else {
-                            Text(". , ? * _ @ 는 닉네임으로 사용할 수 없습니다.")
-                                .font(.Body.body3)
-                                .foregroundStyle(.colRosy)
-                        }
-                        
-                        Spacer()
-                    }
+                    Text(viewModel.output.nicknameStatusMessage.message)
+                        .font(.Body.body3)
+                        .foregroundStyle(viewModel.output.nicknameStatusMessage.isValid ? .colDeep : .colRosy)
+                    
+                    Spacer()
                 }
             }
         }
@@ -183,16 +145,10 @@ extension SignUpView {
         ActionButton(text: "가입하기") {
             viewModel.action(.join)
         }
-        .disabled(
-            !viewModel.output.isValidEmail ||
-            !viewModel.output.isUniqueEmail ||
-            !viewModel.output.isEnoughPasswordLength ||
-            !viewModel.output.isValidPassword ||
-            !viewModel.output.isConfirmPassword ||
-            !viewModel.output.isValidNickname
-        )
+        .disabled(!viewModel.output.isJoinButtonEnabled)
     }
 }
+
 
 #if DEBUG
 #Preview {

@@ -41,19 +41,17 @@ final class SignUpViewModel: ViewModelType {
     
     struct Output {
         var isLoading: Bool = false
-        var isEmailEdited: Bool = false
-        var isPasswordEdited: Bool = false
-        var isConfirmPasswordEdited: Bool = false
-        var isNicknameEdited: Bool = false
-        var isValidEmail: Bool = false
-        var isUniqueEmail: Bool = false
-        var isEnoughPasswordLength: Bool = false
-        var isValidPassword: Bool = false
-        var isConfirmPassword: Bool = false
-        var isValidNickname: Bool = false
         var loginSuccess: Bool = false
         var showAlert: Bool = false
         var alertMessage: String = ""
+        
+        var isJoinButtonEnabled: Bool = false
+        var isEmailValidationButtonEnabled: Bool = false
+        
+        var emailStatusMessage: FieldStatus = .none
+        var passwordStatusMessage: FieldStatus = .none
+        var confirmPasswordStatusMessage: FieldStatus = .none
+        var nicknameStatusMessage: FieldStatus = .none
     }
 }
 
@@ -77,48 +75,38 @@ extension SignUpViewModel {
 // MARK: - Transform
 extension SignUpViewModel {
     func transform() {
-        // 이메일 입력 감지 및 유효성 검사
         $input
             .map(\.email)
             .sink { [weak self] email in
                 guard let self else { return }
-                output.isEmailEdited = !email.isEmpty
-                output.isValidEmail = isValidEmail(email)
-                // 입력이 바뀌면 중복 확인 상태 초기화
-                if email != lastValidatedEmail {
-                    output.isUniqueEmail = false
-                }
+                self.updateEmailStatus(email)
+                
+                let isValidEmailFormat = self.isValidEmail(email)
+                self.output.isEmailValidationButtonEnabled = isValidEmailFormat && email != self.lastValidatedEmail
             }
             .store(in: &cancellables)
         
-        // 비밀번호 입력 감지 및 유효성 검사
         $input
             .map(\.password)
             .sink { [weak self] password in
                 guard let self else { return }
-                output.isPasswordEdited = !password.isEmpty
-                output.isEnoughPasswordLength = password.count >= 8
-                output.isValidPassword = isValidPassword(password)
+                self.updatePasswordStatus(password)
             }
             .store(in: &cancellables)
         
-        // 비밀번호 확인 입력 감지
         $input
             .combineLatest($input.map(\.password), $input.map(\.confirmPassword))
             .sink { [weak self] (_, password, confirmPassword) in
                 guard let self else { return }
-                output.isConfirmPasswordEdited = !confirmPassword.isEmpty
-                output.isConfirmPassword = password == confirmPassword && !password.isEmpty
+                self.updateConfirmPasswordStatus(password, confirmPassword)
             }
             .store(in: &cancellables)
         
-        // 닉네임 입력 감지 및 유효성 검사
         $input
             .map(\.nickname)
             .sink { [weak self] nickname in
                 guard let self else { return }
-                output.isNicknameEdited = !nickname.isEmpty
-                output.isValidNickname = isValidNickname(nickname)
+                self.updateNicknameStatus(nickname)
             }
             .store(in: &cancellables)
         
@@ -136,12 +124,7 @@ extension SignUpViewModel {
         input.joinButtonTapped
             .sink { [weak self] _ in
                 guard let self else { return }
-                guard output.isValidEmail,
-                      output.isUniqueEmail,
-                      output.isValidPassword,
-                      output.isEnoughPasswordLength,
-                      output.isConfirmPassword,
-                      output.isValidNickname else {
+                guard self.output.isJoinButtonEnabled else {
                     output.showAlert = true
                     output.alertMessage = "모든 필드를 올바르게 입력해주세요."
                     return
@@ -166,7 +149,9 @@ extension SignUpViewModel {
         )
         
         lastValidatedEmail = input.email
-        output.isUniqueEmail = true
+        updateEmailStatus(input.email)
+        
+        output.isEmailValidationButtonEnabled = false
     }
     
     @MainActor
@@ -221,5 +206,111 @@ extension SignUpViewModel {
         let pattern = "[.,?*_@]"
         return !NSPredicate(format: "SELF MATCHES %@", pattern)
             .evaluate(with: nickname)
+    }
+}
+
+// MARK: - State
+extension SignUpViewModel {
+    enum FieldStatus {
+        case none
+        case valid(String)
+        case invalid(String)
+        case pending(String)
+        
+        var message: String {
+            switch self {
+            case .none:
+                return ""
+            case .valid(let message), .invalid(let message), .pending(let message):
+                return message
+            }
+        }
+        
+        var isValid: Bool {
+            if case .valid = self {
+                return true
+            }
+            return false
+        }
+    }
+    
+    private func updateEmailStatus(_ email: String) {
+        if email.isEmpty {
+            output.emailStatusMessage = .none
+            return
+        }
+        
+        let isValid = isValidEmail(email)
+        if !isValid {
+            output.emailStatusMessage = .invalid("올바른 이메일 형식이 아닙니다.")
+            return
+        }
+        
+        if email == lastValidatedEmail {
+            output.emailStatusMessage = .valid("사용 가능한 이메일 입니다.")
+        } else {
+            output.emailStatusMessage = .pending("이메일 중복확인을 해주세요.")
+        }
+        
+        updateJoinButtonEnabled()
+    }
+    
+    private func updatePasswordStatus(_ password: String) {
+        if password.isEmpty {
+            output.passwordStatusMessage = .none
+            return
+        }
+        
+        if password.count < 8 {
+            output.passwordStatusMessage = .invalid("비밀번호는 8자 이상이어야 합니다.")
+            return
+        }
+        
+        if !isValidPassword(password) {
+            output.passwordStatusMessage = .invalid("영문, 숫자, 특수문자를 각 1개 이상 포함해야 합니다.")
+            return
+        }
+        
+        output.passwordStatusMessage = .valid("사용 가능한 비밀번호 입니다.")
+        
+        updateConfirmPasswordStatus(password, input.confirmPassword)
+        updateJoinButtonEnabled()
+    }
+    
+    private func updateConfirmPasswordStatus(_ password: String, _ confirmPassword: String) {
+        if confirmPassword.isEmpty {
+            output.confirmPasswordStatusMessage = .none
+            return
+        }
+        
+        if password == confirmPassword {
+            output.confirmPasswordStatusMessage = .valid("비밀번호가 일치합니다.")
+        } else {
+            output.confirmPasswordStatusMessage = .invalid("비밀번호가 일치하지 않습니다.")
+        }
+        updateJoinButtonEnabled()
+    }
+    
+    private func updateNicknameStatus(_ nickname: String) {
+        if nickname.isEmpty {
+            output.nicknameStatusMessage = .none
+            return
+        }
+        
+        if isValidNickname(nickname) {
+            output.nicknameStatusMessage = .valid("사용 가능한 닉네임 입니다.")
+        } else {
+            output.nicknameStatusMessage = .invalid(". , ? * _ @ 는 닉네임으로 사용할 수 없습니다.")
+        }
+        updateJoinButtonEnabled()
+    }
+    
+    private func updateJoinButtonEnabled() {
+        output.isJoinButtonEnabled =
+        output.emailStatusMessage.isValid &&
+        output.passwordStatusMessage.isValid &&
+        output.confirmPasswordStatusMessage.isValid &&
+        output.nicknameStatusMessage.isValid &&
+        (lastValidatedEmail == input.email)
     }
 }
