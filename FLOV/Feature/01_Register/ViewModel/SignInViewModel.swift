@@ -49,7 +49,6 @@ extension SignInViewModel {
     enum Action {
         case kakaoLogin
         case appleLogin(result: Result<ASAuthorization, Error>)
-        case emailLogin
     }
     
     func action(_ action: Action) {
@@ -58,8 +57,6 @@ extension SignInViewModel {
             input.kakaoLoginButtonTapped.send(())
         case .appleLogin(let result):
             input.appleLoginButtonTapped.send(result)
-        case .emailLogin:
-            input.emailLoginButtonTapped.send(())
         }
     }
 }
@@ -69,7 +66,6 @@ extension SignInViewModel {
     func transform() {
         setupKakaoLogin()
         setupAppleLogin()
-        setupEmailLogin()
     }
     
     private func setupKakaoLogin() {
@@ -96,15 +92,6 @@ extension SignInViewModel {
                         try await self.appleLogin(result: result)
                     }
                 }
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func setupEmailLogin() {
-        input.emailLoginButtonTapped
-            .sink {
-                // TODO: 화면전환을 위한 트리깅
-                print("EmailSignUpView 화면전환")
             }
             .store(in: &cancellables)
     }

@@ -9,42 +9,40 @@ import SwiftUI
 import AuthenticationServices
 
 struct SignInView: View {
+    @EnvironmentObject private var pathModel: PathModel
     @StateObject var viewModel: SignInViewModel
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                logoView()
-                loginButtonView()
-                Spacer()
+        VStack {
+            logoView()
+            loginButtonView()
+            Spacer()
+        }
+        .padding(.top, 88)
+        .padding(.horizontal)
+        .asNavigationToolbar()
+        .onChange(of: viewModel.output.loginSuccess) { success in
+            if success {
+                // TODO: 토스트메세지 띄우기
+                pathModel.dismissFullScreenCover()
             }
-            .padding(.top, 88)
-            .padding(.horizontal)
-            .asNavigationToolbar()
-            // TODO: viewModel.output.loginSuccess가 true일때 화면전환
-//            .onReceive(viewModel.output.loginSuccess) { _ in
-//                // TODO: PathModel을 통해 fullScreen 닫기
-//                // TODO: 토스트메세지 띄우기
-//                print("로그인 성공")
-//            }
-            .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
-                Button("확인", role: .cancel) { }
+        }
+        .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
+            Button("확인", role: .cancel) { }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    pathModel.dismissFullScreenCover()
+                } label: {
+                    Image(.icnClose)
+                }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        // TODO: PathModel 적용
-                        // pathModel.dismissFullScreenCover()
-                    } label: {
-                        Image(.icnClose)
-                    }
-                }
-                
-                ToolbarItem(placement: .principal) {
-                    Text("Sign In")
-                        .foregroundStyle(.colDeep)
-                        .font(.Caption.caption0)
-                }
+            
+            ToolbarItem(placement: .principal) {
+                Text("Sign In")
+                    .foregroundStyle(.colDeep)
+                    .font(.Caption.caption0)
             }
         }
     }
@@ -84,8 +82,7 @@ private extension SignInView {
                 }
             
             Button {
-                // TODO: 화면전환 -> 굳이 viewModel로 넘겨야하나?
-                viewModel.action(.emailLogin)
+                pathModel.pushToCover(.emailSignIn)
             } label: {
                 Text("이메일로 시작하기")
                     .font(.Body.body1.bold())

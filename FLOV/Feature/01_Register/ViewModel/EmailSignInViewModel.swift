@@ -46,15 +46,12 @@ final class EmailSignInViewModel: ViewModelType {
 extension EmailSignInViewModel {
     enum Action {
         case login
-        case signUp
     }
     
     func action(_ action: Action) {
         switch action {
         case .login:
             input.loginButtonTapped.send(())
-        case .signUp:
-            input.signUpButtonTaped.send(())
         }
     }
 }
@@ -63,7 +60,6 @@ extension EmailSignInViewModel {
 extension EmailSignInViewModel {
     func transform() {
         setupEmailLogin()
-        setupSignup()
     }
     
     private func setupEmailLogin() {
@@ -82,15 +78,6 @@ extension EmailSignInViewModel {
                         try await self.emailLogin()
                     }
                 }
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func setupSignup() {
-        input.signUpButtonTaped
-            .sink {
-                // TODO: 화면전환을 위한 트리깅
-                print("SignUpView 화면전환")
             }
             .store(in: &cancellables)
     }

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=Frame.png",
+      "filename" : "Property 1=Icon, Property 2=Post_Empty.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Property 1=Frame@2x.png",
+      "filename" : "Property 1=Icon, Property 2=Post_Empty@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Property 1=Frame@3x.png",
+      "filename" : "Property 1=Icon, Property 2=Post_Empty@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

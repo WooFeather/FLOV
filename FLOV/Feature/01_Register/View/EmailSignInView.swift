@@ -8,43 +8,33 @@
 import SwiftUI
 
 struct EmailSignInView: View {
+    @EnvironmentObject private var pathModel: PathModel
     @StateObject var viewModel: EmailSignInViewModel
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack {
-                    inputFieldsView()
-                    buttonsStackView()
-                    Spacer()
-                }
-                .padding(.top, 70)
-                .padding(.horizontal)
+        ScrollView {
+            VStack {
+                inputFieldsView()
+                buttonsStackView()
+                Spacer()
             }
-            .asNavigationToolbar()
-            // TODO: viewModel.output.loginSuccess가 true일때 화면전환
-//            .onReceive(viewModel.output.loginSuccess) { _ in
-//                // TODO: dismiss
-//                // TODO: 토스트메세지 띄우기
-//                print("로그인성공")
-//            }
-            .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
-                Button("확인", role: .cancel) { }
+            .padding()
+        }
+        .asNavigationToolbar()
+        .onChange(of: viewModel.output.loginSuccess) { success in
+            if success {
+                // TODO: 토스트메세지 띄우기
+                pathModel.dismissFullScreenCover()
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        // TODO: PathModel 적용
-                    } label: {
-                        Image(.icnChevron)
-                    }
-                }
-                
-                ToolbarItem(placement: .principal) {
-                    Text("Email")
-                        .foregroundStyle(.colDeep)
-                        .font(.Caption.caption0)
-                }
+        }
+        .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
+            Button("확인", role: .cancel) { }
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Email")
+                    .foregroundStyle(.colDeep)
+                    .font(.Caption.caption0)
             }
         }
     }
@@ -80,8 +70,7 @@ private extension EmailSignInView {
             }
             
             ActionButton(text: "이메일로 가입하기", backgroundColor: .colLight) {
-                // TODO: 화면전환
-                viewModel.action(.signUp)
+                pathModel.pushToCover(.signUp)
             }
         }
         .padding(.top, 36)

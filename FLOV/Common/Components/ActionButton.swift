@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ActionButton: View {
+    @Environment(\.isEnabled) private var isEnabled: Bool
+    
     var text: String
     var backgroundColor: Color = .colBlack
     var tapAction: () -> Void
@@ -22,7 +24,7 @@ struct ActionButton: View {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(backgroundColor)
+                .background(isEnabled ? backgroundColor : .gray60)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
         }
     }

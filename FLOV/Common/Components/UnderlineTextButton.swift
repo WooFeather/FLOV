@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct UnderlineTextButton: View {
+    @Environment(\.isEnabled) private var isEnabled: Bool
+    
     var buttonTitle: String
     var tapAction: () -> Void
     
@@ -22,11 +24,11 @@ struct UnderlineTextButton: View {
         } label: {
             Text(buttonTitle)
                 .font(.Body.body3.bold())
-                .foregroundStyle(.colDeep)
+                .foregroundStyle(isEnabled ? .colDeep : .gray60)
                 .overlay(
                     Rectangle()
                         .frame(height: 2)
-                        .foregroundColor(.colDeep), alignment: .bottom)
+                        .foregroundColor(isEnabled ? .colDeep : .gray60), alignment: .bottom)
         }
     }
 }
