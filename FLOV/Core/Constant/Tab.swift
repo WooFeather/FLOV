@@ -17,7 +17,7 @@ enum FlovTab: Identifiable, CaseIterable {
         return .init()
     }
     
-    var icon: Image {
+    var selectedIcon: Image {
         switch self {
         case .activity:
             return Image(.tabBarHomeFill)
@@ -27,6 +27,19 @@ enum FlovTab: Identifiable, CaseIterable {
             return Image(.tabBarKeepFill)
         case .profile:
             return Image(.tabBarProfileFill)
+        }
+    }
+    
+    var deselectedIcon: Image {
+        switch self {
+        case .activity:
+            return Image(.tabBarHomeEmpty)
+        case .post:
+            return Image(.tabBarPostEmpty)
+        case .keep:
+            return Image(.tabBarKeepEmpty)
+        case .profile:
+            return Image(.tabBarProfileEmpty)
         }
     }
 }
