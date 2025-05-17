@@ -8,14 +8,19 @@
 import Foundation
 
 final class DIContainer {
-    let userRepository: UserRepositoryType
+    let services: Services
     
-    init(
-        userRepository: UserRepositoryType = UserRepository.shared
-    ) {
-        self.userRepository = userRepository
+    struct Services {
+        let userRepository: UserRepositoryType
     }
     
+    init(
+        services: Services
+    ) {
+        self.services = services
+    }
+    
+    /// Factory Method: PathModel 생성시 필요한 의존성을 자동 주입
     func makePathModel() -> PathModel {
         PathModel(container: self)
     }

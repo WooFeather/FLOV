@@ -34,13 +34,13 @@ extension PathModel {
     func build(_ fullScreenCover: FullScreenCover) -> some View {
         switch fullScreenCover {
         case .signIn:
-            let vm = SignInViewModel(userRepository: container.userRepository)
+            let vm = SignInViewModel(userRepository: container.services.userRepository)
             SignInView(viewModel: vm)
         case .emailSignIn:
-            let vm = EmailSignInViewModel(userRepository: container.userRepository)
+            let vm = EmailSignInViewModel(userRepository: container.services.userRepository)
             EmailSignInView(viewModel: vm)
         case .signUp:
-            let vm = SignUpViewModel(userRepository: container.userRepository)
+            let vm = SignUpViewModel(userRepository: container.services.userRepository)
             SignUpView(viewModel: vm)
         case .postWrite:
             PostWriteView()

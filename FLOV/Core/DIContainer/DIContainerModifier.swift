@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct DIContainerModifier: ViewModifier {
-    private let container = DIContainer()
+    private let container = DIContainer(
+        services: .init(userRepository: UserRepository.shared)
+    )
     
     func body(content: Content) -> some View {
         content
