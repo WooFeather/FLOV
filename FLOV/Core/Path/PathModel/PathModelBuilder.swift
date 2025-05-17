@@ -24,6 +24,7 @@ extension PathModel {
         case .keep:
             KeepView()
         case .profile:
+//            let vm = ProfileViewModel(userRepository: container.services.userRepos)
             ProfileView()
         case .profileEdit:
             ProfileEditView()

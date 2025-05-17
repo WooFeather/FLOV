@@ -13,6 +13,7 @@ enum NetworkError: Error {
     case statusCode(Int) // HTTP 4xx/5xx
     case decoding(Error) // JSON 디코딩 실패
     case apiError(String) // 서버가 내려주는 message
+    case refreshTokenExpired // 리프레시토큰 만료
     case corsError // CORS 등 특수 처리
 }
 
@@ -31,6 +32,8 @@ extension NetworkError: LocalizedError {
             return message
         case .corsError:
             return "CORS 오류가 발생했습니다."
+        case .refreshTokenExpired:
+            return "토큰이 만료되었습니다. 다시 로그인해주세요."
         }
     }
 }

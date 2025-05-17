@@ -117,12 +117,9 @@ extension SignInViewModel {
             }
         }
         
-        let response = try await userRepository.kakaoLogin(
+        _ = try await userRepository.kakaoLogin(
             request: .init(oauthToken: oauth.accessToken, deviceToken: nil)
         )
-        
-        // TODO: NetworkLog라는 디버깅용 객체 만들어서 대응
-        dump(response)
     }
     
     private func appleLogin(result: Result<ASAuthorization, Error>) async throws {
@@ -140,10 +137,9 @@ extension SignInViewModel {
                 .compactMap { $0 }
                 .joined()
             
-            let response = try await userRepository.appleLogin(
+            _ = try await userRepository.appleLogin(
                 request: .init(idToken: idToken, deviceToken: nil, nick: name)
             )
-            print("애플 로그인 성공:", response)
             
         case .failure(let error):
             throw error

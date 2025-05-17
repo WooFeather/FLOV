@@ -8,11 +8,39 @@
 import SwiftUI
 
 struct ProfileView: View {
+//    @StateObject var viewModel: ProfileViewModel
+    
     var body: some View {
-        Text("ProfileView")
+        ZStack {
+//            if viewModel.output.isLoading {
+//                ProgressView()
+//            }
+            
+            VStack {
+                Text("ProfileView")
+//                Button("프로필 조회") {
+//                    viewModel.action(.fetchProfile)
+//                }
+//                
+//                Text(viewModel.output.profile?.user_id ?? "아이디없음")
+//                Text(viewModel.output.profile?.email ?? "이메일없음")
+//                Text(viewModel.output.profile?.nick ?? "닉네임없음")
+            }
+        }
+//        .onAppear {
+//            viewModel.action(.fetchProfile)
+//        }
+//        .alert("로그인이 만료되었습니다.", isPresented: $viewModel.output.showSessionExpiredAlert) {
+//            Button("로그인") {
+//                viewModel.pathModel.presentFullScreenCover(.signIn)
+//            }
+//            Button("취소", role: .cancel) {}
+//        } message: {
+//            Text("다시 로그인해주세요.")
+//        }
     }
 }
 
-#Preview {
-    ProfileView()
-}
+//#Preview {
+//    ProfileView()
+//}

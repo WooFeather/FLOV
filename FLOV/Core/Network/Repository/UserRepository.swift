@@ -46,6 +46,8 @@ final class UserRepository: UserRepositoryType {
             refresh: response.refreshToken
         )
         
+        UserDefaultsManager.isSigned = true
+        
         return response
     }
     
@@ -57,6 +59,8 @@ final class UserRepository: UserRepositoryType {
             refresh: response.refreshToken
         )
         
+        UserDefaultsManager.isSigned = true
+        
         return response
     }
     
@@ -67,6 +71,8 @@ final class UserRepository: UserRepositoryType {
             access: response.accessToken,
             refresh: response.refreshToken
         )
+        
+        UserDefaultsManager.isSigned = true
         
         return response
     }
