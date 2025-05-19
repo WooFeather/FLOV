@@ -14,7 +14,11 @@ enum UserAPI {
     case login(request: LoginRequest)
     case kakaoLogin(request: KakaoLoginRequest)
     case appleLogin(request: AppleLoginRequest)
+    case deviceTokenUpdate(request: DeviceTokenUpdateRequest)
     case profileLookup
+    case profileUpdate(request: ProileUpdateRequest)
+    case profileImageUpload
+    case searchUser(nick: String)
 }
 
 extension UserAPI: Router {
@@ -30,17 +34,25 @@ extension UserAPI: Router {
             return "/v1/users/login/kakao"
         case .appleLogin:
             return "/v1/users/login/apple"
-        case .profileLookup:
+        case .profileLookup, .profileUpdate:
             return "/v1/users/me/profile"
+        case .deviceTokenUpdate:
+            return "/v1/users/deviceToken"
+        case .profileImageUpload:
+            return "/v1/users/profile/image"
+        case .searchUser:
+            return "/v1/users/search"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-            case .emailValidate, .join, .login, .kakaoLogin, .appleLogin:
+        case .emailValidate, .join, .login, .kakaoLogin, .appleLogin, .profileImageUpload:
             return .post
-        case .profileLookup:
+        case .profileLookup, .searchUser:
             return .get
+        case .deviceTokenUpdate, .profileUpdate:
+            return .put
         }
     }
     
@@ -51,10 +63,33 @@ extension UserAPI: Router {
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "application/json"
             ]
-        case .profileLookup:
+        case .profileLookup, .searchUser:
             return [
                 "Authorization": TokenManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
+            ]
+        case .deviceTokenUpdate, .profileUpdate:
+            return [
+                "Authorization": TokenManager.shared.accessToken ?? "",
+                "SeSACKey": Config.sesacKey,
+                "Content-Type": "application/json"
+            ]
+        case .profileImageUpload:
+            return [
+                "Authorization": TokenManager.shared.accessToken ?? "",
+                "SeSACKey": Config.sesacKey,
+                "Content-Type": "multipart/form-data"
+            ]
+        }
+    }
+    
+    var params: Parameters {
+        switch self {
+        case .emailValidate, .join, .login, .kakaoLogin, .appleLogin, .deviceTokenUpdate, .profileLookup, .profileUpdate, .profileImageUpload:
+            return [:]
+        case .searchUser(let nick):
+            return [
+                "nick": nick
             ]
         }
     }
@@ -72,6 +107,14 @@ extension UserAPI: Router {
         case .appleLogin(let request):
             return request
         case .profileLookup:
+            return nil
+        case .deviceTokenUpdate(let request):
+            return request
+        case .profileUpdate(let request):
+            return request
+        case .profileImageUpload:
+            return nil
+        case .searchUser:
             return nil
         }
     }
