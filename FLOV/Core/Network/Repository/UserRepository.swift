@@ -84,7 +84,7 @@ final class UserRepository: UserRepositoryType {
     }
     
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws {
-        _ = try await networkManager.callRequest(UserAPI.deviceTokenUpdate(request: request)) as EmptyResponse
+        _ = try await networkManager.callWithRefresh(UserAPI.deviceTokenUpdate(request: request), as: EmptyResponse.self)
         
         // TODO: 토큰이 헤더에 있다면 헤더에서 꺼내기
     }
@@ -94,13 +94,14 @@ final class UserRepository: UserRepositoryType {
     }
     
     func profileUpdate(request: ProfileUpdateRequest) async throws -> ProfileUpdateResponse {
-        let response: ProfileUpdateResponse = try await networkManager.callRequest(UserAPI.profileUpdate(request: request))
-        
-        return response
+        try await networkManager.callWithRefresh(UserAPI.profileUpdate(request: request), as: ProfileUpdateResponse.self)
     }
     
     func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse {
-        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipart(UserAPI.profileImageUpload) { form in
+        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipartWithRefresh(
+            UserAPI.profileImageUpload,
+            as: ProfileImageUploadResponse.self
+        ) { form in
             form.append(
                 imageData,
                 withName: "profile",
@@ -108,13 +109,10 @@ final class UserRepository: UserRepositoryType {
                 mimeType: "image/png"
             )
         }
-        
         return response
     }
     
     func searchUser(_ nick: String) async throws -> SearchUserResponse {
-        let response: SearchUserResponse = try await networkManager.callRequest(UserAPI.searchUser(nick: nick))
-        
-        return response
+        try await networkManager.callWithRefresh(UserAPI.searchUser(nick: nick), as: SearchUserResponse.self)
     }
 }

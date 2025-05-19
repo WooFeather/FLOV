@@ -14,12 +14,14 @@ struct DIContainerModifier: ViewModifier {
         let networkManager = NetworkManager(tokenManager: TokenManager.shared)
         let authRepository = AuthRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
         let userRepository = UserRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
+        let activityRepository = ActivityRepository(networkManager: networkManager)
         
         self.container = DIContainer(
             services: .init(
                 networkManager: networkManager,
                 userRepository: userRepository,
-                authRepository: authRepository
+                authRepository: authRepository,
+                activityRepository: activityRepository
             )
         )
     }

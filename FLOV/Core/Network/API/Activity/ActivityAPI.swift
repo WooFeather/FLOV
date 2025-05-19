@@ -12,13 +12,13 @@ enum ActivityAPI {
     case fileUpload
     case listLookup(country: String?, category: String?, limit: String?, next: String?)
     case detailLookup(activityId: String)
-    case keep(activityId: String)
+    case keep(activityId: String, request: ActivityKeepRequest)
     case newListLookup(country: String?, category: String?)
     case search(title: String?)
     case keepLookup(country: String?, category: String?, limit: String?, next: String?)
 }
 
-extension ActivityAPI {
+extension ActivityAPI: Router {
     var path: String {
         switch self {
         case .fileUpload:
@@ -27,7 +27,7 @@ extension ActivityAPI {
             return "/v1/activities"
         case .detailLookup(let id):
             return "/v1/activities/\(id)"
-        case .keep(let id):
+        case .keep(let id, _):
             return "/v1/activities/\(id)/keep"
         case .newListLookup:
             return "/v1/activities/new"
@@ -81,7 +81,7 @@ extension ActivityAPI {
                 "limit": limit,
                 "next": next
             ]
-        case .detailLookup(let id), .keep(let id):
+        case .detailLookup(let id), .keep(let id, _):
             return [
                 "activity_id": id
             ]
@@ -97,5 +97,22 @@ extension ActivityAPI {
         }
     }
     
-    
+    var requestBody: Encodable? {
+        switch self {
+        case .fileUpload:
+            return nil
+        case .listLookup:
+            return nil
+        case .detailLookup:
+            return nil
+        case .keep(_, let request):
+            return request
+        case .newListLookup:
+            return nil
+        case .search:
+            return nil
+        case .keepLookup:
+            return nil
+        }
+    }
 }
