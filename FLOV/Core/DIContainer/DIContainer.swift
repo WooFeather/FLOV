@@ -11,7 +11,9 @@ final class DIContainer {
     let services: Services
     
     struct Services {
+        let networkManager: NetworkManagerType
         let userRepository: UserRepositoryType
+        let authRepository: AuthRepositoryType
     }
     
     init(

@@ -12,7 +12,7 @@ extension PathModel {
     func build(_ screen: Screen) -> some View {
         switch screen {
         case .activity:
-            ActivityView()
+            ActivityView(userRepo: container.services.userRepository)
         case .activityDetail:
             ActivityDetailView()
         case .post:
@@ -24,6 +24,7 @@ extension PathModel {
         case .keep:
             KeepView()
         case .profile:
+//            let vm = ProfileViewModel(userRepository: container.services.userRepos)
             ProfileView()
         case .profileEdit:
             ProfileEditView()

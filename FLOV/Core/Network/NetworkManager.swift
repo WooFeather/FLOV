@@ -15,8 +15,11 @@ protocol NetworkManagerType {
 }
 
 final class NetworkManager: NetworkManagerType {
-    static let shared: NetworkManagerType = NetworkManager()
-    private init() { }
+    private let tokenManager: TokenManager
+    
+    init(tokenManager: TokenManager) {
+        self.tokenManager = tokenManager
+    }
     
     func callRequest<T: Decodable, U: Router>(_ api: U) async throws -> T {
         // 서버 응답(Data + HTTPURLResponse)
@@ -32,12 +35,23 @@ final class NetworkManager: NetworkManagerType {
         // 상태코드 분기처리
         if (200..<300).contains(status) {
             do {
-                return try JSONDecoder().decode(T.self, from: data)
+                let decoded: T = try JSONDecoder().decode(T.self, from: data)
+                NetworkLog.success(
+                    url: api.path,
+                    statusCode: status,
+                    data: decoded
+                )
+                return decoded
             } catch {
                 throw NetworkError.decoding(error)
             }
         } else {
             if let errModel = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+                NetworkLog.failure(
+                    url: api.path,
+                    statusCode: status,
+                    data: errModel
+                )
                 throw NetworkError.apiError(errModel.message)
             } else {
                 throw NetworkError.statusCode(status)
@@ -63,13 +77,24 @@ final class NetworkManager: NetworkManagerType {
         // 상태코드 분기처리
         if (200..<300).contains(status) {
             do {
-                return try JSONDecoder().decode(T.self, from: data)
+                let decoded: T = try JSONDecoder().decode(T.self, from: data)
+                NetworkLog.success(
+                    url: api.path,
+                    statusCode: status,
+                    data: decoded
+                )
+                return decoded
             } catch {
                 throw NetworkError.decoding(error)
             }
         } else {
-            if let err = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-                throw NetworkError.apiError(err.message)
+            if let errModel = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+                NetworkLog.failure(
+                    url: api.path,
+                    statusCode: status,
+                    data: errModel
+                )
+                throw NetworkError.apiError(errModel.message)
             } else {
                 throw NetworkError.statusCode(status)
             }
@@ -82,15 +107,22 @@ extension NetworkManager {
     func callWithRefresh<T: Decodable>(_ api: Router, as type: T.Type) async throws -> T {
         do {
             return try await self.callRequest(api)
-        } catch NetworkError.statusCode(let code) where code == 419 {
+        } catch {
             // refresh
-            let tokens = try await AuthRepository.shared.refresh()
-            TokenManager.shared.updateAuthTokens(
-                access: tokens.accessToken,
-                refresh: tokens.refreshToken
-            )
-            // retry
-            return try await self.callRequest(api)
+            
+            do {
+                let refreshResponse: RefreshResponse = try await callRequest(AuthAPI.refresh)
+                
+                tokenManager.updateAuthTokens(
+                    access: refreshResponse.accessToken,
+                    refresh: refreshResponse.refreshToken
+                )
+                // retry
+                return try await self.callRequest(api)
+            } catch {
+                UserDefaultsManager.isSigned = false
+                throw NetworkError.refreshTokenExpired
+            }
         }
     }
 }

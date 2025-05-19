@@ -8,9 +8,21 @@
 import SwiftUI
 
 struct DIContainerModifier: ViewModifier {
-    private let container = DIContainer(
-        services: .init(userRepository: UserRepository.shared)
-    )
+    private let container: DIContainer
+    
+    init() {
+        let networkManager = NetworkManager(tokenManager: TokenManager.shared)
+        let authRepository = AuthRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
+        let userRepository = UserRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
+        
+        self.container = DIContainer(
+            services: .init(
+                networkManager: networkManager,
+                userRepository: userRepository,
+                authRepository: authRepository
+            )
+        )
+    }
     
     func body(content: Content) -> some View {
         content
