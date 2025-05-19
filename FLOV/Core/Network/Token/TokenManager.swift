@@ -14,6 +14,8 @@ final class TokenManager {
     private enum Key: String {
         case accessToken, refreshToken
     }
+    
+    private init() {}
 
     var accessToken: String? {
         get {

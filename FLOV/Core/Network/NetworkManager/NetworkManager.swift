@@ -37,23 +37,22 @@ final class NetworkManager: NetworkManagerType {
         if (200..<300).contains(status) {
             do {
                 let decoded: T = try JSONDecoder().decode(T.self, from: data)
-                NetworkLog.success(
-                    url: api.path,
-                    statusCode: status,
-                    data: decoded
-                )
+                NetworkLog.success(url: api.path, statusCode: status, data: decoded)
                 return decoded
             } catch {
                 throw NetworkError.decoding(error)
             }
         } else {
             if let errModel = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-                NetworkLog.failure(
-                    url: api.path,
-                    statusCode: status,
-                    data: errModel
-                )
-                throw NetworkError.apiError(errModel.message)
+                NetworkLog.failure(url: api.path, statusCode: status, data: errModel)
+                switch status {
+                case 418:
+                    throw NetworkError.statusCode(418)
+                case 419:
+                    throw NetworkError.statusCode(419)
+                default:
+                    throw NetworkError.apiError(errModel.message)
+                }
             } else {
                 throw NetworkError.statusCode(status)
             }
@@ -78,24 +77,21 @@ final class NetworkManager: NetworkManagerType {
         // 상태코드 분기처리
         if (200..<300).contains(status) {
             do {
-                let decoded: T = try JSONDecoder().decode(T.self, from: data)
-                NetworkLog.success(
-                    url: api.path,
-                    statusCode: status,
-                    data: decoded
-                )
-                return decoded
+                return try JSONDecoder().decode(T.self, from: data)
             } catch {
                 throw NetworkError.decoding(error)
             }
         } else {
             if let errModel = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-                NetworkLog.failure(
-                    url: api.path,
-                    statusCode: status,
-                    data: errModel
-                )
-                throw NetworkError.apiError(errModel.message)
+                NetworkLog.failure(url: api.path, statusCode: status, data: errModel)
+                switch status {
+                case 418:
+                    throw NetworkError.statusCode(418)
+                case 419:
+                    throw NetworkError.statusCode(419)
+                default:
+                    throw NetworkError.apiError(errModel.message)
+                }
             } else {
                 throw NetworkError.statusCode(status)
             }
@@ -107,7 +103,6 @@ extension NetworkManager {
     /// 액세스 토큰을 갱신한 이후 요청하는 메서드
     func callWithRefresh<T: Decodable>(_ api: Router, as type: T.Type) async throws -> T {
         do {
-            // 1) 원래 요청 시도
             return try await self.callRequest(api)
         } catch let error as NetworkError {
             switch error {
@@ -145,11 +140,7 @@ extension NetworkManager {
 
 extension NetworkManager {
     /// multipart 요청에서 토큰 만료 시 자동 갱신 후 재시도
-    func uploadMultipartWithRefresh<T: Decodable>(
-        _ api: Router,
-        as type: T.Type,
-        formDataBuilder: @escaping (MultipartFormData) -> Void
-    ) async throws -> T {
+    func uploadMultipartWithRefresh<T: Decodable>(_ api: Router, as type: T.Type, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T {
         do {
             return try await self.uploadMultipart(api, formDataBuilder: formDataBuilder)
         } catch let error as NetworkError {
