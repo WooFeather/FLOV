@@ -7,18 +7,29 @@
 
 import Foundation
 
-struct ProileUpdateRequest: Encodable {
+// MARK: - ProfileUpdateRequest
+struct ProfileUpdateRequest: Encodable {
     let nick: String?
     let profileImage: String?
     let phoneNum: String?
     let introduction: String?
 }
 
+// MARK: - ProfileUpdateResponse
 struct ProfileUpdateResponse: Decodable {
-    let user_id: String
+    let userId: String
     let email: String
     let nick: String
     let profileImage: String?
     let phoneNum: String?
     let introduction: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case email
+        case nick
+        case profileImage
+        case phoneNum
+        case introduction
+    }
 }

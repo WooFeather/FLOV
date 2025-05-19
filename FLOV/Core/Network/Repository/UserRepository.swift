@@ -15,7 +15,7 @@ protocol UserRepositoryType {
     func appleLogin(request: AppleLoginRequest) async throws -> AppleLoginResponse
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws
     func profileLookup() async throws -> ProfileLookupResponse
-    func profileUpdate(request: ProileUpdateRequest) async throws -> ProfileUpdateResponse
+    func profileUpdate(request: ProfileUpdateRequest) async throws -> ProfileUpdateResponse
     func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse
     func searchUser(_ nick: String) async throws -> SearchUserResponse
 }
@@ -93,7 +93,7 @@ final class UserRepository: UserRepositoryType {
         try await networkManager.callWithRefresh(UserAPI.profileLookup, as: ProfileLookupResponse.self)
     }
     
-    func profileUpdate(request: ProileUpdateRequest) async throws -> ProfileUpdateResponse {
+    func profileUpdate(request: ProfileUpdateRequest) async throws -> ProfileUpdateResponse {
         let response: ProfileUpdateResponse = try await networkManager.callRequest(UserAPI.profileUpdate(request: request))
         
         return response

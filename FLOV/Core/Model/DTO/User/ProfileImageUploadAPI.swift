@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - ProfileImageUploadResponse
 struct ProfileImageUploadResponse: Decodable {
     let profileImage: String?
 }
