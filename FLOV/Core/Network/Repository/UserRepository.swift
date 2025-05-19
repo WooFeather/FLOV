@@ -13,7 +13,11 @@ protocol UserRepositoryType {
     func login(request: LoginRequest) async throws -> LoginResponse
     func kakaoLogin(request: KakaoLoginRequest) async throws -> KakaoLoginResponse
     func appleLogin(request: AppleLoginRequest) async throws -> AppleLoginResponse
+    func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws
     func profileLookup() async throws -> ProfileLookupResponse
+    func profileUpdate(request: ProileUpdateRequest) async throws -> ProfileUpdateResponse
+    func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse
+    func searchUser(_ nick: String) async throws -> SearchUserResponse
 }
 
 final class UserRepository: UserRepositoryType {
@@ -79,7 +83,38 @@ final class UserRepository: UserRepositoryType {
         return response
     }
     
+    func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws {
+        _ = try await networkManager.callRequest(UserAPI.deviceTokenUpdate(request: request)) as EmptyResponse
+        
+        // TODO: 토큰이 헤더에 있다면 헤더에서 꺼내기
+    }
+    
     func profileLookup() async throws -> ProfileLookupResponse {
         try await networkManager.callWithRefresh(UserAPI.profileLookup, as: ProfileLookupResponse.self)
+    }
+    
+    func profileUpdate(request: ProileUpdateRequest) async throws -> ProfileUpdateResponse {
+        let response: ProfileUpdateResponse = try await networkManager.callRequest(UserAPI.profileUpdate(request: request))
+        
+        return response
+    }
+    
+    func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse {
+        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipart(UserAPI.profileImageUpload) { form in
+            form.append(
+                imageData,
+                withName: "profile",
+                fileName: "profile.png",
+                mimeType: "image/png"
+            )
+        }
+        
+        return response
+    }
+    
+    func searchUser(_ nick: String) async throws -> SearchUserResponse {
+        let response: SearchUserResponse = try await networkManager.callRequest(UserAPI.searchUser(nick: nick))
+        
+        return response
     }
 }
