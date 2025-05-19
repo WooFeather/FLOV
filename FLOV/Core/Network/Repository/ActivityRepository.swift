@@ -13,9 +13,9 @@ protocol ActivityRepositoryType {
     func listLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListLookupResponse
     func detailLookup(activityId: String) async throws -> ActivityDetailLookupResponse
     func keep(activityId: String, request: ActivityKeepRequest) async throws -> ActivityKeepResponse
-    func newListLookup(country: String?, category: String?) async throws -> ActivityListLookupResponse
-    func search(title: String?) async throws -> ActivityListLookupResponse
-    func keepLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListLookupResponse
+    func newListLookup(country: String?, category: String?) async throws -> ActivityNewListLookupResponse
+    func search(title: String?) async throws -> ActivitySearchResponse
+    func keepLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityKeepLookupResponse
 }
 
 final class ActivityRepository: ActivityRepositoryType {
@@ -26,73 +26,51 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func fileUpload(data: Data) async throws -> ActivityFileUploadResponse {
-        let response: ActivityFileUploadResponse = try await networkManager.uploadMultipart(ActivityAPI.fileUpload) { form in
+        let response: ActivityFileUploadResponse = try await networkManager.uploadMultipartWithRefresh(
+            ActivityAPI.fileUpload,
+            as: ActivityFileUploadResponse.self
+        ) { form in
             form.append(
                 data,
-                withName: "file",
-                fileName: "upload.jpg",
-                mimeType: "image/jpeg"
+                withName: "profile",
+                fileName: "upload.png",
+                mimeType: "image/png"
             )
         }
-        
         return response
     }
 
     func listLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListLookupResponse {
-        let response: ActivityListLookupResponse = try await networkManager.callRequest(
-            ActivityAPI.listLookup(
-                country: country,
-                category: category,
-                limit: limit,
-                next: next
-            )
-        )
-        
-        return response
+        try await networkManager.callWithRefresh(ActivityAPI.listLookup(
+            country: country,
+            category: category,
+            limit: limit,
+            next: next
+        ), as: ActivityListLookupResponse.self)
     }
 
     func detailLookup(activityId: String) async throws -> ActivityDetailLookupResponse {
-        let response: ActivityDetailLookupResponse = try await networkManager.callRequest(
-            ActivityAPI.detailLookup(activityId: activityId)
-        )
-        
-        return response
+        try await networkManager.callWithRefresh(ActivityAPI.detailLookup(activityId: activityId), as: ActivityDetailLookupResponse.self)
     }
 
     func keep(activityId: String, request: ActivityKeepRequest) async throws -> ActivityKeepResponse {
-        let response: ActivityKeepResponse = try await networkManager.callRequest(
-            ActivityAPI.keep(activityId: activityId, request: request)
-        )
-        
-        return response
+        try await networkManager.callWithRefresh(ActivityAPI.keep(activityId: activityId, request: request), as: ActivityKeepResponse.self)
     }
 
-    func newListLookup(country: String?, category: String?) async throws -> ActivityListLookupResponse {
-        let response: ActivityListLookupResponse = try await networkManager.callRequest(
-            ActivityAPI.newListLookup(country: country, category: category)
-        )
-        
-        return response
+    func newListLookup(country: String?, category: String?) async throws -> ActivityNewListLookupResponse {
+        try await networkManager.callWithRefresh(ActivityAPI.newListLookup(country: country, category: category), as: ActivityNewListLookupResponse.self)
     }
 
-    func search(title: String?) async throws -> ActivityListLookupResponse {
-        let response: ActivityListLookupResponse = try await networkManager.callRequest(
-            ActivityAPI.search(title: title)
-        )
-        
-        return response
+    func search(title: String?) async throws -> ActivitySearchResponse {
+        try await networkManager.callWithRefresh(ActivityAPI.search(title: title), as: ActivitySearchResponse.self)
     }
 
-    func keepLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListLookupResponse {
-        let response: ActivityListLookupResponse = try await networkManager.callRequest(
-            ActivityAPI.keepLookup(
-                country: country,
-                category: category,
-                limit: limit,
-                next: next
-            )
-        )
-        
-        return response
+    func keepLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityKeepLookupResponse {
+        try await networkManager.callWithRefresh(ActivityAPI.keepLookup(
+            country: country,
+            category: category,
+            limit: limit,
+            next: next
+        ), as: ActivityKeepLookupResponse.self)
     }
 }

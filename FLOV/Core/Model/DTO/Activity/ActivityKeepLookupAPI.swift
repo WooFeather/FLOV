@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - ActivityKeepLookupResponse
-struct ActivityKeepLookupResponse {
+struct ActivityKeepLookupResponse: Decodable {
     let data: [ActivitySummary]
     let nextCursor: String
 

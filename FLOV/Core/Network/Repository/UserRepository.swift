@@ -16,7 +16,7 @@ protocol UserRepositoryType {
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws
     func profileLookup() async throws -> ProfileLookupResponse
     func profileUpdate(request: ProfileUpdateRequest) async throws -> ProfileUpdateResponse
-    func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse
+    func profileImageUpload(data: Data) async throws -> ProfileImageUploadResponse
     func searchUser(_ nick: String) async throws -> SearchUserResponse
 }
 
@@ -97,13 +97,13 @@ final class UserRepository: UserRepositoryType {
         try await networkManager.callWithRefresh(UserAPI.profileUpdate(request: request), as: ProfileUpdateResponse.self)
     }
     
-    func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse {
+    func profileImageUpload(data: Data) async throws -> ProfileImageUploadResponse {
         let response: ProfileImageUploadResponse = try await networkManager.uploadMultipartWithRefresh(
             UserAPI.profileImageUpload,
             as: ProfileImageUploadResponse.self
         ) { form in
             form.append(
-                imageData,
+                data,
                 withName: "profile",
                 fileName: "profile.png",
                 mimeType: "image/png"
