@@ -93,12 +93,12 @@ private extension SignInView {
     }
 }
 
-#if DEBUG
-#Preview {
-    SignInView(
-        viewModel: SignInViewModel(
-            userRepository: UserRepository.shared
-        )
-    )
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    SignInView(
+//        viewModel: SignInViewModel(
+//            userRepository: UserRepository.shared
+//        )
+//    )
+//}
+//#endif

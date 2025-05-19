@@ -143,8 +143,8 @@ extension SignUpView {
 }
 
 
-#if DEBUG
-#Preview {
-    SignUpView(viewModel: SignUpViewModel(userRepository: UserRepository.shared))
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    SignUpView(viewModel: SignUpViewModel(userRepository: UserRepository.shared))
+//}
+//#endif

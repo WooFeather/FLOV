@@ -15,8 +15,11 @@ protocol NetworkManagerType {
 }
 
 final class NetworkManager: NetworkManagerType {
-    static let shared: NetworkManagerType = NetworkManager()
-    private init() { }
+    private let tokenManager: TokenManager
+    
+    init(tokenManager: TokenManager) {
+        self.tokenManager = tokenManager
+    }
     
     func callRequest<T: Decodable, U: Router>(_ api: U) async throws -> T {
         // 서버 응답(Data + HTTPURLResponse)
@@ -108,11 +111,11 @@ extension NetworkManager {
             // refresh
             
             do {
-                let tokens = try await AuthRepository.shared.refresh()
+                let refreshResponse: RefreshResponse = try await callRequest(AuthAPI.refresh)
                 
-                TokenManager.shared.updateAuthTokens(
-                    access: tokens.accessToken,
-                    refresh: tokens.refreshToken
+                tokenManager.updateAuthTokens(
+                    access: refreshResponse.accessToken,
+                    refresh: refreshResponse.refreshToken
                 )
                 // retry
                 return try await self.callRequest(api)

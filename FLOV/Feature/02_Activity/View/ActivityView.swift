@@ -11,7 +11,7 @@ struct ActivityView: View {
     @EnvironmentObject private var pathModel: PathModel
     @State private var isSigned: Bool = false
     
-    let userRepo = UserRepository.shared
+    let userRepo: UserRepositoryType
     
     var body: some View {
         Button {

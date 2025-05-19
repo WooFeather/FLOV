@@ -77,8 +77,9 @@ private extension EmailSignInView {
     }
 }
 
-#if DEBUG
-#Preview {
-    EmailSignInView(viewModel: EmailSignInViewModel(userRepository: UserRepository.shared))
-}
-#endif
+//#if DEBUG
+//#Preview {
+//    EmailSignInView(viewModel: EmailSignInViewModel(userRepository: UserRepository(networkManager: NetworkManager(tokenManager: TokenManager.shared), tokenManager: TokenManager.shared)))
+//        .injectDIContainer()
+//}
+//#endif

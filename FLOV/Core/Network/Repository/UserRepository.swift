@@ -17,11 +17,13 @@ protocol UserRepositoryType {
 }
 
 final class UserRepository: UserRepositoryType {
-    static let shared: UserRepositoryType = UserRepository()
-    private let networkManager: NetworkManagerType = NetworkManager.shared
-    private let tokenManager = TokenManager.shared
+    private let networkManager: NetworkManagerType
+    private let tokenManager: TokenManager
     
-    private init() {}
+    init(networkManager: NetworkManagerType, tokenManager: TokenManager) {
+        self.networkManager = networkManager
+        self.tokenManager = tokenManager
+    }
     
     func emailValidate(request: EmailValidateRequest) async throws -> EmailValidateResponse {
         try await networkManager.callRequest(UserAPI.emailValidate(request: request))

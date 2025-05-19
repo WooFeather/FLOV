@@ -12,11 +12,13 @@ protocol AuthRepositoryType {
 }
 
 final class AuthRepository: AuthRepositoryType {
-    static let shared: AuthRepositoryType = AuthRepository()
-    private let networkManager: NetworkManagerType = NetworkManager.shared
-    private let tokenManager = TokenManager.shared
+    private let networkManager: NetworkManagerType
+    private let tokenManager: TokenManager
     
-    private init() {}
+    init(networkManager: NetworkManagerType, tokenManager: TokenManager) {
+        self.networkManager = networkManager
+        self.tokenManager = tokenManager
+    }
     
     func refresh() async throws -> RefreshResponse {
         let response: RefreshResponse = try await networkManager.callRequest(AuthAPI.refresh)
