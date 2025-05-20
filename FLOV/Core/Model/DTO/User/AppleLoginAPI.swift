@@ -7,17 +7,28 @@
 
 import Foundation
 
+// MARK: - AppleLoginRequest
 struct AppleLoginRequest: Encodable {
     let idToken: String
     let deviceToken: String?
     let nick: String?
 }
 
+// MARK: - AppleLoginResponse
 struct AppleLoginResponse: Decodable {
-    let user_id: String
+    let userId: String
     let email: String
     let nick: String
     let profileImage: String?
     let accessToken: String
     let refreshToken: String
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case email
+        case nick
+        case profileImage
+        case accessToken
+        case refreshToken
+    }
 }

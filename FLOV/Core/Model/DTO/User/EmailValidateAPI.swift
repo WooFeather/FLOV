@@ -7,10 +7,12 @@
 
 import Foundation
 
+// MARK: - EmailValidateRequest
 struct EmailValidateRequest: Encodable {
     let email: String
 }
 
+// MARK: - EmailValidateResponse
 struct EmailValidateResponse: Decodable {
     let message: String
 }

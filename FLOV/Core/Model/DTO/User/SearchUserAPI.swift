@@ -7,13 +7,22 @@
 
 import Foundation
 
+// MARK: - SearchUserResponse
 struct SearchUserResponse: Decodable {
-    let data: [User]
+    let data: [SearchUserData]
 }
 
-struct User: Decodable {
-    let user_id: String
+// MARK: - SearchUserData
+struct SearchUserData: Decodable {
+    let userId: String
     let nick: String
     let profileImage: String?
     let introduction: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case nick
+        case profileImage
+        case introduction
+    }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - DeviceTokenUpdateRequest
 struct DeviceTokenUpdateRequest: Encodable {
     let deviceToken: String
 }

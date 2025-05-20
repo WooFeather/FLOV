@@ -16,7 +16,7 @@ enum UserAPI {
     case appleLogin(request: AppleLoginRequest)
     case deviceTokenUpdate(request: DeviceTokenUpdateRequest)
     case profileLookup
-    case profileUpdate(request: ProileUpdateRequest)
+    case profileUpdate(request: ProfileUpdateRequest)
     case profileImageUpload
     case searchUser(nick: String)
 }

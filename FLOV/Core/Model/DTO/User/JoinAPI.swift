@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - JoinRequest
 struct JoinRequest: Encodable {
     let email: String
     let password: String
@@ -16,10 +17,20 @@ struct JoinRequest: Encodable {
     let deviceToken: String?
 }
 
+
+// MARK: - JoinResponse
 struct JoinResponse: Decodable {
-    let user_id: String
+    let userId: String
     let email: String
     let nick: String
     let accessToken: String
     let refreshToken: String
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case email
+        case nick
+        case accessToken
+        case refreshToken
+    }
 }

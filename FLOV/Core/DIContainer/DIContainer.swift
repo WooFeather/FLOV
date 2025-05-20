@@ -14,6 +14,7 @@ final class DIContainer {
         let networkManager: NetworkManagerType
         let userRepository: UserRepositoryType
         let authRepository: AuthRepositoryType
+        let activityRepository: ActivityRepositoryType
     }
     
     init(

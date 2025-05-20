@@ -15,8 +15,8 @@ protocol UserRepositoryType {
     func appleLogin(request: AppleLoginRequest) async throws -> AppleLoginResponse
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws
     func profileLookup() async throws -> ProfileLookupResponse
-    func profileUpdate(request: ProileUpdateRequest) async throws -> ProfileUpdateResponse
-    func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse
+    func profileUpdate(request: ProfileUpdateRequest) async throws -> ProfileUpdateResponse
+    func profileImageUpload(data: Data) async throws -> ProfileImageUploadResponse
     func searchUser(_ nick: String) async throws -> SearchUserResponse
 }
 
@@ -84,7 +84,7 @@ final class UserRepository: UserRepositoryType {
     }
     
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws {
-        _ = try await networkManager.callRequest(UserAPI.deviceTokenUpdate(request: request)) as EmptyResponse
+        _ = try await networkManager.callWithRefresh(UserAPI.deviceTokenUpdate(request: request), as: EmptyResponse.self)
         
         // TODO: 토큰이 헤더에 있다면 헤더에서 꺼내기
     }
@@ -93,28 +93,26 @@ final class UserRepository: UserRepositoryType {
         try await networkManager.callWithRefresh(UserAPI.profileLookup, as: ProfileLookupResponse.self)
     }
     
-    func profileUpdate(request: ProileUpdateRequest) async throws -> ProfileUpdateResponse {
-        let response: ProfileUpdateResponse = try await networkManager.callRequest(UserAPI.profileUpdate(request: request))
-        
-        return response
+    func profileUpdate(request: ProfileUpdateRequest) async throws -> ProfileUpdateResponse {
+        try await networkManager.callWithRefresh(UserAPI.profileUpdate(request: request), as: ProfileUpdateResponse.self)
     }
     
-    func profileImageUpload(_ imageData: Data) async throws -> ProfileImageUploadResponse {
-        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipart(UserAPI.profileImageUpload) { form in
+    func profileImageUpload(data: Data) async throws -> ProfileImageUploadResponse {
+        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipartWithRefresh(
+            UserAPI.profileImageUpload,
+            as: ProfileImageUploadResponse.self
+        ) { form in
             form.append(
-                imageData,
+                data,
                 withName: "profile",
                 fileName: "profile.png",
                 mimeType: "image/png"
             )
         }
-        
         return response
     }
     
     func searchUser(_ nick: String) async throws -> SearchUserResponse {
-        let response: SearchUserResponse = try await networkManager.callRequest(UserAPI.searchUser(nick: nick))
-        
-        return response
+        try await networkManager.callWithRefresh(UserAPI.searchUser(nick: nick), as: SearchUserResponse.self)
     }
 }
