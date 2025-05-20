@@ -11,3 +11,10 @@ import Foundation
 struct DeviceTokenUpdateRequest: Encodable {
     let deviceToken: String
 }
+
+// MARK: - Mapper
+extension DeviceTokenUpdateRequest {
+    func toEntity() -> DeviceTokenEntity {
+        return DeviceTokenEntity(deviceToken: deviceToken)
+    }
+}

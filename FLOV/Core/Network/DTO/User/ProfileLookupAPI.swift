@@ -25,3 +25,17 @@ struct ProfileLookupResponse: Decodable {
         case introduction
     }
 }
+
+// MARK: - Mapper
+extension ProfileLookupResponse {
+    func toEntity() -> UserEntity {
+        return UserEntity(
+            id: userId,
+            email: email,
+            nick: nick,
+            profileImageURL: profileImage,
+            phoneNumber: phoneNum,
+            introduction: introduction
+        )
+    }
+}

@@ -16,3 +16,10 @@ struct EmailValidateRequest: Encodable {
 struct EmailValidateResponse: Decodable {
     let message: String
 }
+
+// MARK: - Mapper
+extension EmailValidateResponse {
+    func toEntity() -> EmailValidationEntity {
+        return EmailValidationEntity(message: message)
+    }
+}

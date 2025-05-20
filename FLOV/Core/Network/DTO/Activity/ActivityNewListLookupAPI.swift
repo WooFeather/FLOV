@@ -11,3 +11,13 @@ import Foundation
 struct ActivityNewListLookupResponse: Decodable {
     let data: [ActivitySummary]
 }
+
+// MARK: - Mapper
+extension ActivityNewListLookupResponse {
+    func toEntity() -> ActivityListEntity {
+        return ActivityListEntity(
+            data: data.map { $0.toEntity() },
+            nextCursor: nil
+        )
+    }
+}

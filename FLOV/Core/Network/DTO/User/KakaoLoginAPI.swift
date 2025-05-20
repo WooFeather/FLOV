@@ -31,3 +31,24 @@ struct KakaoLoginResponse: Decodable {
         case refreshToken
     }
 }
+
+// MARK: - Mapper
+extension KakaoLoginResponse {
+    func toEntity() -> AuthResultEntity {
+        let user = UserEntity(
+            id: userId,
+            email: email,
+            nick: nick,
+            profileImageURL: profileImage,
+            phoneNumber: nil,
+            introduction: nil
+        )
+        
+        let credentials = AuthCredentialsEntity(
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        )
+        
+        return AuthResultEntity(user: user, credentials: credentials)
+    }
+}

@@ -26,3 +26,17 @@ struct SearchUserData: Decodable {
         case introduction
     }
 }
+
+// MARK: - Mapper
+extension SearchUserData {
+    func toEntity() -> UserEntity {
+        return UserEntity(
+            id: userId,
+            email: nil,
+            nick: nick,
+            profileImageURL: profileImage,
+            phoneNumber: nil,
+            introduction: introduction
+        )
+    }
+}

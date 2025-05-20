@@ -34,3 +34,24 @@ struct JoinResponse: Decodable {
         case refreshToken
     }
 }
+
+// MARK: - Mapper
+extension JoinResponse {
+    func toEntity() -> AuthResultEntity {
+        let user = UserEntity(
+            id: userId,
+            email: email,
+            nick: nick,
+            profileImageURL: nil,
+            phoneNumber: nil,
+            introduction: nil
+        )
+        
+        let credentials = AuthCredentialsEntity(
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        )
+        
+        return AuthResultEntity(user: user, credentials: credentials)
+    }
+}

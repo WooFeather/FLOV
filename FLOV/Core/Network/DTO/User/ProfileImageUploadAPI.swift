@@ -11,3 +11,10 @@ import Foundation
 struct ProfileImageUploadResponse: Decodable {
     let profileImage: String?
 }
+
+// MARK: - Mapper
+extension ProfileImageUploadResponse {
+    func toEntity() -> ProfileImageEntity {
+        return ProfileImageEntity(profileImage: profileImage)
+    }
+}

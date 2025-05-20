@@ -17,3 +17,14 @@ struct ActivityKeepLookupResponse: Decodable {
         case nextCursor = "next_cursor"
     }
 }
+
+// MARK: - Mapper
+extension ActivityKeepLookupResponse {
+    func toEntity() -> ActivityListEntity {
+        return ActivityListEntity(
+            data: data.map { $0.toEntity() },
+            nextCursor: nextCursor
+        )
+    }
+}
+
