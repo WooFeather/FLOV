@@ -85,8 +85,6 @@ final class UserRepository: UserRepositoryType {
     
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws {
         _ = try await networkManager.callWithRefresh(UserAPI.deviceTokenUpdate(request: request), as: EmptyResponse.self)
-        
-        // TODO: 토큰이 헤더에 있다면 헤더에서 꺼내기
     }
     
     func profileLookup() async throws -> ProfileLookupResponse {

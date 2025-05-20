@@ -11,5 +11,3 @@ import Foundation
 struct DeviceTokenUpdateRequest: Encodable {
     let deviceToken: String
 }
-
-// TODO: 응답값 구조 확인
