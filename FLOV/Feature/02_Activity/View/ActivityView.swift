@@ -8,11 +8,40 @@
 import SwiftUI
 
 struct ActivityView: View {
+    @EnvironmentObject private var pathModel: PathModel
+    @AppStorage("isSigned") private var isSigned: Bool = false
+
+    let activityRepo: ActivityRepositoryType
+    @State private var list: [ActivitySummary] = []
+
     var body: some View {
-        Text("ActivityView")
+        VStack {
+            Button {
+                if !isSigned {
+                    pathModel.presentFullScreenCover(.signIn)
+                } else {
+                    Task {
+                        do {
+                            let response = try await activityRepo.listLookup(country: nil, category: nil, limit: nil, next: nil)
+                            
+                            list = response.data
+                        } catch {
+                            print(error)
+                        }
+                    }
+                }
+            } label: {
+                Text("TEST")
+            }
+
+            List(list, id: \.activityId) { data in
+                Text(data.title ?? "타이틀 없음")
+            }
+        }
     }
 }
 
-#Preview {
-    ActivityView()
-}
+//#Preview {
+//    ActivityView()
+//        .injectDIContainer()
+//}
