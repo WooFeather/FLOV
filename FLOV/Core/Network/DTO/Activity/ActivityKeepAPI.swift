@@ -24,3 +24,10 @@ struct ActivityKeepResponse: Decodable {
         case keepStatus = "keep_status"
     }
 }
+
+// MARK: - Mapper
+extension ActivityKeepResponse {
+    func toEntity() -> ActivityKeepEntity {
+        return ActivityKeepEntity(keepStatus: keepStatus)
+    }
+}

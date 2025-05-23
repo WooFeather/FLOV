@@ -113,3 +113,61 @@ struct ActivitySchedule: Decodable {
     let duration: String?
     let description: String?
 }
+
+// MARK: - Mapper
+extension ActivityDetailLookupResponse {
+    func toEntity() -> ActivityDetailEntity {
+        let summaryDTO = ActivitySummary(
+            activityId: activityId,
+            title: title,
+            country: country,
+            category: category,
+            thumbnails: thumbnails,
+            geolocation: geolocation,
+            price: price,
+            tags: tags,
+            pointReward: pointReward,
+            isAdvertisement: isAdvertisement,
+            isKeep: isKeep,
+            keepCount: keepCount
+        )
+        
+        return ActivityDetailEntity(
+            summary: summaryDTO.toEntity(),
+            description: description,
+            startDate: startDate?.toDate(format: "yyyy-MM-dd"),
+            endDate: endDate?.toDate(format: "yyyy-MM-dd"),
+            schedule: schedule?.map {
+                ScheduleEntity(
+                    duration: $0.duration,
+                    description: $0.description
+                )
+            } ?? [],
+            reservations: reservationList.map {
+                ReservationEntity(
+                    itemName: $0.itemName,
+                    times: $0.times.map {
+                        TimeSlotEntity(
+                            time: $0.time,
+                            isReserved: $0.isReserved ?? false
+                        )
+                    }
+                )
+            },
+            restrictions: RestrictionsEntity(
+                minHeight: restrictions.minHeight,
+                minAge: restrictions.minAge,
+                maxParticipants: restrictions.maxParticipants
+            ),
+            totalOrderCount: totalOrderCount,
+            creator: CreatorEntity(
+                id: creator.userId,
+                nick: creator.nick,
+                profileImageURL: creator.profileImage,
+                introduction: creator.introduction
+            ),
+            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+        )
+    }
+}

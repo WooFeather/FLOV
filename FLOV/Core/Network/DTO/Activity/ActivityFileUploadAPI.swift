@@ -11,3 +11,10 @@ import Foundation
 struct ActivityFileUploadResponse: Decodable {
     let thumbnails: [String]
 }
+
+// MARK: - Mapper
+extension ActivityFileUploadResponse {
+    func toEntity() -> ActivityFileUploadEntity {
+        return ActivityFileUploadEntity(thumbnails: thumbnails)
+    }
+}

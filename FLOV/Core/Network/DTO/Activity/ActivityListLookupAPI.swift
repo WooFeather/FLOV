@@ -61,3 +61,34 @@ struct ActivityPrice: Decodable {
     let final: Int
 }
 
+// MARK: - Mapper
+extension ActivitySummary {
+    func toEntity() -> ActivitySummaryEntity {
+        return ActivitySummaryEntity(
+            id: activityId,
+            title: title ?? "",
+            country: country ?? "",
+            category: category ?? "",
+            thumbnailURLs: thumbnails,
+            location: (
+                latitude: geolocation.latitude,
+                longitude: geolocation.longitude
+            ),
+            originalPrice: price.original,
+            finalPrice: price.final,
+            tags: tags,
+            pointReward: pointReward,
+            isKept: isKeep,
+            keepCount: keepCount
+        )
+    }
+}
+
+extension ActivityListLookupResponse {
+    func toEntity() -> ActivityListEntity {
+        return ActivityListEntity(
+            data: data.map { $0.toEntity() },
+            nextCursor: nextCursor
+        )
+    }
+}

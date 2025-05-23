@@ -12,7 +12,7 @@ struct ActivityView: View {
     @AppStorage("isSigned") private var isSigned: Bool = false
 
     let activityRepo: ActivityRepositoryType
-    @State private var list: [ActivitySummary] = []
+    @State private var list: [ActivitySummaryEntity] = []
 
     var body: some View {
         VStack {
@@ -34,8 +34,8 @@ struct ActivityView: View {
                 Text("TEST")
             }
 
-            List(list, id: \.activityId) { data in
-                Text(data.title ?? "타이틀 없음")
+            List(list, id: \.id) { data in
+                Text(data.title)
             }
         }
     }

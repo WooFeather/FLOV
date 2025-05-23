@@ -12,4 +12,9 @@ struct DeviceTokenUpdateRequest: Encodable {
     let deviceToken: String
 }
 
-// TODO: 응답값 구조 확인
+// MARK: - Mapper
+extension DeviceTokenUpdateRequest {
+    func toEntity() -> DeviceTokenEntity {
+        return DeviceTokenEntity(deviceToken: deviceToken)
+    }
+}

@@ -144,7 +144,7 @@ extension SignUpViewModel {
 extension SignUpViewModel {
     @MainActor
     private func validateEmail() async throws {
-        let _: EmailValidateResponse = try await userRepository.emailValidate(
+        let _: EmailValidationEntity = try await userRepository.emailValidate(
             request: .init(email: input.email)
         )
         

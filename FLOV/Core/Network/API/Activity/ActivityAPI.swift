@@ -34,7 +34,7 @@ extension ActivityAPI: Router {
         case .search:
             return "/v1/activities/search"
         case .keepLookup:
-            return "/v1/activities/likes/me"
+            return "/v1/activities/keeps/me"
         }
     }
     
