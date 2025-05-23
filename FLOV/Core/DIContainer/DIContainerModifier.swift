@@ -15,13 +15,15 @@ struct DIContainerModifier: ViewModifier {
         let authRepository = AuthRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
         let userRepository = UserRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
         let activityRepository = ActivityRepository(networkManager: networkManager)
+        let authManager = AuthManager.shared
         
         self.container = DIContainer(
             services: .init(
                 networkManager: networkManager,
                 userRepository: userRepository,
                 authRepository: authRepository,
-                activityRepository: activityRepository
+                activityRepository: activityRepository,
+                authManager: authManager
             )
         )
     }
@@ -29,6 +31,7 @@ struct DIContainerModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environmentObject(container.makePathModel())
+            .environmentObject(container.services.authManager)
     }
 }
 
