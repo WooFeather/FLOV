@@ -11,6 +11,7 @@ protocol PathModelType: ObservableObject {
     var path: NavigationPath { get set }
     var fullScreenCover: FullScreenCover? { get set }
     var coverNavigationPath: NavigationPath { get set }
+    var isAtRoot: Bool { get }
     
     func push(_ screen: Screen)
     func presentFullScreenCover(_ cover: FullScreenCover)
@@ -27,6 +28,10 @@ final class PathModel: PathModelType {
     @Published var fullScreenCover: FullScreenCover?
     @Published var coverNavigationPath: NavigationPath = NavigationPath()
     
+    var isAtRoot: Bool {
+        path.isEmpty
+    }
+
     init(container: DIContainer) {
         self.container = container
     }

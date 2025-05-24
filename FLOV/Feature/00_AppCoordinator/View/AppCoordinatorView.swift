@@ -70,8 +70,11 @@ struct FlovTabView: View {
             
             VStack {
                 Spacer()
-                CustomTabBar(selectedTab: $selectedTab)
+                if pathModel.isAtRoot {
+                    CustomTabBar(selectedTab: $selectedTab)
+                }
             }
+            .animation(.bouncy(duration: 0.5), value: pathModel.isAtRoot)
         }
         .ignoresSafeArea(edges: .bottom)
     }
