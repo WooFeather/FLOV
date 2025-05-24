@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var authManager: AuthManager
 //    @StateObject var viewModel: ProfileViewModel
     
     var body: some View {
@@ -17,6 +18,10 @@ struct ProfileView: View {
 //            }
             
             VStack {
+                Button("로그아웃") {
+                    authManager.signOut()
+                }
+                
                 Text("ProfileView")
 //                Button("프로필 조회") {
 //                    viewModel.action(.fetchProfile)

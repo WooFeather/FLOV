@@ -12,11 +12,14 @@ struct AppCoordinatorView: View {
     @EnvironmentObject private var authManager: AuthManager
     
     var body: some View {
-        if authManager.isSigned {
-            FlovTabView()
-        } else {
-            RegisterView()
+        Group {
+            if authManager.isSigned {
+                FlovTabView()
+            } else {
+                RegisterView()
+            }
         }
+        .animation(.easeInOut, value: authManager.isSigned)
     }
 }
 

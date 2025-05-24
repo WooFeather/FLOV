@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 final class AuthManager: ObservableObject {
     @Published private(set) var isSigned: Bool

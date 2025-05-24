@@ -9,16 +9,16 @@ import SwiftUI
 
 struct ActivityView: View {
     @EnvironmentObject var pathModel: PathModel
-    @EnvironmentObject var authManager: AuthManager
     @StateObject var viewModel: ActivityViewModel
 
     var body: some View {
-        List(viewModel.output.newActivities, id: \.id) { activity in
-            Text(activity.title)
+        VStack {
+            List(viewModel.output.newActivities, id: \.id) { activity in
+                Text(activity.title)
+            }
+            .listStyle(PlainListStyle())
         }
-        .listStyle(PlainListStyle())
         .onAppear {
-            guard authManager.isSigned else { return }
             viewModel.action(.fetchAllActivities)
         }
     }
