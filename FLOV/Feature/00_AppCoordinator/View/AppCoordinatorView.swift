@@ -1,12 +1,29 @@
 //
-//  TabView.swift
+//  AppCoordinatorView.swift
 //  FLOV
 //
-//  Created by 조우현 on 5/16/25.
+//  Created by 조우현 on 5/23/25.
 //
 
 import SwiftUI
 
+// MARK: - AppCoordinatorView
+struct AppCoordinatorView: View {
+    @EnvironmentObject private var authManager: AuthManager
+    
+    var body: some View {
+        Group {
+            if authManager.isSigned {
+                FlovTabView()
+            } else {
+                RegisterView()
+            }
+        }
+        .animation(.easeInOut, value: authManager.isSigned)
+    }
+}
+
+// MARK: - FlovTabView
 struct FlovTabView: View {
     @EnvironmentObject var pathModel: PathModel
     @State private var selectedTab: FlovTab = .activity
@@ -43,13 +60,26 @@ struct FlovTabView: View {
                 pathModel.build(screen)
             }
             .fullScreenCover(item: $pathModel.fullScreenCover) { cover in
-                NavigationStack(path: $pathModel.coverNavigationPath) {
-                    pathModel.build(cover)
-                        .navigationDestination(for: FullScreenCover.self) { cover in
-                            pathModel.build(cover)
-                        }
-                }
+                pathModel.build(cover)
             }
         }
     }
 }
+
+// MARK: - RegisterView
+struct RegisterView: View {
+    @EnvironmentObject var pathModel: PathModel
+    
+    var body: some View {
+        NavigationStack(path: $pathModel.path) {
+            pathModel.build(.signIn)
+                .navigationDestination(for: Screen.self) { screen in
+                    pathModel.build(screen)
+                }
+        }
+    }
+}
+
+//#Preview {
+//    AppCoordinatorView()
+//}

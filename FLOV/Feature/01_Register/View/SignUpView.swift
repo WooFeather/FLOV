@@ -19,7 +19,7 @@ struct SignUpView: View {
         .onChange(of: viewModel.output.loginSuccess) { success in
             if success {
                 // TODO: 토스트메세지 띄우기
-                pathModel.dismissFullScreenCover()
+                pathModel.popToRoot()
             }
         }
         .asNavigationToolbar()
@@ -135,7 +135,7 @@ extension SignUpView {
     func joinButtonView() -> some View {
         ActionButton(text: "가입하기") {
             viewModel.action(.join)
-            pathModel.dismissFullScreenCover()
+            pathModel.popToRoot()
         }
         .padding()
         .disabled(!viewModel.output.isJoinButtonEnabled)

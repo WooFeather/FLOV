@@ -22,11 +22,14 @@ protocol UserRepositoryType {
 
 final class UserRepository: UserRepositoryType {
     private let networkManager: NetworkManagerType
-    private let tokenManager: TokenManager
+    private let authManager: AuthManager
     
-    init(networkManager: NetworkManagerType, tokenManager: TokenManager) {
+    init(
+        networkManager: NetworkManagerType,
+        authManager: AuthManager
+    ) {
         self.networkManager = networkManager
-        self.tokenManager = tokenManager
+        self.authManager = authManager
     }
     
     func emailValidate(request: EmailValidateRequest) async throws -> EmailValidationEntity {
@@ -40,7 +43,7 @@ final class UserRepository: UserRepositoryType {
     func join(request: JoinRequest) async throws -> AuthResultEntity {
         let response: JoinResponse = try await networkManager.callRequest(UserAPI.join(request: request))
         
-        tokenManager.updateAuthTokens(
+        await authManager.signInSucceeded(
             access: response.accessToken,
             refresh: response.refreshToken
         )
@@ -53,12 +56,10 @@ final class UserRepository: UserRepositoryType {
     func login(request: LoginRequest) async throws -> AuthResultEntity {
         let response: LoginResponse = try await networkManager.callRequest(UserAPI.login(request: request))
         
-        tokenManager.updateAuthTokens(
+        await authManager.signInSucceeded(
             access: response.accessToken,
             refresh: response.refreshToken
         )
-        
-        UserDefaultsManager.isSigned = true
         
         let entity = response.toEntity()
         
@@ -68,12 +69,10 @@ final class UserRepository: UserRepositoryType {
     func kakaoLogin(request: KakaoLoginRequest) async throws -> AuthResultEntity {
         let response: KakaoLoginResponse = try await networkManager.callRequest(UserAPI.kakaoLogin(request: request))
         
-        tokenManager.updateAuthTokens(
+        await authManager.signInSucceeded(
             access: response.accessToken,
             refresh: response.refreshToken
         )
-        
-        UserDefaultsManager.isSigned = true
         
         let entity = response.toEntity()
         
@@ -83,12 +82,10 @@ final class UserRepository: UserRepositoryType {
     func appleLogin(request: AppleLoginRequest) async throws -> AuthResultEntity {
         let response: AppleLoginResponse = try await networkManager.callRequest(UserAPI.appleLogin(request: request))
         
-        tokenManager.updateAuthTokens(
+        await authManager.signInSucceeded(
             access: response.accessToken,
             refresh: response.refreshToken
         )
-        
-        UserDefaultsManager.isSigned = true
         
         let entity = response.toEntity()
         

@@ -17,9 +17,11 @@ protocol NetworkManagerType {
 
 final class NetworkManager: NetworkManagerType {
     private let tokenManager: TokenManager
+    private let authManager: AuthManager
     
-    init(tokenManager: TokenManager) {
+    init(tokenManager: TokenManager, authManager: AuthManager) {
         self.tokenManager = tokenManager
+        self.authManager = authManager
     }
     
     func callRequest<T: Decodable, U: Router>(_ api: U) async throws -> T {
@@ -127,7 +129,7 @@ extension NetworkManager {
         } catch let error as NetworkError {
             switch error {
             case .statusCode(418):
-                UserDefaultsManager.isSigned = false
+                await authManager.signOut()
                 throw NetworkError.refreshTokenExpired
             default:
                 throw error
@@ -166,7 +168,7 @@ extension NetworkManager {
         } catch let error as NetworkError {
             switch error {
             case .statusCode(418):
-                UserDefaultsManager.isSigned = false
+                await authManager.signOut()
                 throw NetworkError.refreshTokenExpired
             default:
                 throw error

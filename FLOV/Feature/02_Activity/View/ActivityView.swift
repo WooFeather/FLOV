@@ -8,35 +8,18 @@
 import SwiftUI
 
 struct ActivityView: View {
-    @EnvironmentObject private var pathModel: PathModel
-    @AppStorage("isSigned") private var isSigned: Bool = false
-
-    let activityRepo: ActivityRepositoryType
-    @State private var list: [ActivitySummaryEntity] = []
+    @EnvironmentObject var pathModel: PathModel
+    @StateObject var viewModel: ActivityViewModel
 
     var body: some View {
         VStack {
-            Button {
-                if !isSigned {
-                    pathModel.presentFullScreenCover(.signIn)
-                } else {
-                    Task {
-                        do {
-                            let response = try await activityRepo.listLookup(country: nil, category: nil, limit: nil, next: nil)
-                            
-                            list = response.data
-                        } catch {
-                            print(error)
-                        }
-                    }
-                }
-            } label: {
-                Text("TEST")
+            List(viewModel.output.newActivities, id: \.id) { activity in
+                Text(activity.title)
             }
-
-            List(list, id: \.id) { data in
-                Text(data.title)
-            }
+            .listStyle(PlainListStyle())
+        }
+        .onAppear {
+            viewModel.action(.fetchAllActivities)
         }
     }
 }
