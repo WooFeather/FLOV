@@ -28,14 +28,12 @@ final class ActivityViewModel: ViewModelType {
     }
     
     struct Input {
-        let viewOnAppear = PassthroughSubject<Void, Never>()
         let fetchNewActivities = PassthroughSubject<Void, Never>()
         // 추천 액티비티(limit에 5) / 전체 액티비티(limit에 10 -> 페이지네이션)
         let fetchActivities = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
-        var isSigned: Bool = false
         var newActivities: [ActivitySummaryEntity] = []
         var allActivities: [ActivityListEntity] = []
     }
@@ -44,14 +42,11 @@ final class ActivityViewModel: ViewModelType {
 // MARK: - Action
 extension ActivityViewModel {
     enum Action {
-        case checkSignIn
         case fetchAllActivities
     }
     
     func action(_ action: Action) {
         switch action {
-        case .checkSignIn:
-            input.viewOnAppear.send(())
         case .fetchAllActivities:
             input.fetchNewActivities.send(())
             input.fetchActivities.send(())
@@ -62,12 +57,6 @@ extension ActivityViewModel {
 // MARK: - Transform
 extension ActivityViewModel {
     func transform() {
-        input.viewOnAppear
-            .sink { [weak self] _ in
-                guard let self else { return }
-                self.signInCheck()
-            }
-            .store(in: &cancellables)
         
         input.fetchNewActivities
             .sink { [weak self] _ in
@@ -90,14 +79,6 @@ extension ActivityViewModel {
 
 // MARK: - Function
 extension ActivityViewModel {
-    private func signInCheck() {
-        if UserDefaultsManager.isSigned {
-            output.isSigned = true
-        } else {
-            output.isSigned = false
-        }
-    }
-    
     @MainActor
     private func fetchNewActivities() async {
         do {
