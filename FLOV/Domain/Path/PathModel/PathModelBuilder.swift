@@ -38,6 +38,8 @@ extension PathModel {
             ProfileView()
         case .profileEdit:
             ProfileEditView()
+        case .notification:
+            NotificationView()
         }
     }
         

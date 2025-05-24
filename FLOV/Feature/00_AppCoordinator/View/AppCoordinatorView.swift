@@ -33,36 +33,47 @@ struct FlovTabView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $pathModel.path) {
-            ZStack {
-                TabView(selection: $selectedTab) {
+        ZStack {
+            TabView(selection: $selectedTab) {
+                NavigationStack(path: $pathModel.path) {
                     pathModel.build(.activity)
-                        .tag(FlovTab.activity)
-                    
-                    pathModel.build(.post)
-                        .tag(FlovTab.post)
-                    
-                    pathModel.build(.keep)
-                        .tag(FlovTab.keep)
-                    
-                    pathModel.build(.profile)
-                        .tag(FlovTab.profile)
+                        .navigationDestination(for: Screen.self) { screen in
+                            pathModel.build(screen)
+                        }
                 }
+                .tag(FlovTab.activity)
                 
-                /// 커스텀 탭바
-                VStack {
-                    Spacer()
-                    CustomTabBar(selectedTab: $selectedTab)
+                NavigationStack(path: $pathModel.path) {
+                    pathModel.build(.post)
+                        .navigationDestination(for: Screen.self) { screen in
+                            pathModel.build(screen)
+                        }
                 }
+                .tag(FlovTab.post)
+                
+                NavigationStack(path: $pathModel.path) {
+                    pathModel.build(.keep)
+                        .navigationDestination(for: Screen.self) { screen in
+                            pathModel.build(screen)
+                        }
+                }
+                .tag(FlovTab.keep)
+                
+                NavigationStack(path: $pathModel.path) {
+                    pathModel.build(.profile)
+                        .navigationDestination(for: Screen.self) { screen in
+                            pathModel.build(screen)
+                        }
+                }
+                .tag(FlovTab.profile)
             }
-            .ignoresSafeArea()
-            .navigationDestination(for: Screen.self) { screen in
-                pathModel.build(screen)
-            }
-            .fullScreenCover(item: $pathModel.fullScreenCover) { cover in
-                pathModel.build(cover)
+            
+            VStack {
+                Spacer()
+                CustomTabBar(selectedTab: $selectedTab)
             }
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 
@@ -79,7 +90,3 @@ struct RegisterView: View {
         }
     }
 }
-
-//#Preview {
-//    AppCoordinatorView()
-//}

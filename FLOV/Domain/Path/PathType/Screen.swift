@@ -32,5 +32,8 @@ enum Screen: Identifiable, Hashable {
     case profile
     case profileEdit // 그냥 profileView에서 수정가능하게 할지 고민
     
+    // 07_Notification
+    case notification
+    
     var id: Self { self }
 }

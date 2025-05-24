@@ -12,11 +12,24 @@ struct ActivityView: View {
     @StateObject var viewModel: ActivityViewModel
 
     var body: some View {
-        VStack {
-            List(viewModel.output.newActivities, id: \.id) { activity in
-                Text(activity.title)
+        ScrollView {
+            VStack {
+                Text("ActivityView")
             }
-            .listStyle(PlainListStyle())
+        }
+        .asNavigationToolbar()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                logoImage()
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                alertButton()
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                searchButton()
+            }
         }
         .onAppear {
             viewModel.action(.fetchAllActivities)
@@ -24,7 +37,29 @@ struct ActivityView: View {
     }
 }
 
-//#Preview {
-//    ActivityView()
-//        .injectDIContainer()
-//}
+// MARK: - Toolbar
+private extension ActivityView {
+    func logoImage() -> some View {
+        Image(.flovLogo)
+            .resizable()
+            .frame(width: 80, height: 24)
+    }
+    
+    func alertButton() -> some View {
+        Image(.icnNoti)
+            .resizable()
+            .frame(width: 32, height: 32)
+            .asButton {
+                pathModel.push(.notification)
+            }
+    }
+    
+    func searchButton() -> some View {
+        Image(.icnSearch)
+            .resizable()
+            .frame(width: 32, height: 32)
+            .asButton {
+                pathModel.push(.search)
+            }
+    }
+}

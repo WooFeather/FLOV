@@ -76,10 +76,3 @@ private extension EmailSignInView {
         .padding(.top, 36)
     }
 }
-
-//#if DEBUG
-//#Preview {
-//    EmailSignInView(viewModel: EmailSignInViewModel(userRepository: UserRepository(networkManager: NetworkManager(tokenManager: TokenManager.shared), tokenManager: TokenManager.shared)))
-//        .injectDIContainer()
-//}
-//#endif

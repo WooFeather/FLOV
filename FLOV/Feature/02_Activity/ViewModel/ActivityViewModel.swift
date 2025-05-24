@@ -81,13 +81,13 @@ extension ActivityViewModel {
 extension ActivityViewModel {
     @MainActor
     private func fetchNewActivities() async {
-        do {
-            let response = try await activityRepository.newListLookup(country: nil, category: nil)
-            
-            output.newActivities = response.data
-        } catch {
-            print(error)
-        }
+//        do {
+//            let response = try await activityRepository.newListLookup(country: nil, category: nil)
+//            
+//            output.newActivities = response.data
+//        } catch {
+//            print(error)
+//        }
     }
     
     private func fetchActivities() {
