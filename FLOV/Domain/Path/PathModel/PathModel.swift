@@ -14,7 +14,6 @@ protocol PathModelType: ObservableObject {
     
     func push(_ screen: Screen)
     func presentFullScreenCover(_ cover: FullScreenCover)
-    func pushToCover(_ cover: FullScreenCover)
     func pop()
     func popFromCover()
     func popToRoot()
@@ -39,10 +38,6 @@ final class PathModel: PathModelType {
     func presentFullScreenCover(_ cover: FullScreenCover) {
         self.fullScreenCover = cover
         self.coverNavigationPath = NavigationPath()
-    }
-    
-    func pushToCover(_ cover: FullScreenCover) {
-        coverNavigationPath.append(cover)
     }
     
     func pop() {

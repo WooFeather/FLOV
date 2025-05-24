@@ -24,7 +24,7 @@ struct EmailSignInView: View {
         .onChange(of: viewModel.output.loginSuccess) { success in
             if success {
                 // TODO: 토스트메세지 띄우기
-                pathModel.dismissFullScreenCover()
+                pathModel.popToRoot()
             }
         }
         .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
@@ -70,7 +70,7 @@ private extension EmailSignInView {
             }
             
             ActionButton(text: "이메일로 가입하기", backgroundColor: .colLight) {
-                pathModel.pushToCover(.signUp)
+                pathModel.push(.signUp)
             }
         }
         .padding(.top, 36)
