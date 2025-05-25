@@ -127,7 +127,7 @@ private extension ActivityView {
     
     func recommendedActivityList() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
+            HStack(spacing: 20) {
                 ForEach(0..<5) { _ in
                     recommendedActivityCard()
                 }
@@ -137,13 +137,16 @@ private extension ActivityView {
     }
     
     // TODO: 실제 데이터로 교체
-    // TODO: 컴포넌트화
     func recommendedActivityCard() -> some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color.colDeep)
                     .frame(height: 140)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.colLight, lineWidth: 4)
+                    )
                 
                 VStack {
                     HStack {
@@ -151,41 +154,14 @@ private extension ActivityView {
                             .asButton {
                                 // TODO: 좋아요 로직
                             }
-                        
                         Spacer()
-                        
-                        HStack(spacing: 0) {
-                            Image(.icnLocationWhite)
-                                .resizable()
-                                .frame(width: 12, height: 12)
-                            
-                            Text("스위스 융프라우")
-                                .font(.Caption.caption2.weight(.semibold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(.gray45.opacity(0.5))
-                        .clipShape(Capsule())
+                        LocationTag(location: "스위스 융프라우")
                     }
                     
                     Spacer()
                     
                     HStack {
-                        HStack(spacing: 0) {
-                            Image(.icnHot)
-                                .resizable()
-                                .frame(width: 12, height: 12)
-                            
-                            Text("HOT")
-                                .font(.Caption.caption2.weight(.semibold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 4)
-                        .background(.gray45.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                        
+                        StatusTag(status: .hot(orderCount: 200), isLongTag: true)
                         Spacer()
                     }
                 }
@@ -218,7 +194,12 @@ private extension ActivityView {
                     Text("341,000원")
                         .font(.Body.body1.bold())
                         .foregroundColor(.gray30)
-                        .strikethrough()
+                        .padding(.trailing)
+                        .overlay {
+                            Image(.imgDiscountArrow)
+                                .resizable()
+                                .frame(height: 6)
+                        }
                     
                     Text("123,000원")
                         .font(.Body.body1.bold())
