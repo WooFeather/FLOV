@@ -261,23 +261,25 @@ private extension ActivityView {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(Country.allCases, id: \.self) { country in
-                    Button {
-                        viewModel.action(.selectCountry(country: country))
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(uiImage: country.flag)
-                                .resizable().frame(width: 24, height: 24)
-                            Text(country.title)
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .foregroundColor(viewModel.output.selectedCountry == country ? .white : .black)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(viewModel.output.selectedCountry == country
-                                        ? Color.blue.opacity(0.8)
-                                        : Color.gray.opacity(0.1))
-                        )
+                    HStack(spacing: 6) {
+                        Image(uiImage: country.flag)
+                            .resizable()
+                            .frame(width: 48, height: 48)
+                        Text(country.title)
+                            .font(.Body.body3.bold())
+                            .foregroundStyle(viewModel.output.selectedCountry == country ? .colDeep : .gray75)
                     }
+                    .asButton {
+                        viewModel.action(.selectCountry(country: country))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 2)
+                    .background(viewModel.output.selectedCountry == country ? Color.colDeep.opacity(0.5) : Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
             .padding(.horizontal)
@@ -286,21 +288,22 @@ private extension ActivityView {
     
     func typeFilterButtons() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: 4) {
                 ForEach(ActivityType.allCases, id: \.self) { type in
-                    Button {
-                        viewModel.action(.selectActivityType(type: type))
-                    } label: {
-                        Text(type.title)
-                            .padding(.horizontal, 12).padding(.vertical, 8)
-                            .foregroundColor(viewModel.output.selectedActivityType == type ? .white : .black)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(viewModel.output.selectedActivityType == type
-                                            ? Color.blue.opacity(0.8)
-                                            : Color.gray.opacity(0.1))
-                            )
-                    }
+                    Text(type.title)
+                        .asButton {
+                            viewModel.action(.selectActivityType(type: type))
+                        }
+                        .font(.Body.body3.weight(.medium))
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 8)
+                        .foregroundStyle(viewModel.output.selectedActivityType == type ? .colDeep : .gray75)
+                        .background(viewModel.output.selectedActivityType == type ? Color.colDeep.opacity(0.5) : Color.white)
+                        .overlay(
+                            Capsule()
+                                .stroke(viewModel.output.selectedActivityType == type ? Color.colDeep : Color.gray30, lineWidth: 1)
+                        )
+                        .clipShape(Capsule())
                 }
             }
             .padding(.horizontal)
