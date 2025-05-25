@@ -25,7 +25,7 @@ struct CustomTabBar: View {
         .frame(height: 88, alignment: .top)
         .frame(maxWidth: .infinity)
         .padding(.top, 18)
-        .background(Color.white)
+        .background(Color.white.opacity(0.95))
         .clipShape(
             RoundedCorners(corners: [.topLeft, .topRight], radius: 20)
         )

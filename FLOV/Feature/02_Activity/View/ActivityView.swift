@@ -161,7 +161,7 @@ private extension ActivityView {
                     Spacer()
                     
                     HStack {
-                        StatusTag(status: .hot(orderCount: 200), isLongTag: true)
+                        StatusTag(status: .hot(orderCount: nil))
                         Spacer()
                     }
                 }
@@ -174,15 +174,8 @@ private extension ActivityView {
                         .font(.Body.body1.bold())
                         .foregroundColor(.gray90)
                         .lineLimit(1)
-                    HStack(spacing: 2) {
-                        Image(.icnLikeFill)
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                        
-                        Text("378개")
-                            .font(.Body.body1.bold())
-                            .foregroundColor(.gray90)
-                    }
+                    
+                    LikeCountView(likeCount: 387)
                 }
                 
                 Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신이원하는모든덧어쩌구.....야호")
@@ -190,25 +183,7 @@ private extension ActivityView {
                     .foregroundColor(.gray60)
                     .lineLimit(2)
                 
-                HStack(spacing: 8) {
-                    Text("341,000원")
-                        .font(.Body.body1.bold())
-                        .foregroundColor(.gray30)
-                        .padding(.trailing)
-                        .overlay {
-                            Image(.imgDiscountArrow)
-                                .resizable()
-                                .frame(height: 6)
-                        }
-                    
-                    Text("123,000원")
-                        .font(.Body.body1.bold())
-                        .foregroundColor(.gray90)
-                    
-                    Text("63%")
-                        .font(.Body.body1.bold())
-                        .foregroundColor(.colBlack)
-                }
+                PriceView(originPrice: 341000, finalPrice: 123000)
             }
         }
         .frame(width: 240)

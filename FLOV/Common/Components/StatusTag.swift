@@ -30,7 +30,7 @@ struct StatusTag: View {
                         .font(.Caption.caption2.weight(.semibold))
                         .foregroundColor(.white)
                 case .hot(let orderCount):
-                    Text("총 예약 수 \(orderCount)")
+                    Text("총 예약 수 \(orderCount ?? 0)")
                         .font(.Caption.caption2.weight(.semibold))
                         .foregroundColor(.white)
                 case .deadline(let endDate):
@@ -55,7 +55,7 @@ struct StatusTag: View {
 extension StatusTag {
     enum ActivityStatus {
         case new
-        case hot(orderCount: Int)
+        case hot(orderCount: Int?)
         case deadline(endDate: Date?)
         
         var text: String {
