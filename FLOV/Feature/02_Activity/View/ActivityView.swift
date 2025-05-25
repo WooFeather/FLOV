@@ -12,9 +12,11 @@ struct ActivityView: View {
     @StateObject var viewModel: ActivityViewModel
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             VStack {
                 newActivityView()
+                recommendedActivityView()
+                Spacer(minLength: 80)
             }
         }
         .asNavigationToolbar()
@@ -98,7 +100,137 @@ private extension ActivityView {
                 .padding(.horizontal, sidePadding)
             }
         }
-        .frame(height: cardHeight + 40)
+        .frame(height: cardHeight)
+    }
+}
+
+// MARK: - RecommendedActivity
+private extension ActivityView {
+    func recommendedActivityView() -> some View {
+        VStack {
+            recommendedActivityHeader()
+            recommendedActivityList()
+        }
+    }
+    
+    func recommendedActivityHeader() -> some View {
+        HStack {
+            Text("추천 액티비티")
+                .foregroundStyle(.gray90)
+                .font(.Body.body2.bold())
+            
+            Spacer()
+        }
+        .padding(.top)
+        .padding(.horizontal)
+    }
+    
+    func recommendedActivityList() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 16) {
+                ForEach(0..<5) { _ in
+                    recommendedActivityCard()
+                }
+            }
+            .padding()
+        }
+    }
+    
+    // TODO: 실제 데이터로 교체
+    // TODO: 컴포넌트화
+    func recommendedActivityCard() -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ZStack(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.colDeep)
+                    .frame(height: 140)
+                
+                VStack {
+                    HStack {
+                        Image(.icnLikeEmpty)
+                            .asButton {
+                                // TODO: 좋아요 로직
+                            }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 0) {
+                            Image(.icnLocationWhite)
+                                .resizable()
+                                .frame(width: 12, height: 12)
+                            
+                            Text("스위스 융프라우")
+                                .font(.Caption.caption2.weight(.semibold))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.gray45.opacity(0.5))
+                        .clipShape(Capsule())
+                    }
+                    
+                    Spacer()
+                    
+                    HStack {
+                        HStack(spacing: 0) {
+                            Image(.icnHot)
+                                .resizable()
+                                .frame(width: 12, height: 12)
+                            
+                            Text("HOT")
+                                .font(.Caption.caption2.weight(.semibold))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 4)
+                        .background(.gray45.opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        
+                        Spacer()
+                    }
+                }
+                .padding(8)
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    Text("겨울 새싹 스키 원정대")
+                        .font(.Body.body1.bold())
+                        .foregroundColor(.gray90)
+                        .lineLimit(1)
+                    HStack(spacing: 2) {
+                        Image(.icnLikeFill)
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                        
+                        Text("378개")
+                            .font(.Body.body1.bold())
+                            .foregroundColor(.gray90)
+                    }
+                }
+                
+                Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신이원하는모든덧어쩌구.....야호")
+                    .font(.Caption.caption1)
+                    .foregroundColor(.gray60)
+                    .lineLimit(2)
+                
+                HStack(spacing: 8) {
+                    Text("341,000원")
+                        .font(.Body.body1.bold())
+                        .foregroundColor(.gray30)
+                        .strikethrough()
+                    
+                    Text("123,000원")
+                        .font(.Body.body1.bold())
+                        .foregroundColor(.gray90)
+                    
+                    Text("63%")
+                        .font(.Body.body1.bold())
+                        .foregroundColor(.colBlack)
+                }
+            }
+        }
+        .frame(width: 240)
     }
 }
 
