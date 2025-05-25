@@ -167,64 +167,11 @@ private extension ActivityView {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
                 ForEach(0..<5) { _ in
-                    recommendedActivityCard()
+                    ActivityCard(isRecommended: true)
                 }
             }
             .padding()
         }
-    }
-    
-    // TODO: 실제 데이터로 교체
-    func recommendedActivityCard() -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.colDeep)
-                    .frame(height: 140)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.colLight, lineWidth: 4)
-                    )
-                
-                VStack {
-                    HStack {
-                        Image(.icnLikeEmpty)
-                            .asButton {
-                                // TODO: 좋아요 로직
-                            }
-                        Spacer()
-                        LocationTag(location: "스위스 융프라우")
-                    }
-                    
-                    Spacer()
-                    
-                    HStack {
-                        StatusTag(status: .hot(orderCount: nil))
-                        Spacer()
-                    }
-                }
-                .padding(8)
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 12) {
-                    Text("겨울 새싹 스키 원정대")
-                        .font(.Body.body1.bold())
-                        .foregroundColor(.gray90)
-                        .lineLimit(1)
-                    
-                    LikeCountView(likeCount: 387)
-                }
-                
-                Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신이원하는모든덧어쩌구.....야호")
-                    .font(.Caption.caption1)
-                    .foregroundColor(.gray60)
-                    .lineLimit(2)
-                
-                PriceView(originPrice: 341000, finalPrice: 123000)
-            }
-        }
-        .frame(width: 240)
     }
 }
 
@@ -311,9 +258,12 @@ private extension ActivityView {
     }
     
     func allActivityList() -> some View {
-        VStack {
-            
+        VStack(spacing: 20) {
+            ForEach(0..<5) { _ in
+                ActivityCard(isRecommended: false)
+            }
         }
+        .padding()
     }
 }
 
