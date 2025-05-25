@@ -17,8 +17,9 @@ struct ActivityView: View {
                 newActivityView()
                 recommendedActivityView()
                 AdBannerView(banners: viewModel.output.ads)
+                allActivityView()
                 
-                Spacer(minLength: 80)
+                Spacer(minLength: 88)
             }
         }
         .asNavigationToolbar()
@@ -224,6 +225,92 @@ private extension ActivityView {
             }
         }
         .frame(width: 240)
+    }
+}
+
+// MARK: - AllActivity
+private extension ActivityView {
+    func allActivityView() -> some View {
+        VStack {
+            allActivityHeader()
+            filterButtonsView()
+            allActivityList()
+        }
+    }
+    
+    func allActivityHeader() -> some View {
+        HStack {
+            Text("전체 액티비티")
+                .foregroundStyle(.gray90)
+                .font(.Body.body2.bold())
+            
+            Spacer()
+        }
+        .padding(.top)
+        .padding(.horizontal)
+    }
+    
+    func filterButtonsView() -> some View {
+        VStack {
+            countryFilterButtons()
+            typeFilterButtons()
+        }
+    }
+    
+    func countryFilterButtons() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(Country.allCases, id: \.self) { country in
+                    Button {
+                        viewModel.action(.selectCountry(country: country))
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(uiImage: country.flag)
+                                .resizable().frame(width: 24, height: 24)
+                            Text(country.title)
+                        }
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .foregroundColor(viewModel.output.selectedCountry == country ? .white : .black)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(viewModel.output.selectedCountry == country
+                                        ? Color.blue.opacity(0.8)
+                                        : Color.gray.opacity(0.1))
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    func typeFilterButtons() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(ActivityType.allCases, id: \.self) { type in
+                    Button {
+                        viewModel.action(.selectActivityType(type: type))
+                    } label: {
+                        Text(type.title)
+                            .padding(.horizontal, 12).padding(.vertical, 8)
+                            .foregroundColor(viewModel.output.selectedActivityType == type ? .white : .black)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(viewModel.output.selectedActivityType == type
+                                            ? Color.blue.opacity(0.8)
+                                            : Color.gray.opacity(0.1))
+                            )
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    func allActivityList() -> some View {
+        VStack {
+            
+        }
     }
 }
 

@@ -31,12 +31,18 @@ final class ActivityViewModel: ViewModelType {
         let fetchNewActivities = PassthroughSubject<Void, Never>()
         // 추천 액티비티(limit에 5) / 전체 액티비티(limit에 10 -> 페이지네이션)
         let fetchActivities = PassthroughSubject<Void, Never>()
+        
+        let didSelectCountry = PassthroughSubject<Country, Never>()
+        let didSelectActivityType = PassthroughSubject<ActivityType, Never>()
     }
     
     struct Output {
         var newActivities: [ActivitySummaryEntity] = []
         var allActivities: [ActivityListEntity] = []
         var ads: [AdBannerEntity] = MockDataBuilder.ads
+        
+        var selectedCountry: Country? = nil
+        var selectedActivityType: ActivityType? = nil
     }
 }
 
@@ -44,6 +50,8 @@ final class ActivityViewModel: ViewModelType {
 extension ActivityViewModel {
     enum Action {
         case fetchAllActivities
+        case selectCountry(country: Country)
+        case selectActivityType(type: ActivityType)
     }
     
     func action(_ action: Action) {
@@ -51,6 +59,10 @@ extension ActivityViewModel {
         case .fetchAllActivities:
             input.fetchNewActivities.send(())
             input.fetchActivities.send(())
+        case .selectCountry(let country):
+            input.didSelectCountry.send(country)
+        case .selectActivityType(let type):
+            input.didSelectActivityType.send(type)
         }
     }
 }
@@ -58,7 +70,6 @@ extension ActivityViewModel {
 // MARK: - Transform
 extension ActivityViewModel {
     func transform() {
-        
         input.fetchNewActivities
             .sink { [weak self] _ in
                 guard let self else { return }
@@ -72,6 +83,30 @@ extension ActivityViewModel {
             .sink { [weak self] _ in
                 guard let self else { return }
                 self.fetchActivities()
+            }
+            .store(in: &cancellables)
+        
+        input.didSelectCountry
+            .sink { [weak self] country in
+                guard let self = self else { return }
+                if output.selectedCountry == country {
+                    output.selectedCountry = nil
+                } else {
+                    output.selectedCountry = country
+                }
+                action(.fetchAllActivities)
+            }
+            .store(in: &cancellables)
+        
+        input.didSelectActivityType
+            .sink { [weak self] type in
+                guard let self = self else { return }
+                if output.selectedActivityType == type {
+                    output.selectedActivityType = nil
+                } else {
+                    output.selectedActivityType = type
+                }
+                action(.fetchAllActivities)
             }
             .store(in: &cancellables)
     }
