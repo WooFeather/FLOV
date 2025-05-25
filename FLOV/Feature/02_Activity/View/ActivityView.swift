@@ -44,7 +44,7 @@ private extension ActivityView {
     func newActivityView() -> some View {
         VStack {
             newActivityHeader()
-            activityCarousel()
+            newActivityCarousel()
         }
     }
     
@@ -66,7 +66,7 @@ private extension ActivityView {
         .padding()
     }
     
-    func activityCarousel() -> some View {
+    func newActivityCarousel() -> some View {
         // TODO: 실제 activity데이터로 변경
         let colors: [Color] = [.red, .green, .blue, .orange, .purple]
         
@@ -88,11 +88,13 @@ private extension ActivityView {
                             let distance = abs(midX - screenWidth/2)
                             let scale = max(minScale, 1 - distance / screenWidth)
 
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(colors[idx])
-                                .frame(width: cardWidth, height: cardHeight)
-                                .scaleEffect(scale)
-                                .animation(.easeOut(duration: 0.25), value: scale)
+                            newActivityCard(
+                                colors: colors,
+                                idx: idx,
+                                cardWidth: cardWidth,
+                                cardHeight: cardHeight,
+                                scale: scale
+                            )
                         }
                         .frame(width: cardWidth, height: cardHeight)
                     }
@@ -101,6 +103,45 @@ private extension ActivityView {
             }
         }
         .frame(height: cardHeight)
+    }
+    
+    func newActivityCard(colors: [Color], idx: Int, cardWidth: CGFloat, cardHeight: CGFloat, scale: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: 20)
+            .fill(colors[idx])
+            .overlay {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        LocationTag(location: "스위스 융프라우")
+                        Spacer()
+                    }
+                    
+                    Spacer()
+                    
+                    Text("겨울 새싹 스키 원정대")
+                        .font(.Body.body0)
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                    
+                    HStack(spacing: 2) {
+                        Image(.icnWonWhite)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                        
+                        Text("123,000원")
+                            .font(.Caption.caption0)
+                            .foregroundStyle(.white)
+                    }
+                    
+                    Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신만의 새싹 스키 리듬을 찾아 떠나보세요.")
+                        .font(.Caption.caption1)
+                        .foregroundStyle(.gray30)
+                        .lineLimit(3)
+                }
+                .padding()
+            }
+            .frame(width: cardWidth, height: cardHeight)
+            .scaleEffect(scale)
+            .animation(.easeOut(duration: 0.25), value: scale)
     }
 }
 
