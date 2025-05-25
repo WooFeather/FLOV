@@ -36,6 +36,7 @@ final class ActivityViewModel: ViewModelType {
     struct Output {
         var newActivities: [ActivitySummaryEntity] = []
         var allActivities: [ActivityListEntity] = []
+        var ads: [AdBannerEntity] = MockDataBuilder.ads
     }
 }
 

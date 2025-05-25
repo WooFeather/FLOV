@@ -16,6 +16,8 @@ struct ActivityView: View {
             VStack {
                 newActivityView()
                 recommendedActivityView()
+                AdBannerView(banners: viewModel.output.ads)
+                
                 Spacer(minLength: 80)
             }
         }
@@ -87,14 +89,11 @@ private extension ActivityView {
                             let midX = itemGeo.frame(in: .global).midX
                             let distance = abs(midX - screenWidth/2)
                             let scale = max(minScale, 1 - distance / screenWidth)
-
-                            newActivityCard(
-                                colors: colors,
-                                idx: idx,
-                                cardWidth: cardWidth,
-                                cardHeight: cardHeight,
-                                scale: scale
-                            )
+                            
+                            newActivityCard(colors: colors, idx: idx)
+                                .frame(width: cardWidth, height: cardHeight)
+                                .scaleEffect(scale)
+                                .animation(.easeOut(duration: 0.25), value: scale)
                         }
                         .frame(width: cardWidth, height: cardHeight)
                     }
@@ -105,7 +104,7 @@ private extension ActivityView {
         .frame(height: cardHeight)
     }
     
-    func newActivityCard(colors: [Color], idx: Int, cardWidth: CGFloat, cardHeight: CGFloat, scale: CGFloat) -> some View {
+    func newActivityCard(colors: [Color], idx: Int) -> some View {
         RoundedRectangle(cornerRadius: 20)
             .fill(colors[idx])
             .overlay {
@@ -139,9 +138,6 @@ private extension ActivityView {
                 }
                 .padding()
             }
-            .frame(width: cardWidth, height: cardHeight)
-            .scaleEffect(scale)
-            .animation(.easeOut(duration: 0.25), value: scale)
     }
 }
 
