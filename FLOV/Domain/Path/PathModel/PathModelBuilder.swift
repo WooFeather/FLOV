@@ -11,8 +11,18 @@ extension PathModel {
     @ViewBuilder
     func build(_ screen: Screen) -> some View {
         switch screen {
+        case .signIn:
+            let vm = SignInViewModel(userRepository: container.services.userRepository)
+            SignInView(viewModel: vm)
+        case .emailSignIn:
+            let vm = EmailSignInViewModel(userRepository: container.services.userRepository)
+            EmailSignInView(viewModel: vm)
+        case .signUp:
+            let vm = SignUpViewModel(userRepository: container.services.userRepository)
+            SignUpView(viewModel: vm)
         case .activity:
-            ActivityView(activityRepo: container.services.activityRepository)
+            let vm = ActivityViewModel(activityRepository: container.services.activityRepository)
+            ActivityView(viewModel: vm)
         case .activityDetail:
             ActivityDetailView()
         case .post:
@@ -28,21 +38,14 @@ extension PathModel {
             ProfileView()
         case .profileEdit:
             ProfileEditView()
+        case .notification:
+            NotificationView()
         }
     }
         
     @ViewBuilder
     func build(_ fullScreenCover: FullScreenCover) -> some View {
         switch fullScreenCover {
-        case .signIn:
-            let vm = SignInViewModel(userRepository: container.services.userRepository)
-            SignInView(viewModel: vm)
-        case .emailSignIn:
-            let vm = EmailSignInViewModel(userRepository: container.services.userRepository)
-            EmailSignInView(viewModel: vm)
-        case .signUp:
-            let vm = SignUpViewModel(userRepository: container.services.userRepository)
-            SignUpView(viewModel: vm)
         case .postWrite:
             PostWriteView()
         }

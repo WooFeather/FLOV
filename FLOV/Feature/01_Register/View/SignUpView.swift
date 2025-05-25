@@ -19,7 +19,7 @@ struct SignUpView: View {
         .onChange(of: viewModel.output.loginSuccess) { success in
             if success {
                 // TODO: 토스트메세지 띄우기
-                pathModel.dismissFullScreenCover()
+                pathModel.popToRoot()
             }
         }
         .asNavigationToolbar()
@@ -37,7 +37,7 @@ struct SignUpView: View {
 }
 
 // MARK: - InputField
-extension SignUpView {
+private extension SignUpView {
     func inputFieldView() -> some View {
         ScrollView {
             VStack(spacing: 18) {
@@ -52,7 +52,7 @@ extension SignUpView {
 }
 
 // MARK: - EmailField
-extension SignUpView {
+private extension SignUpView {
     func emailFieldView() -> some View {
         VStack {
             RoundedTextField(fieldTitle: "이메일", text: $viewModel.input.email)
@@ -76,7 +76,7 @@ extension SignUpView {
 }
 
 // MARK: - PasswordFieldView
-extension SignUpView {
+private extension SignUpView {
     func passwordFieldView() -> some View {
         VStack {
             RoundedTextField(fieldTitle: "비밀번호", text: $viewModel.input.password, isSecureField: true)
@@ -111,7 +111,7 @@ extension SignUpView {
 }
 
 // MARK: - NicknameFieldView
-extension SignUpView {
+private extension SignUpView {
     func nicknameFieldView() -> some View {
         VStack {
             RoundedTextField(fieldTitle: "닉네임", text: $viewModel.input.nickname)
@@ -131,20 +131,13 @@ extension SignUpView {
 }
 
 // MARK: - JoinButton
-extension SignUpView {
+private extension SignUpView {
     func joinButtonView() -> some View {
         ActionButton(text: "가입하기") {
             viewModel.action(.join)
-            pathModel.dismissFullScreenCover()
+            pathModel.popToRoot()
         }
         .padding()
         .disabled(!viewModel.output.isJoinButtonEnabled)
     }
 }
-
-
-//#if DEBUG
-//#Preview {
-//    SignUpView(viewModel: SignUpViewModel(userRepository: UserRepository.shared))
-//}
-//#endif

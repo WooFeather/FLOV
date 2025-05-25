@@ -11,10 +11,10 @@ protocol PathModelType: ObservableObject {
     var path: NavigationPath { get set }
     var fullScreenCover: FullScreenCover? { get set }
     var coverNavigationPath: NavigationPath { get set }
+    var isAtRoot: Bool { get }
     
     func push(_ screen: Screen)
     func presentFullScreenCover(_ cover: FullScreenCover)
-    func pushToCover(_ cover: FullScreenCover)
     func pop()
     func popFromCover()
     func popToRoot()
@@ -28,6 +28,10 @@ final class PathModel: PathModelType {
     @Published var fullScreenCover: FullScreenCover?
     @Published var coverNavigationPath: NavigationPath = NavigationPath()
     
+    var isAtRoot: Bool {
+        path.isEmpty
+    }
+
     init(container: DIContainer) {
         self.container = container
     }
@@ -39,10 +43,6 @@ final class PathModel: PathModelType {
     func presentFullScreenCover(_ cover: FullScreenCover) {
         self.fullScreenCover = cover
         self.coverNavigationPath = NavigationPath()
-    }
-    
-    func pushToCover(_ cover: FullScreenCover) {
-        coverNavigationPath.append(cover)
     }
     
     func pop() {

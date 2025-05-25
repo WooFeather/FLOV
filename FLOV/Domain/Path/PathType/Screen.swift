@@ -9,6 +9,11 @@ import Foundation
 
 enum Screen: Identifiable, Hashable {
     
+    // 01_Register
+    case signIn
+    case emailSignIn
+    case signUp
+    
     // 02_Activity
     case activity
     case activityDetail
@@ -26,6 +31,9 @@ enum Screen: Identifiable, Hashable {
     // 06_Profile
     case profile
     case profileEdit // 그냥 profileView에서 수정가능하게 할지 고민
+    
+    // 07_Notification
+    case notification
     
     var id: Self { self }
 }

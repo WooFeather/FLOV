@@ -24,21 +24,13 @@ struct SignInView: View {
         .onChange(of: viewModel.output.loginSuccess) { success in
             if success {
                 // TODO: 토스트메세지 띄우기
-                pathModel.dismissFullScreenCover()
+                pathModel.popToRoot()
             }
         }
         .alert(viewModel.output.alertMessage, isPresented: $viewModel.output.showAlert) {
             Button("확인", role: .cancel) { }
         }
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    pathModel.dismissFullScreenCover()
-                } label: {
-                    Image(.icnClose)
-                }
-            }
-            
             ToolbarItem(placement: .principal) {
                 Text("Sign In")
                     .foregroundStyle(.colDeep)
@@ -82,7 +74,7 @@ private extension SignInView {
                 }
             
             Button {
-                pathModel.pushToCover(.emailSignIn)
+                pathModel.push(.emailSignIn)
             } label: {
                 Text("이메일로 시작하기")
                     .font(.Body.body1.bold())
@@ -93,12 +85,61 @@ private extension SignInView {
     }
 }
 
-//#if DEBUG
-//#Preview {
-//    SignInView(
-//        viewModel: SignInViewModel(
-//            userRepository: UserRepository.shared
-//        )
-//    )
-//}
-//#endif
+// MARK: - KakaoLoginButton
+private struct KakaoLoginButton: View {
+    var tapAction: () -> Void
+    
+    var body: some View {
+        Button {
+            tapAction()
+        } label: {
+            HStack {
+                Image(.kakaoIcon)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                
+                Spacer()
+                
+                Text("카카오로 시작하기")
+                    .font(.Body.body1)
+                    .foregroundStyle(.kakaoFg)
+                
+                Spacer()
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .frame(height: 56)
+            .background(.kakaoBg)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+    }
+}
+
+// MARK: - AppleLoginButton
+private struct AppleLoginButton: View {
+    
+    var body: some View {
+        Button {
+            
+        } label: {
+            HStack {
+                Image(.appleIcon)
+                    .resizable()
+                    .frame(width: 20, height: 24)
+                
+                Spacer()
+                
+                Text("Apple로 시작하기")
+                    .font(.Body.body1)
+                    .foregroundStyle(.appleFg)
+                
+                Spacer()
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .frame(height: 56)
+            .background(.appleBg)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+    }
+}

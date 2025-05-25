@@ -18,7 +18,7 @@ struct FLOVApp: App {
     
     var body: some Scene {
         WindowGroup {
-            FlovTabView()
+            AppCoordinatorView()
                 .injectDIContainer()
                 .onOpenURL { url in
                     if AuthApi.isKakaoTalkLoginUrl(url) {

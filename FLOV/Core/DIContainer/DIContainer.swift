@@ -15,6 +15,7 @@ final class DIContainer {
         let userRepository: UserRepositoryType
         let authRepository: AuthRepositoryType
         let activityRepository: ActivityRepositoryType
+        let authManager: AuthManager
     }
     
     init(
