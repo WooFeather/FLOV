@@ -29,8 +29,8 @@ struct ActivityDetailLookupResponse: Decodable {
     let schedule: [ActivitySchedule]?
     let reservationList: [ActivityReservationList]
     let creator: ActivityCreator
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: String?
+    let updatedAt: String?
 
     enum CodingKeys: String, CodingKey {
         case activityId = "activity_id"
@@ -166,8 +166,8 @@ extension ActivityDetailLookupResponse {
                 profileImageURL: creator.profileImage,
                 introduction: creator.introduction
             ),
-            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+            createdAt: createdAt?.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            updatedAt: updatedAt?.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
         )
     }
 }

@@ -70,9 +70,6 @@ private extension ActivityView {
     }
     
     func newActivityCarousel() -> some View {
-        // TODO: 실제 activity데이터로 변경
-        let colors: [Color] = [.red, .green, .blue, .orange, .purple]
-        
         let cardWidthRatio: CGFloat = 0.8 // 화면 너비의 80%
         let cardHeight: CGFloat = 300
         let spacing: CGFloat = -30 // 카드 사이 간격
@@ -85,18 +82,21 @@ private extension ActivityView {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: spacing) {
-                    ForEach(colors.indices, id: \.self) { idx in
+                    ForEach(viewModel.output.newActivities, id: \.id) { activity in
                         GeometryReader { itemGeo in
                             let midX = itemGeo.frame(in: .global).midX
                             let distance = abs(midX - screenWidth/2)
                             let scale = max(minScale, 1 - distance / screenWidth)
                             
-                            newActivityCard(colors: colors, idx: idx)
+                            newActivityCard(activity: activity)
                                 .frame(width: cardWidth, height: cardHeight)
                                 .scaleEffect(scale)
                                 .animation(.easeOut(duration: 0.25), value: scale)
                         }
                         .frame(width: cardWidth, height: cardHeight)
+                        .onAppear {
+                            viewModel.action(.fetchActivityDetail(id: activity.id))
+                        }
                     }
                 }
                 .padding(.horizontal, sidePadding)
@@ -105,19 +105,18 @@ private extension ActivityView {
         .frame(height: cardHeight)
     }
     
-    func newActivityCard(colors: [Color], idx: Int) -> some View {
+    func newActivityCard(activity: ActivitySummaryEntity) -> some View {
         RoundedRectangle(cornerRadius: 20)
-            .fill(colors[idx])
             .overlay {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        LocationTag(location: "스위스 융프라우")
+                        LocationTag(location: activity.country)
                         Spacer()
                     }
                     
                     Spacer()
                     
-                    Text("겨울 새싹 스키 원정대")
+                    Text(activity.title)
                         .font(.Body.body0)
                         .foregroundStyle(.white)
                         .lineLimit(1)
@@ -127,12 +126,12 @@ private extension ActivityView {
                             .resizable()
                             .frame(width: 16, height: 16)
                         
-                        Text("123,000원")
+                        Text("\(activity.finalPrice)원")
                             .font(.Caption.caption0)
                             .foregroundStyle(.white)
                     }
                     
-                    Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신만의 새싹 스키 리듬을 찾아 떠나보세요.")
+                    Text(viewModel.output.activityDetails[activity.id]?.description ?? "...")
                         .font(.Caption.caption1)
                         .foregroundStyle(.gray30)
                         .lineLimit(3)
