@@ -37,6 +37,7 @@ struct ActivityView: View {
             }
         }
         .onAppear {
+            viewModel.action(.fetchNewActivities)
             viewModel.action(.fetchAllActivities)
         }
     }
@@ -47,6 +48,11 @@ private extension ActivityView {
     func newActivityView() -> some View {
         VStack {
             newActivityHeader()
+            
+            if viewModel.output.isLoadingNew {
+                ProgressView()
+                    .frame(height: 300)
+            }
             newActivityCarousel()
         }
     }
@@ -92,10 +98,17 @@ private extension ActivityView {
                                 .frame(width: cardWidth, height: cardHeight)
                                 .scaleEffect(scale)
                                 .animation(.easeOut(duration: 0.25), value: scale)
+                                .overlay {
+                                    if viewModel.output.loadingDetails.contains(activity.id) {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                            .padding()
+                                    }
+                                }
                         }
                         .frame(width: cardWidth, height: cardHeight)
                         .onAppear {
-                            viewModel.action(.fetchActivityDetail(id: activity.id))
+                            // viewModel.action(.fetchActivityDetail(id: activity.id))
                         }
                     }
                 }
@@ -180,6 +193,11 @@ private extension ActivityView {
         VStack {
             allActivityHeader()
             filterButtonsView()
+            
+            if viewModel.output.isLoadingAll {
+                ProgressView()
+                    .frame(maxWidth: .infinity, minHeight: 200)
+            }
             allActivityList()
         }
     }

@@ -30,7 +30,7 @@ final class ActivityViewModel: ViewModelType {
     struct Input {
         let fetchNewActivities = PassthroughSubject<Void, Never>()
         // 추천 액티비티(limit에 5) / 전체 액티비티(limit에 10 -> 페이지네이션)
-        let fetchActivities = PassthroughSubject<Void, Never>()
+        let fetchAllActivities = PassthroughSubject<Void, Never>()
         let fetchActivityDetail = PassthroughSubject<String, Never>()
         
         let didSelectCountry = PassthroughSubject<Country, Never>()
@@ -45,12 +45,17 @@ final class ActivityViewModel: ViewModelType {
         
         var selectedCountry: Country? = nil
         var selectedActivityType: ActivityType? = nil
+        
+        var isLoadingNew = false
+        var isLoadingAll = false
+        var loadingDetails = Set<String>() // id별 로딩상태 표시
     }
 }
 
 // MARK: - Action
 extension ActivityViewModel {
     enum Action {
+        case fetchNewActivities
         case fetchAllActivities
         case fetchActivityDetail(id: String)
         case selectCountry(country: Country)
@@ -59,9 +64,10 @@ extension ActivityViewModel {
     
     func action(_ action: Action) {
         switch action {
-        case .fetchAllActivities:
+        case .fetchNewActivities:
             input.fetchNewActivities.send(())
-            input.fetchActivities.send(())
+        case .fetchAllActivities:
+            input.fetchAllActivities.send(())
         case .fetchActivityDetail(id: let id):
             input.fetchActivityDetail.send(id)
         case .selectCountry(let country):
@@ -84,7 +90,7 @@ extension ActivityViewModel {
             }
             .store(in: &cancellables)
         
-        input.fetchActivities
+        input.fetchAllActivities
             .sink { [weak self] _ in
                 guard let self else { return }
                 self.fetchActivities()
@@ -124,13 +130,15 @@ extension ActivityViewModel {
             }
             .store(in: &cancellables)
     }
-
 }
 
 // MARK: - Function
 extension ActivityViewModel {
     @MainActor
     private func fetchNewActivities() async {
+        output.isLoadingNew = true
+        defer { output.isLoadingNew = false }
+        
         do {
             let response = try await activityRepository.newListLookup(country: nil, category: nil)
             
@@ -142,6 +150,9 @@ extension ActivityViewModel {
     
     @MainActor
     private func fetchActivityDetail(id: String) async {
+        output.loadingDetails.insert(id)
+        defer { output.loadingDetails.remove(id) }
+        
         do {
             let response = try await activityRepository.detailLookup(activityId: id)
             
@@ -152,6 +163,9 @@ extension ActivityViewModel {
     }
     
     private func fetchActivities() {
+        output.isLoadingAll = true
+        defer { output.isLoadingAll = false }
+        
         print("fetchActivities")
     }
 }
