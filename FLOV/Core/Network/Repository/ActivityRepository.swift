@@ -10,12 +10,12 @@ import Alamofire
 
 protocol ActivityRepositoryType {
     func fileUpload(data: Data) async throws -> ActivityFileUploadEntity
-    func listLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListEntity
+    func listLookup(country: String?, category: String?, limit: Int?, next: String?) async throws -> ActivityListEntity
     func detailLookup(activityId: String) async throws -> ActivityDetailEntity
     func keep(activityId: String, request: ActivityKeepRequest) async throws -> ActivityKeepEntity
     func newListLookup(country: String?, category: String?) async throws -> ActivityListEntity
     func search(title: String?) async throws -> ActivityListEntity
-    func keepLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListEntity
+    func keepLookup(country: String?, category: String?, limit: Int?, next: String?) async throws -> ActivityListEntity
 }
 
 final class ActivityRepository: ActivityRepositoryType {
@@ -43,7 +43,7 @@ final class ActivityRepository: ActivityRepositoryType {
         return entity
     }
 
-    func listLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListEntity {
+    func listLookup(country: String?, category: String?, limit: Int?, next: String?) async throws -> ActivityListEntity {
         let response: ActivityListLookupResponse = try await networkManager.callWithRefresh(ActivityAPI.listLookup(
             country: country,
             category: category,
@@ -88,7 +88,7 @@ final class ActivityRepository: ActivityRepositoryType {
         return entity
     }
 
-    func keepLookup(country: String?, category: String?, limit: String?, next: String?) async throws -> ActivityListEntity {
+    func keepLookup(country: String?, category: String?, limit: Int?, next: String?) async throws -> ActivityListEntity {
         let response: ActivityKeepLookupResponse = try await networkManager.callWithRefresh(ActivityAPI.keepLookup(
             country: country,
             category: category,

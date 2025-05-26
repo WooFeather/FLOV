@@ -10,12 +10,12 @@ import Alamofire
 
 enum ActivityAPI {
     case fileUpload
-    case listLookup(country: String?, category: String?, limit: String?, next: String?)
+    case listLookup(country: String?, category: String?, limit: Int?, next: String?)
     case detailLookup(activityId: String)
     case keep(activityId: String, request: ActivityKeepRequest)
     case newListLookup(country: String?, category: String?)
     case search(title: String?)
-    case keepLookup(country: String?, category: String?, limit: String?, next: String?)
+    case keepLookup(country: String?, category: String?, limit: Int?, next: String?)
 }
 
 extension ActivityAPI: Router {

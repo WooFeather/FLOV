@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-// TODO: Entity를 매개변수로 받아서 실제 데이터 로드
 struct ActivityCard: View {
     var isRecommended: Bool
+    var activity: ActivitySummaryEntity
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -24,23 +24,30 @@ struct ActivityCard: View {
                 
                 VStack {
                     HStack {
-                        Image(.icnLikeEmpty)
+                        Image(activity.isKeep ? .icnLikeFill : .icnLikeEmpty)
                             .asButton {
                                 // TODO: 좋아요 로직
                             }
                         Spacer()
-                        LocationTag(location: "스위스 융프라우")
+                        LocationTag(location: activity.country)
                     }
                     
                     Spacer()
                     
+                    // TODO: hot의 orderCount 디테일 통신으로 처리
+                    // TODO: detail의 endDate를 통해 countdown 계산 후 특정 기준을 충족할 경우 .deadline을 보여줌
                     HStack {
                         if isRecommended {
-                            StatusTag(status: .hot(orderCount: nil))
+                            StatusTag(
+                                status: activity.tags.first!.contains("Hot") ? .hot(orderCount: nil) : .new
+                            )
                             Spacer()
                         } else {
-                            StatusTag(status: .new, isLongTag: true)
-                                .offset(y: 16)
+                            StatusTag(
+                                status: activity.tags.first! == "Hot 이벤트" ? .hot(orderCount: nil) : .new,
+                                isLongTag: true
+                            )
+                            .offset(y: 16)
                         }
                     }
                 }
@@ -49,24 +56,27 @@ struct ActivityCard: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 12) {
-                    Text("겨울 새싹 스키 원정대")
+                    Text(activity.title)
                         .font(.Body.body1.bold())
                         .foregroundColor(.gray90)
                         .lineLimit(1)
                     
-                    LikeCountView(likeCount: 387)
+                    LikeCountView(likeCount: activity.keepCount)
                     
                     if !isRecommended {
-                        PointView(point: 200)
+                        PointView(point: activity.pointReward ?? 0)
                     }
                 }
                 
-                Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신이원하는모든덧어쩌구.....야호")
+                Text("Detail에서 description을 가져와야 하는데...")
                     .font(.Caption.caption1)
                     .foregroundColor(.gray60)
                     .lineLimit(2)
                 
-                PriceView(originPrice: 341000, finalPrice: 123000)
+                PriceView(
+                    originPrice: activity.originalPrice,
+                    finalPrice: activity.finalPrice
+                )
             }
         }
         .frame(width: isRecommended ? 240 : nil)
@@ -74,7 +84,7 @@ struct ActivityCard: View {
     }
 }
 
-#Preview {
-    ActivityCard(isRecommended: true)
-    ActivityCard(isRecommended: false)
-}
+//#Preview {
+//    ActivityCard(isRecommended: true)
+//    ActivityCard(isRecommended: false)
+//}

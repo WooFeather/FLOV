@@ -18,6 +18,6 @@ struct ActivitySummaryEntity {
     let finalPrice: Int
     let tags: [String]
     let pointReward: Int?
-    var isKept: Bool
+    var isKeep: Bool
     var keepCount: Int
 }

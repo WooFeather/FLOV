@@ -29,6 +29,7 @@ final class ActivityViewModel: ViewModelType {
     
     struct Input {
         let fetchNewActivities = PassthroughSubject<Void, Never>()
+        let fetchRecommendedActivities = PassthroughSubject<Void, Never>()
         // 추천 액티비티(limit에 5) / 전체 액티비티(limit에 10 -> 페이지네이션)
         let fetchAllActivities = PassthroughSubject<Void, Never>()
         let fetchActivityDetail = PassthroughSubject<String, Never>()
@@ -39,7 +40,8 @@ final class ActivityViewModel: ViewModelType {
     
     struct Output {
         var newActivities: [ActivitySummaryEntity] = []
-        var allActivities: [ActivityListEntity] = []
+        var recommendedActivities: [ActivitySummaryEntity] = []
+        var allActivities: [ActivitySummaryEntity] = []
         var activityDetails: [String: ActivityDetailEntity] = [:]
         var ads: [AdBannerEntity] = MockDataBuilder.ads
         
@@ -47,6 +49,7 @@ final class ActivityViewModel: ViewModelType {
         var selectedActivityType: ActivityType? = nil
         
         var isLoadingNew = false
+        var isLoadingRecommended = false
         var isLoadingAll = false
         var loadingDetails = Set<String>() // id별 로딩상태 표시
     }
@@ -56,6 +59,7 @@ final class ActivityViewModel: ViewModelType {
 extension ActivityViewModel {
     enum Action {
         case fetchNewActivities
+        case fetchRecommendedActivities
         case fetchAllActivities
         case fetchActivityDetail(id: String)
         case selectCountry(country: Country)
@@ -66,6 +70,8 @@ extension ActivityViewModel {
         switch action {
         case .fetchNewActivities:
             input.fetchNewActivities.send(())
+        case .fetchRecommendedActivities:
+            input.fetchRecommendedActivities.send(())
         case .fetchAllActivities:
             input.fetchAllActivities.send(())
         case .fetchActivityDetail(id: let id):
@@ -86,6 +92,16 @@ extension ActivityViewModel {
                 guard let self else { return }
                 Task {
                     await self.fetchNewActivities()
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.fetchRecommendedActivities
+            .sink { [weak self] _ in
+                guard let self else { return }
+                
+                Task {
+                    await self.fetchRecommendedActivities()
                 }
             }
             .store(in: &cancellables)
@@ -157,6 +173,20 @@ extension ActivityViewModel {
             let response = try await activityRepository.detailLookup(activityId: id)
             
             output.activityDetails[id] = response
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func fetchRecommendedActivities() async {
+        output.isLoadingRecommended = true
+        defer { output.isLoadingRecommended = false }
+        
+        do {
+            let response = try await activityRepository.listLookup(country: nil, category: nil, limit: 5, next: nil)
+            
+            output.recommendedActivities = response.data
         } catch {
             print(error)
         }

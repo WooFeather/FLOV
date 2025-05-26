@@ -78,7 +78,7 @@ extension ActivitySummary {
             finalPrice: price.final,
             tags: tags,
             pointReward: pointReward,
-            isKept: isKeep,
+            isKeep: isKeep,
             keepCount: keepCount
         )
     }

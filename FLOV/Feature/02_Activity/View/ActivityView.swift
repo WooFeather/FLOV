@@ -38,6 +38,7 @@ struct ActivityView: View {
         }
         .onAppear {
             viewModel.action(.fetchNewActivities)
+            viewModel.action(.fetchRecommendedActivities)
             viewModel.action(.fetchAllActivities)
         }
     }
@@ -52,8 +53,9 @@ private extension ActivityView {
             if viewModel.output.isLoadingNew {
                 ProgressView()
                     .frame(height: 300)
+            } else {
+                newActivityCarousel()
             }
-            newActivityCarousel()
         }
     }
     
@@ -108,6 +110,7 @@ private extension ActivityView {
                         }
                         .frame(width: cardWidth, height: cardHeight)
                         .onAppear {
+                            // TODO: Detail 과호출문제 해결
                             // viewModel.action(.fetchActivityDetail(id: activity.id))
                         }
                     }
@@ -178,8 +181,8 @@ private extension ActivityView {
     func recommendedActivityList() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
-                ForEach(0..<5) { _ in
-                    ActivityCard(isRecommended: true)
+                ForEach(viewModel.output.recommendedActivities, id: \.id) { activity in
+                    ActivityCard(isRecommended: true, activity: activity)
                 }
             }
             .padding()
@@ -197,8 +200,9 @@ private extension ActivityView {
             if viewModel.output.isLoadingAll {
                 ProgressView()
                     .frame(maxWidth: .infinity, minHeight: 200)
+            } else {
+                allActivityList()
             }
-            allActivityList()
         }
     }
     
@@ -276,8 +280,8 @@ private extension ActivityView {
     
     func allActivityList() -> some View {
         VStack(spacing: 20) {
-            ForEach(0..<5) { _ in
-                ActivityCard(isRecommended: false)
+            ForEach(viewModel.output.allActivities, id: \.id) { activity in
+                ActivityCard(isRecommended: false, activity: activity)
             }
         }
         .padding()
