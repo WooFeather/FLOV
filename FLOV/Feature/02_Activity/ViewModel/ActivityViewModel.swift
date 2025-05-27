@@ -109,7 +109,9 @@ extension ActivityViewModel {
         input.fetchAllActivities
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.fetchActivities()
+                Task {
+                    await self.fetchActivities()
+                }
             }
             .store(in: &cancellables)
         
@@ -192,10 +194,18 @@ extension ActivityViewModel {
         }
     }
     
-    private func fetchActivities() {
+    // TODO: country, category, limit, next를 파라미터로 받아서 처리
+    @MainActor
+    private func fetchActivities() async {
         output.isLoadingAll = true
         defer { output.isLoadingAll = false }
         
-        print("fetchActivities")
+        do {
+            let response = try await activityRepository.listLookup(country: nil, category: nil, limit: 10, next: nil)
+            
+            output.allActivities = response.data
+        } catch {
+            print(error)
+        }
     }
 }

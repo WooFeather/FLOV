@@ -94,6 +94,15 @@ extension UserAPI: Router {
         }
     }
     
+    var encoding: ParameterEncoding? {
+        switch self {
+        case .searchUser:
+            return JSONEncoding.default
+        default:
+            return nil
+        }
+    }
+    
     var requestBody: Encodable? {
         switch self {
         case .emailValidate(let request):

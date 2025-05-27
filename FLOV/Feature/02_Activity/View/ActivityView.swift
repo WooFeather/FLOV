@@ -245,7 +245,7 @@ private extension ActivityView {
                     .background(viewModel.output.selectedCountry == country ? Color.colDeep.opacity(0.5) : Color.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 1)
+                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 2)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
@@ -269,7 +269,7 @@ private extension ActivityView {
                         .background(viewModel.output.selectedActivityType == type ? Color.colDeep.opacity(0.5) : Color.white)
                         .overlay(
                             Capsule()
-                                .stroke(viewModel.output.selectedActivityType == type ? Color.colDeep : Color.gray30, lineWidth: 1)
+                                .stroke(viewModel.output.selectedActivityType == type ? Color.colDeep : Color.gray30, lineWidth: 2)
                         )
                         .clipShape(Capsule())
                 }
