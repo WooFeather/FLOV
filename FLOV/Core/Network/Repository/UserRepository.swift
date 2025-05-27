@@ -93,11 +93,11 @@ final class UserRepository: UserRepositoryType {
     }
     
     func deviceTokenUpdate(request: DeviceTokenUpdateRequest) async throws {
-        _ = try await networkManager.callWithRefresh(UserAPI.deviceTokenUpdate(request: request), as: EmptyResponse.self)
+        _ = try await networkManager.callRequest(UserAPI.deviceTokenUpdate(request: request)) as EmptyResponse
     }
     
     func profileLookup() async throws -> UserEntity {
-        let response: ProfileLookupResponse = try await networkManager.callWithRefresh(UserAPI.profileLookup, as: ProfileLookupResponse.self)
+        let response: ProfileLookupResponse = try await networkManager.callRequest(UserAPI.profileLookup)
         
         let entity = response.toEntity()
         
@@ -105,7 +105,7 @@ final class UserRepository: UserRepositoryType {
     }
     
     func profileUpdate(request: ProfileUpdateRequest) async throws -> UserEntity {
-        let response: ProfileUpdateResponse = try await networkManager.callWithRefresh(UserAPI.profileUpdate(request: request), as: ProfileUpdateResponse.self)
+        let response: ProfileUpdateResponse = try await networkManager.callRequest(UserAPI.profileUpdate(request: request))
         
         let entity = response.toEntity()
         
@@ -113,10 +113,7 @@ final class UserRepository: UserRepositoryType {
     }
     
     func profileImageUpload(data: Data) async throws -> ProfileImageEntity {
-        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipartWithRefresh(
-            UserAPI.profileImageUpload,
-            as: ProfileImageUploadResponse.self
-        ) { form in
+        let response: ProfileImageUploadResponse = try await networkManager.uploadMultipart(UserAPI.profileImageUpload) { form in
             form.append(
                 data,
                 withName: "profile",
@@ -131,7 +128,7 @@ final class UserRepository: UserRepositoryType {
     }
     
     func searchUser(_ nick: String) async throws -> [UserEntity] {
-        let response: SearchUserResponse = try await networkManager.callWithRefresh(UserAPI.searchUser(nick: nick), as: SearchUserResponse.self)
+        let response: SearchUserResponse = try await networkManager.callRequest(UserAPI.searchUser(nick: nick))
         
         let entity = response.toEntity()
         

@@ -26,10 +26,7 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func fileUpload(data: Data) async throws -> ActivityFileUploadEntity {
-        let response: ActivityFileUploadResponse = try await networkManager.uploadMultipartWithRefresh(
-            ActivityAPI.fileUpload,
-            as: ActivityFileUploadResponse.self
-        ) { form in
+        let response: ActivityFileUploadResponse = try await networkManager.uploadMultipart(ActivityAPI.fileUpload) { form in
             form.append(
                 data,
                 withName: "profile",
@@ -44,12 +41,14 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func listLookup(country: String?, category: String?, limit: Int?, next: String?) async throws -> ActivityListEntity {
-        let response: ActivityListLookupResponse = try await networkManager.callWithRefresh(ActivityAPI.listLookup(
+        
+        
+        let response: ActivityListLookupResponse = try await networkManager.callRequest(ActivityAPI.listLookup(
             country: country,
             category: category,
             limit: limit,
             next: next
-        ), as: ActivityListLookupResponse.self)
+        ))
         
         let entity = response.toEntity()
         
@@ -57,7 +56,7 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func detailLookup(activityId: String) async throws -> ActivityDetailEntity {
-        let response: ActivityDetailLookupResponse = try await networkManager.callWithRefresh(ActivityAPI.detailLookup(activityId: activityId), as: ActivityDetailLookupResponse.self)
+        let response: ActivityDetailLookupResponse = try await networkManager.callRequest(ActivityAPI.detailLookup(activityId: activityId))
         
         let entity = response.toEntity()
         
@@ -65,7 +64,7 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func keep(activityId: String, request: ActivityKeepRequest) async throws -> ActivityKeepEntity {
-        let response: ActivityKeepResponse = try await networkManager.callWithRefresh(ActivityAPI.keep(activityId: activityId, request: request), as: ActivityKeepResponse.self)
+        let response: ActivityKeepResponse = try await networkManager.callRequest(ActivityAPI.keep(activityId: activityId, request: request))
         
         let entity = response.toEntity()
         
@@ -73,7 +72,7 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func newListLookup(country: String?, category: String?) async throws -> ActivityListEntity {
-        let response: ActivityNewListLookupResponse = try await networkManager.callWithRefresh(ActivityAPI.newListLookup(country: country, category: category), as: ActivityNewListLookupResponse.self)
+        let response: ActivityNewListLookupResponse = try await networkManager.callRequest(ActivityAPI.newListLookup(country: country, category: category))
         
         let entity = response.toEntity()
         
@@ -81,7 +80,7 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func search(title: String?) async throws -> ActivityListEntity {
-        let response: ActivitySearchResponse = try await networkManager.callWithRefresh(ActivityAPI.search(title: title), as: ActivitySearchResponse.self)
+        let response: ActivitySearchResponse = try await networkManager.callRequest(ActivityAPI.search(title: title))
         
         let entity = response.toEntity()
         
@@ -89,12 +88,12 @@ final class ActivityRepository: ActivityRepositoryType {
     }
 
     func keepLookup(country: String?, category: String?, limit: Int?, next: String?) async throws -> ActivityListEntity {
-        let response: ActivityKeepLookupResponse = try await networkManager.callWithRefresh(ActivityAPI.keepLookup(
+        let response: ActivityKeepLookupResponse = try await networkManager.callRequest(ActivityAPI.keepLookup(
             country: country,
             category: category,
             limit: limit,
             next: next
-        ), as: ActivityKeepLookupResponse.self)
+        ))
         
         let entity = response.toEntity()
         

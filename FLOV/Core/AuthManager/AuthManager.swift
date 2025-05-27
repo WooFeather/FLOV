@@ -7,6 +7,7 @@
 
 import Foundation
 
+@preconcurrency
 final class AuthManager: ObservableObject {
     @Published private(set) var isSigned: Bool
     
