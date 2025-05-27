@@ -87,26 +87,26 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
             completion(false)
             return
         }
-
+        
         AF.request(AuthAPI.refresh)
-          .validate(statusCode: 200..<300)
-          .responseDecodable(of: RefreshResponse.self) { [weak self] response in
-            switch response.result {
-            case .success(let dto):
-                print("[AuthInterceptor] ✅ refresh 성공: \(dto.accessToken)")
-                self?.tokenManager.updateAuthTokens(
-                  access: dto.accessToken,
-                  refresh: dto.refreshToken
-                )
-                completion(true)
-
-            case .failure(let error):
-                print("[AuthInterceptor] 🔴 refresh 실패:", error)
-                if response.response?.statusCode == 418 {
-                    Task { await self?.authManager.signOut() }
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: RefreshResponse.self) { [weak self] response in
+                switch response.result {
+                case .success(let dto):
+                    print("[AuthInterceptor] ✅ refresh 성공: \(dto.accessToken)")
+                    self?.tokenManager.updateAuthTokens(
+                        access: dto.accessToken,
+                        refresh: dto.refreshToken
+                    )
+                    completion(true)
+                    
+                case .failure(let error):
+                    print("[AuthInterceptor] 🔴 refresh 실패:", error)
+                    if response.response?.statusCode == 418 {
+                        Task { await self?.authManager.signOut() }
+                    }
+                    completion(false)
                 }
-                completion(false)
             }
-          }
     }
 }

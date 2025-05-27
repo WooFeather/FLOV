@@ -11,8 +11,6 @@ import Alamofire
 protocol NetworkManagerType {
     func callRequest<T: Decodable, U: Router>(_ api: U) async throws -> T
     func uploadMultipart<T: Decodable, U: Router>(_ api: U, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T
-//    func callWithRefresh<T: Decodable>(_ api: Router, as type: T.Type) async throws -> T
-//    func uploadMultipartWithRefresh<T: Decodable>(_ api: Router, as type: T.Type, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T
 }
 
 final class NetworkManager: NetworkManagerType {
@@ -115,81 +113,3 @@ final class NetworkManager: NetworkManagerType {
         }
     }
 }
-
-//extension NetworkManager {
-//    /// 액세스 토큰을 갱신한 이후 요청하는 메서드
-//    func callWithRefresh<T: Decodable>(_ api: Router, as type: T.Type) async throws -> T {
-//        do {
-//            return try await self.callRequest(api)
-//        } catch let error as NetworkError {
-//            switch error {
-//            case .statusCode(419):
-//                break
-//            default:
-//                throw error
-//            }
-//        } catch {
-//            throw error
-//        }
-//        
-//        // 액세스 토큰 갱신
-//        do {
-//            let refreshResponse: RefreshResponse = try await callRequest(AuthAPI.refresh)
-//            tokenManager.updateAuthTokens(
-//                access: refreshResponse.accessToken,
-//                refresh: refreshResponse.refreshToken
-//            )
-//            
-//            return try await self.callRequest(api)
-//        } catch let error as NetworkError {
-//            switch error {
-//            case .statusCode(418):
-//                await authManager.signOut()
-//                throw NetworkError.refreshTokenExpired
-//            default:
-//                throw error
-//            }
-//        } catch {
-//            throw error
-//        }
-//    }
-//}
-//
-//extension NetworkManager {
-//    /// multipart 요청에서 토큰 만료 시 자동 갱신 후 재시도
-//    func uploadMultipartWithRefresh<T: Decodable>(_ api: Router, as type: T.Type, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T {
-//        do {
-//            return try await self.uploadMultipart(api, formDataBuilder: formDataBuilder)
-//        } catch let error as NetworkError {
-//            switch error {
-//            case .statusCode(419):
-//                break
-//            default:
-//                throw error
-//            }
-//        } catch {
-//            throw error
-//        }
-//        
-//        // 액세스 토큰 갱신
-//        do {
-//            let refreshResponse: RefreshResponse = try await callRequest(AuthAPI.refresh)
-//            tokenManager.updateAuthTokens(
-//                access: refreshResponse.accessToken,
-//                refresh: refreshResponse.refreshToken
-//            )
-//            
-//            return try await self.uploadMultipart(api, formDataBuilder: formDataBuilder)
-//        } catch let error as NetworkError {
-//            switch error {
-//            case .statusCode(418):
-//                await authManager.signOut()
-//                throw NetworkError.refreshTokenExpired
-//            default:
-//                throw error
-//            }
-//        } catch {
-//            throw error
-//        }
-//    }
-//}
