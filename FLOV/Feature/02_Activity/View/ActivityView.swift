@@ -89,7 +89,7 @@ private extension ActivityView {
             let sidePadding = (screenWidth - cardWidth) / 2
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: spacing) {
+                LazyHStack(spacing: spacing) {
                     ForEach(viewModel.output.newActivities, id: \.id) { activity in
                         GeometryReader { itemGeo in
                             let midX = itemGeo.frame(in: .global).midX
@@ -110,8 +110,7 @@ private extension ActivityView {
                         }
                         .frame(width: cardWidth, height: cardHeight)
                         .onAppear {
-                            // TODO: Detail 과호출문제 해결
-                            // viewModel.action(.fetchActivityDetail(id: activity.id))
+                             viewModel.action(.fetchActivityDetail(id: activity.id))
                         }
                     }
                 }
@@ -180,9 +179,12 @@ private extension ActivityView {
     
     func recommendedActivityList() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
+            LazyHStack(spacing: 20) {
                 ForEach(viewModel.output.recommendedActivities, id: \.id) { activity in
-                    ActivityCard(isRecommended: true, activity: activity)
+                    ActivityCard(isRecommended: true, activity: activity, description: viewModel.output.activityDetails[activity.id]?.description)
+                        .onAppear {
+                            viewModel.action(.fetchActivityDetail(id: activity.id))
+                        }
                 }
             }
             .padding()
@@ -281,9 +283,20 @@ private extension ActivityView {
     }
     
     func allActivityList() -> some View {
-        VStack(spacing: 20) {
+        LazyVStack(spacing: 20) {
             ForEach(viewModel.output.allActivities, id: \.id) { activity in
-                ActivityCard(isRecommended: false, activity: activity)
+                let description = viewModel.output.activityDetails[activity.id]?.description
+                let orderCount = viewModel.output.activityDetails[activity.id]?.totalOrderCount
+                
+                ActivityCard(
+                    isRecommended: false,
+                    activity: activity,
+                    description: description,
+                    orderCount: orderCount
+                )
+                    .onAppear {
+                        viewModel.action(.fetchActivityDetail(id: activity.id))
+                    }
             }
         }
         .padding()

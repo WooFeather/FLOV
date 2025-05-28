@@ -120,7 +120,11 @@ extension ActivityViewModel {
             .store(in: &cancellables)
         
         input.fetchActivityDetail
-            .removeDuplicates { $0 == $1 }
+            .compactMap { [weak self] id -> String? in
+                guard let self = self else { return nil }
+                return self.output.activityDetails[id] == nil ? id : nil
+            }
+            .removeDuplicates()
             .sink { [weak self] id in
                 guard let self else { return }
                 Task {
