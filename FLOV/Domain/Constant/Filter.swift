@@ -79,4 +79,13 @@ enum ActivityType: CaseIterable {
             return "랜덤"
         }
     }
+    
+    var query: String {
+        switch self {
+        case .sightseeing, .tour, .package, .exciting, .experience:
+            return title
+        case .random:
+            return ["관광", "투어", "패키지", "익사이팅", "체험"].randomElement()!
+        }
+    }
 }

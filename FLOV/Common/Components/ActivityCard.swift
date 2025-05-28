@@ -34,17 +34,18 @@ struct ActivityCard: View {
                     
                     Spacer()
                     
+                    // TODO: 여기 로직 수정
                     // TODO: hot의 orderCount 디테일 통신으로 처리
                     // TODO: detail의 endDate를 통해 countdown 계산 후 특정 기준을 충족할 경우 .deadline을 보여줌
                     HStack {
                         if isRecommended {
                             StatusTag(
-                                status: activity.tags.first!.contains("Hot") ? .hot(orderCount: nil) : .new
+                                status: activity.tags[0].contains("Hot") ? .hot(orderCount: nil) : .new
                             )
                             Spacer()
                         } else {
                             StatusTag(
-                                status: activity.tags.first! == "Hot 이벤트" ? .hot(orderCount: nil) : .new,
+                                status: activity.tags[0].contains("Hot") ? .hot(orderCount: nil) : .new,
                                 isLongTag: true
                             )
                             .offset(y: 16)
@@ -68,7 +69,7 @@ struct ActivityCard: View {
                     }
                 }
                 
-                Text("Detail에서 description을 가져와야 하는데...")
+                Text("\(activity.tags[0]) & \(activity.category)")
                     .font(.Caption.caption1)
                     .foregroundColor(.gray60)
                     .lineLimit(2)

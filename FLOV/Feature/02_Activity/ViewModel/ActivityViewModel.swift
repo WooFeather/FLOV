@@ -30,7 +30,6 @@ final class ActivityViewModel: ViewModelType {
     struct Input {
         let fetchNewActivities = PassthroughSubject<Void, Never>()
         let fetchRecommendedActivities = PassthroughSubject<Void, Never>()
-        // 추천 액티비티(limit에 5) / 전체 액티비티(limit에 10 -> 페이지네이션)
         let fetchAllActivities = PassthroughSubject<Void, Never>()
         let fetchActivityDetail = PassthroughSubject<String, Never>()
         
@@ -88,6 +87,7 @@ extension ActivityViewModel {
 extension ActivityViewModel {
     func transform() {
         input.fetchNewActivities
+            .removeDuplicates { $0 == $1 }
             .sink { [weak self] _ in
                 guard let self else { return }
                 Task {
@@ -97,6 +97,7 @@ extension ActivityViewModel {
             .store(in: &cancellables)
         
         input.fetchRecommendedActivities
+            .removeDuplicates { $0 == $1 }
             .sink { [weak self] _ in
                 guard let self else { return }
                 
@@ -110,12 +111,16 @@ extension ActivityViewModel {
             .sink { [weak self] _ in
                 guard let self else { return }
                 Task {
-                    await self.fetchActivities()
+                    await self.fetchActivities(
+                        country: self.output.selectedCountry,
+                        type: self.output.selectedActivityType
+                    )
                 }
             }
             .store(in: &cancellables)
         
         input.fetchActivityDetail
+            .removeDuplicates { $0 == $1 }
             .sink { [weak self] id in
                 guard let self else { return }
                 Task {
@@ -194,14 +199,14 @@ extension ActivityViewModel {
         }
     }
     
-    // TODO: country, category, limit, next를 파라미터로 받아서 처리
+    // TODO: next(마지막 게시글의 activityId)를 파라미터로 받아서 페이지네이션 처리
     @MainActor
-    private func fetchActivities() async {
+    private func fetchActivities(country: Country?, type: ActivityType?) async {
         output.isLoadingAll = true
         defer { output.isLoadingAll = false }
         
         do {
-            let response = try await activityRepository.listLookup(country: nil, category: nil, limit: 10, next: nil)
+            let response = try await activityRepository.listLookup(country: country?.title, category: type?.query, limit: nil, next: nil)
             
             output.allActivities = response.data
         } catch {

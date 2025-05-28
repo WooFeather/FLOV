@@ -39,14 +39,14 @@ final class NetworkManager: NetworkManagerType {
         if (200..<300).contains(status) {
             do {
                 let decoded: T = try JSONDecoder().decode(T.self, from: data)
-                NetworkLog.success(url: api.path, statusCode: status, data: decoded)
+                NetworkLog.success(url: dataResponse.response?.url?.absoluteString ?? "", statusCode: status, data: data)
                 return decoded
             } catch {
                 throw NetworkError.decoding(error)
             }
         } else {
             if let errModel = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
-                NetworkLog.failure(url: api.path, statusCode: status, data: errModel)
+                NetworkLog.failure(url: dataResponse.response?.url?.absoluteString ?? "", statusCode: status, data: errModel)
 
                 switch status {
                 case 419:

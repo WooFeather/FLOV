@@ -200,6 +200,8 @@ private extension ActivityView {
             if viewModel.output.isLoadingAll {
                 ProgressView()
                     .frame(maxWidth: .infinity, minHeight: 200)
+            } else if viewModel.output.allActivities.isEmpty {
+                EmptyResultView()
             } else {
                 allActivityList()
             }
