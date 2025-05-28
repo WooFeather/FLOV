@@ -12,6 +12,16 @@ struct ActivityCard: View {
     var activity: ActivitySummaryEntity
     var description: String?
     var orderCount: Int?
+    var keepButtonTapped: (Bool) -> Void
+    
+    @State private var isKeep: Bool
+    
+    init(isRecommended: Bool, activity: ActivitySummaryEntity, description: String? = nil, orderCount: Int? = nil, keepButtonTapped: @escaping (Bool) -> Void) {
+        self.isRecommended = isRecommended
+        self.activity = activity
+        self.keepButtonTapped = keepButtonTapped
+        _isKeep = State(initialValue: activity.isKeep)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -26,9 +36,10 @@ struct ActivityCard: View {
                 
                 VStack {
                     HStack {
-                        Image(activity.isKeep ? .icnLikeFill : .icnLikeEmpty)
+                        Image(isKeep ? .icnLikeFill : .icnLikeEmpty)
                             .asButton {
-                                // TODO: 좋아요 로직
+                                isKeep.toggle()
+                                keepButtonTapped(isKeep)
                             }
                         Spacer()
                         LocationTag(location: activity.country)
@@ -84,8 +95,3 @@ struct ActivityCard: View {
         .frame(maxWidth: isRecommended ? nil : .infinity)
     }
 }
-
-//#Preview {
-//    ActivityCard(isRecommended: true)
-//    ActivityCard(isRecommended: false)
-//}

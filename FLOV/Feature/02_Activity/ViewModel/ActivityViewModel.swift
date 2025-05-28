@@ -35,6 +35,9 @@ final class ActivityViewModel: ViewModelType {
         
         let didSelectCountry = PassthroughSubject<Country, Never>()
         let didSelectActivityType = PassthroughSubject<ActivityType, Never>()
+        
+        let activityId = PassthroughSubject<String, Never>()
+        let keepToggle = PassthroughSubject<Bool, Never>()
     }
     
     struct Output {
@@ -63,6 +66,7 @@ extension ActivityViewModel {
         case fetchActivityDetail(id: String)
         case selectCountry(country: Country)
         case selectActivityType(type: ActivityType)
+        case keepToggle(id: String, keepStatus: Bool)
     }
     
     func action(_ action: Action) {
@@ -79,6 +83,9 @@ extension ActivityViewModel {
             input.didSelectCountry.send(country)
         case .selectActivityType(let type):
             input.didSelectActivityType.send(type)
+        case .keepToggle(let id, keepStatus: let keepStatus):
+            input.activityId.send(id)
+            input.keepToggle.send(keepStatus)
         }
     }
 }
@@ -156,6 +163,16 @@ extension ActivityViewModel {
                 action(.fetchAllActivities)
             }
             .store(in: &cancellables)
+        
+        input.activityId
+            .zip(input.keepToggle)
+            .sink { [weak self] id, status in
+                guard let self = self else { return }
+                Task {
+                    await self.keepToggle(id: id, keepStatus: status)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -213,6 +230,15 @@ extension ActivityViewModel {
             let response = try await activityRepository.listLookup(country: country?.title, category: type?.query, limit: nil, next: nil)
             
             output.allActivities = response.data
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func keepToggle(id: String, keepStatus: Bool) async {
+        do {
+            _ = try await activityRepository.keep(activityId: id, request: .init(keepStatus: keepStatus))
         } catch {
             print(error)
         }
