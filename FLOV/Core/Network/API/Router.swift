@@ -52,7 +52,7 @@ extension Router {
     }
     
     var encoding: ParameterEncoding? {
-        return nil
+        return URLEncoding.default
     }
     
     func asURLRequest() throws -> URLRequest {
@@ -60,13 +60,22 @@ extension Router {
             throw RouterError.invalidURLError
         }
         var request = URLRequest(url: url)
-        request.method  = method
+        request.method = method
         request.headers = headers
         
+        // requestBody가 있는 경우 (POST with JSON)
         if let body = requestBody {
-            request = try JSONParameterEncoder.default
-                .encode(body, into: request)
+            request = try JSONParameterEncoder.default.encode(body, into: request)
         }
+        // 파라미터가 있는 경우 (GET with query params)
+        else if !params.isEmpty, let encoding = encoding {
+            do {
+                request = try encoding.encode(request, with: params)
+            } catch {
+                throw RouterError.encodingError
+            }
+        }
+        
         return request
     }
 }

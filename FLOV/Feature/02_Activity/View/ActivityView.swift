@@ -37,6 +37,8 @@ struct ActivityView: View {
             }
         }
         .onAppear {
+            viewModel.action(.fetchNewActivities)
+            viewModel.action(.fetchRecommendedActivities)
             viewModel.action(.fetchAllActivities)
         }
     }
@@ -47,7 +49,13 @@ private extension ActivityView {
     func newActivityView() -> some View {
         VStack {
             newActivityHeader()
-            newActivityCarousel()
+            
+            if viewModel.output.isLoadingNew {
+                ProgressView()
+                    .frame(height: 300)
+            } else {
+                newActivityCarousel()
+            }
         }
     }
     
@@ -70,9 +78,6 @@ private extension ActivityView {
     }
     
     func newActivityCarousel() -> some View {
-        // TODO: 실제 activity데이터로 변경
-        let colors: [Color] = [.red, .green, .blue, .orange, .purple]
-        
         let cardWidthRatio: CGFloat = 0.8 // 화면 너비의 80%
         let cardHeight: CGFloat = 300
         let spacing: CGFloat = -30 // 카드 사이 간격
@@ -84,19 +89,29 @@ private extension ActivityView {
             let sidePadding = (screenWidth - cardWidth) / 2
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: spacing) {
-                    ForEach(colors.indices, id: \.self) { idx in
+                LazyHStack(spacing: spacing) {
+                    ForEach(viewModel.output.newActivities, id: \.id) { activity in
                         GeometryReader { itemGeo in
                             let midX = itemGeo.frame(in: .global).midX
                             let distance = abs(midX - screenWidth/2)
                             let scale = max(minScale, 1 - distance / screenWidth)
                             
-                            newActivityCard(colors: colors, idx: idx)
+                            newActivityCard(activity: activity)
                                 .frame(width: cardWidth, height: cardHeight)
                                 .scaleEffect(scale)
                                 .animation(.easeOut(duration: 0.25), value: scale)
+                                .overlay {
+                                    if viewModel.output.loadingDetails.contains(activity.id) {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                            .padding()
+                                    }
+                                }
                         }
                         .frame(width: cardWidth, height: cardHeight)
+                        .onAppear {
+                             viewModel.action(.fetchActivityDetail(id: activity.id))
+                        }
                     }
                 }
                 .padding(.horizontal, sidePadding)
@@ -105,19 +120,18 @@ private extension ActivityView {
         .frame(height: cardHeight)
     }
     
-    func newActivityCard(colors: [Color], idx: Int) -> some View {
+    func newActivityCard(activity: ActivitySummaryEntity) -> some View {
         RoundedRectangle(cornerRadius: 20)
-            .fill(colors[idx])
             .overlay {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        LocationTag(location: "스위스 융프라우")
+                        LocationTag(location: activity.country)
                         Spacer()
                     }
                     
                     Spacer()
                     
-                    Text("겨울 새싹 스키 원정대")
+                    Text(activity.title)
                         .font(.Body.body0)
                         .foregroundStyle(.white)
                         .lineLimit(1)
@@ -127,12 +141,12 @@ private extension ActivityView {
                             .resizable()
                             .frame(width: 16, height: 16)
                         
-                        Text("123,000원")
+                        Text("\(activity.finalPrice)원")
                             .font(.Caption.caption0)
                             .foregroundStyle(.white)
                     }
                     
-                    Text("끝없이 펼쳐진 슬로프, 자유롭게 바람을 가르는 시간. 초보자 코스부터 짜릿한 파크존까지, 당신만의 새싹 스키 리듬을 찾아 떠나보세요.")
+                    Text(viewModel.output.activityDetails[activity.id]?.description ?? "...")
                         .font(.Caption.caption1)
                         .foregroundStyle(.gray30)
                         .lineLimit(3)
@@ -165,9 +179,15 @@ private extension ActivityView {
     
     func recommendedActivityList() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
-                ForEach(0..<5) { _ in
-                    ActivityCard(isRecommended: true)
+            LazyHStack(spacing: 20) {
+                ForEach(viewModel.output.recommendedActivities, id: \.id) { activity in
+                    // TODO: 전체 ActivityCard와 상태 공유 X
+                    ActivityCard(isRecommended: true, activity: activity, description: viewModel.output.activityDetails[activity.id]?.description) { isKeep in
+                        viewModel.action(.keepToggle(id: activity.id, keepStatus: isKeep))
+                    }
+                        .onAppear {
+                            viewModel.action(.fetchActivityDetail(id: activity.id))
+                        }
                 }
             }
             .padding()
@@ -181,7 +201,15 @@ private extension ActivityView {
         VStack {
             allActivityHeader()
             filterButtonsView()
-            allActivityList()
+            
+            if viewModel.output.isLoadingAll {
+                ProgressView()
+                    .frame(maxWidth: .infinity, minHeight: 200)
+            } else if viewModel.output.allActivities.isEmpty {
+                EmptyResultView()
+            } else {
+                allActivityList()
+            }
         }
     }
     
@@ -224,7 +252,7 @@ private extension ActivityView {
                     .background(viewModel.output.selectedCountry == country ? Color.colDeep.opacity(0.5) : Color.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 1)
+                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 2)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
@@ -248,7 +276,7 @@ private extension ActivityView {
                         .background(viewModel.output.selectedActivityType == type ? Color.colDeep.opacity(0.5) : Color.white)
                         .overlay(
                             Capsule()
-                                .stroke(viewModel.output.selectedActivityType == type ? Color.colDeep : Color.gray30, lineWidth: 1)
+                                .stroke(viewModel.output.selectedActivityType == type ? Color.colDeep : Color.gray30, lineWidth: 2)
                         )
                         .clipShape(Capsule())
                 }
@@ -258,9 +286,22 @@ private extension ActivityView {
     }
     
     func allActivityList() -> some View {
-        VStack(spacing: 20) {
-            ForEach(0..<5) { _ in
-                ActivityCard(isRecommended: false)
+        LazyVStack(spacing: 20) {
+            ForEach(viewModel.output.allActivities, id: \.id) { activity in
+                let description = viewModel.output.activityDetails[activity.id]?.description
+                let orderCount = viewModel.output.activityDetails[activity.id]?.totalOrderCount
+                
+                ActivityCard(
+                    isRecommended: false,
+                    activity: activity,
+                    description: description,
+                    orderCount: orderCount
+                ) { isKeep in
+                    viewModel.action(.keepToggle(id: activity.id, keepStatus: isKeep))
+                }
+                    .onAppear {
+                        viewModel.action(.fetchActivityDetail(id: activity.id))
+                    }
             }
         }
         .padding()

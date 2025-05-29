@@ -10,12 +10,12 @@ import Alamofire
 
 enum ActivityAPI {
     case fileUpload
-    case listLookup(country: String?, category: String?, limit: String?, next: String?)
+    case listLookup(country: String?, category: String?, limit: Int?, next: String?)
     case detailLookup(activityId: String)
     case keep(activityId: String, request: ActivityKeepRequest)
     case newListLookup(country: String?, category: String?)
     case search(title: String?)
-    case keepLookup(country: String?, category: String?, limit: String?, next: String?)
+    case keepLookup(country: String?, category: String?, limit: Int?, next: String?)
 }
 
 extension ActivityAPI: Router {
@@ -73,27 +73,25 @@ extension ActivityAPI: Router {
         switch self {
         case .fileUpload:
             return [:]
-        case .listLookup(let country, let category, let limit, let next), 
-                .keepLookup(let country, let category, let limit, let next):
-            return [
-                "country": country,
-                "category": category,
-                "limit": limit,
-                "next": next
-            ]
-        case .detailLookup(let id), .keep(let id, _):
-            return [
-                "activity_id": id
-            ]
+        case .listLookup(let country, let category, let limit, let next),
+             .keepLookup(let country, let category, let limit, let next):
+            var parameters: Parameters = [:]
+            if let country = country { parameters["country"] = country }
+            if let category = category { parameters["category"] = category }
+            if let limit = limit { parameters["limit"] = limit }
+            if let next = next { parameters["next"] = next }
+            return parameters
+        case .detailLookup, .keep:
+            return [:]
         case .newListLookup(let country, let category):
-            return [
-                "country": country,
-                "category": category
-            ]
+            var parameters: Parameters = [:]
+            if let country = country { parameters["country"] = country }
+            if let category = category { parameters["category"] = category }
+            return parameters
         case .search(let title):
-            return [
-                "title": title
-            ]
+            var parameters: Parameters = [:]
+            if let title = title { parameters["title"] = title }
+            return parameters
         }
     }
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class TokenManager {
+final class TokenManager: Sendable {
     static let shared = TokenManager()
     private let keychain = KeychainManager.shared
 

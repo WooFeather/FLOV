@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import Alamofire
 
 struct DIContainerModifier: ViewModifier {
     private let container: DIContainer
     
     init() {
         let authManager = AuthManager()
-        let networkManager = NetworkManager(tokenManager: TokenManager.shared, authManager: authManager)
+        let authInterceptor = AuthInterceptor(tokenManager: TokenManager.shared, authManager: authManager)
+        let session = Session(interceptor: authInterceptor)
+        let networkManager = NetworkManager(tokenManager: TokenManager.shared, authManager: authManager, session: session)
         let authRepository = AuthRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
         let userRepository = UserRepository(networkManager: networkManager, authManager: authManager)
         let activityRepository = ActivityRepository(networkManager: networkManager)
