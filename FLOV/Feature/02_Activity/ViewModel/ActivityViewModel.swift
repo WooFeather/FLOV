@@ -33,6 +33,7 @@ final class ActivityViewModel: ViewModelType {
         let fetchNewActivities = PassthroughSubject<Void, Never>()
         let fetchRecommendedActivities = PassthroughSubject<Void, Never>()
         let fetchAllActivities = PassthroughSubject<Void, Never>()
+        let fetchMoreActivities = PassthroughSubject<Void, Never>()
         let fetchActivityDetail = PassthroughSubject<String, Never>()
         
         let didSelectCountry = PassthroughSubject<Country, Never>()
@@ -48,6 +49,9 @@ final class ActivityViewModel: ViewModelType {
         var allActivities: [ActivitySummaryEntity] = []
         var activityDetails: [String: ActivityDetailEntity] = [:]
         var ads: [AdBannerEntity] = MockDataBuilder.ads
+        
+        var nextCursor: String? = nil
+        var isLodingMore = false
         
         var selectedCountry: Country? = nil
         var selectedActivityType: ActivityType? = nil
@@ -65,6 +69,7 @@ extension ActivityViewModel {
         case fetchNewActivities
         case fetchRecommendedActivities
         case fetchAllActivities
+        case fetchMoreActivities
         case fetchActivityDetail(id: String)
         case selectCountry(country: Country)
         case selectActivityType(type: ActivityType)
@@ -79,6 +84,8 @@ extension ActivityViewModel {
             input.fetchRecommendedActivities.send(())
         case .fetchAllActivities:
             input.fetchAllActivities.send(())
+        case .fetchMoreActivities:
+            input.fetchMoreActivities.send(())
         case .fetchActivityDetail(id: let id):
             input.fetchActivityDetail.send(id)
         case .selectCountry(let country):
@@ -121,10 +128,29 @@ extension ActivityViewModel {
         input.fetchAllActivities
             .sink { [weak self] _ in
                 guard let self else { return }
+                // 초기 로드 및 필터 변경 시 커서 초기화
+                output.nextCursor = nil
+                
                 Task {
                     await self.fetchActivities(
                         country: self.output.selectedCountry,
-                        type: self.output.selectedActivityType
+                        type: self.output.selectedActivityType,
+                        next: nil
+                    )
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.fetchMoreActivities
+            .sink { [weak self] _ in
+                guard let self = self,
+                      let cursor = output.nextCursor else { return }
+                
+                Task {
+                    await self.fetchActivities(
+                        country: self.output.selectedCountry,
+                        type: self.output.selectedActivityType,
+                        next: cursor
                     )
                 }
             }
@@ -230,23 +256,40 @@ extension ActivityViewModel {
         }
     }
     
-    // TODO: next(마지막 게시글의 activityId)를 파라미터로 받아서 페이지네이션 처리
     @MainActor
-    private func fetchActivities(country: Country?, type: ActivityType?) async {
-        output.isLoadingAll = true
-        defer { output.isLoadingAll = false }
+    private func fetchActivities(country: Country?, type: ActivityType?, next: String?) async {
+        if next == nil {
+            output.isLoadingAll = true
+        } else {
+            output.isLodingMore = true
+        }
+        
+        defer {
+            if next == nil {
+                output.isLoadingAll = false
+            } else {
+                output.isLodingMore = false
+            }
+        }
 
         do {
-            // TODO: 필터링을 한 경우 목록이 없을수도 있어서 limit을 10으로 처리했지만, 페이지네이션을 구현하면서 수정할 예정)
             let response = try await activityRepository
-                .listLookup(country: country?.title, category: type?.query, limit: 10, next: nil)
-
-            // 원본 저장
-            rawAllActivities = response.data
-
-            // 추천 리스트에 없는 것만 걸러서 output에 할당
-            filterActivities()
+                .listLookup(
+                    country: country?.title,
+                    category: type?.query,
+                    limit: 10,
+                    next: next
+                )
             
+            output.nextCursor = response.nextCursor
+
+            if next == nil {
+                rawAllActivities = response.data
+            } else {
+                rawAllActivities += response.data
+            }
+
+            filterActivities()
         } catch {
             print(error)
         }

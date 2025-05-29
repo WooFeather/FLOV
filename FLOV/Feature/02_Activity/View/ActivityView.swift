@@ -109,7 +109,7 @@ private extension ActivityView {
                         }
                         .frame(width: cardWidth, height: cardHeight)
                         .onAppear {
-                             viewModel.action(.fetchActivityDetail(id: activity.id))
+                            viewModel.action(.fetchActivityDetail(id: activity.id))
                         }
                     }
                 }
@@ -180,12 +180,18 @@ private extension ActivityView {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 20) {
                 ForEach(viewModel.output.recommendedActivities, id: \.id) { activity in
-                    ActivityCard(isRecommended: true, activity: activity, description: viewModel.output.activityDetails[activity.id]?.description) { isKeep in
+                    let description = viewModel.output.activityDetails[activity.id]?.description
+                    
+                    ActivityCard(
+                        isRecommended: true,
+                        activity: activity,
+                        description: description
+                    ) { isKeep in
                         viewModel.action(.keepToggle(id: activity.id, keepStatus: isKeep))
                     }
-                        .onAppear {
-                            viewModel.action(.fetchActivityDetail(id: activity.id))
-                        }
+                    .onAppear {
+                        viewModel.action(.fetchActivityDetail(id: activity.id))
+                    }
                 }
             }
             .padding()
@@ -297,9 +303,19 @@ private extension ActivityView {
                 ) { isKeep in
                     viewModel.action(.keepToggle(id: activity.id, keepStatus: isKeep))
                 }
-                    .onAppear {
-                        viewModel.action(.fetchActivityDetail(id: activity.id))
+                .onAppear {
+                    viewModel.action(.fetchActivityDetail(id: activity.id))
+                    
+                    if activity.id == viewModel.output.allActivities.last?.id,
+                       viewModel.output.nextCursor != nil {
+                        viewModel.action(.fetchMoreActivities)
                     }
+                }
+            }
+            
+            if viewModel.output.isLodingMore {
+                ProgressView()
+                    .padding()
             }
         }
         .padding()
