@@ -16,9 +16,11 @@ struct ActivityCard: View {
     
     @State private var isKeep: Bool
     
-    init(isRecommended: Bool, activity: ActivitySummaryEntity, description: String? = nil, orderCount: Int? = nil, keepButtonTapped: @escaping (Bool) -> Void) {
+    init(isRecommended: Bool, activity: ActivitySummaryEntity, description: String?, orderCount: Int? = nil, keepButtonTapped: @escaping (Bool) -> Void) {
         self.isRecommended = isRecommended
         self.activity = activity
+        self.description = description
+        self.orderCount = orderCount
         self.keepButtonTapped = keepButtonTapped
         _isKeep = State(initialValue: activity.isKeep)
     }
