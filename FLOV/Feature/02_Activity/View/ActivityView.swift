@@ -39,7 +39,6 @@ struct ActivityView: View {
         .onAppear {
             viewModel.action(.fetchNewActivities)
             viewModel.action(.fetchRecommendedActivities)
-            viewModel.action(.fetchAllActivities)
         }
     }
 }
@@ -181,7 +180,6 @@ private extension ActivityView {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 20) {
                 ForEach(viewModel.output.recommendedActivities, id: \.id) { activity in
-                    // TODO: 전체 ActivityCard와 상태 공유 X
                     ActivityCard(isRecommended: true, activity: activity, description: viewModel.output.activityDetails[activity.id]?.description) { isKeep in
                         viewModel.action(.keepToggle(id: activity.id, keepStatus: isKeep))
                     }

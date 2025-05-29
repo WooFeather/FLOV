@@ -14,6 +14,8 @@ final class ActivityViewModel: ViewModelType {
     var input: Input
     @Published var output: Output
     
+    private var rawAllActivities: [ActivitySummaryEntity] = []
+    
     init(
         activityRepository: ActivityRepositoryType,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
@@ -111,6 +113,8 @@ extension ActivityViewModel {
                 Task {
                     await self.fetchRecommendedActivities()
                 }
+                
+                action(.fetchAllActivities)
             }
             .store(in: &cancellables)
         
@@ -210,11 +214,17 @@ extension ActivityViewModel {
     private func fetchRecommendedActivities() async {
         output.isLoadingRecommended = true
         defer { output.isLoadingRecommended = false }
-        
+
         do {
-            let response = try await activityRepository.listLookup(country: nil, category: nil, limit: 5, next: nil)
-            
+            let response = try await activityRepository
+                .listLookup(country: nil, category: nil, limit: nil, next: nil)
+
+            // 추천 리스트 갱신
             output.recommendedActivities = response.data
+
+            // 전체 리스트 재필터링
+            filterActivities()
+
         } catch {
             print(error)
         }
@@ -225,11 +235,18 @@ extension ActivityViewModel {
     private func fetchActivities(country: Country?, type: ActivityType?) async {
         output.isLoadingAll = true
         defer { output.isLoadingAll = false }
-        
+
         do {
-            let response = try await activityRepository.listLookup(country: country?.title, category: type?.query, limit: nil, next: nil)
+            // TODO: 필터링을 한 경우 목록이 없을수도 있어서 limit을 10으로 처리했지만, 페이지네이션을 구현하면서 수정할 예정)
+            let response = try await activityRepository
+                .listLookup(country: country?.title, category: type?.query, limit: 10, next: nil)
+
+            // 원본 저장
+            rawAllActivities = response.data
+
+            // 추천 리스트에 없는 것만 걸러서 output에 할당
+            filterActivities()
             
-            output.allActivities = response.data
         } catch {
             print(error)
         }
@@ -242,5 +259,11 @@ extension ActivityViewModel {
         } catch {
             print(error)
         }
+    }
+    
+    private func filterActivities() {
+        let recommendedIDs = Set(output.recommendedActivities.map { $0.id })
+        output.allActivities = rawAllActivities
+            .filter { !recommendedIDs.contains($0.id) }
     }
 }
