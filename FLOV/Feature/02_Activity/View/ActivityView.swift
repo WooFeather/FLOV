@@ -120,7 +120,7 @@ private extension ActivityView {
     }
     
     func newActivityCard(activity: ActivitySummaryEntity) -> some View {
-        KFRemoteImageView(path: activity.thumbnailURLs[0], aspectRatio: 1)
+        KFRemoteImageView(path: activity.thumbnailURLs[0], aspectRatio: 1, cachePolicy: .memoryOnly)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .overlay {
                 VStack(alignment: .leading, spacing: 12) {

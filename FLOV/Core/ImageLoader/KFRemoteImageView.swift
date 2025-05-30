@@ -11,6 +11,7 @@ import Kingfisher
 struct KFRemoteImageView: View {
     let path: String
     let aspectRatio: CGFloat
+    let cachePolicy: CachePolicy
     let baseURL = Config.baseURL
     let apiKey = Config.sesacKey
     let accessToken = TokenManager.shared.accessToken
@@ -35,10 +36,7 @@ struct KFRemoteImageView: View {
                     // 다운샘플링
                     .downsampling(size: geometry.size)
                     .scaleFactor(UIScreen.main.scale)
-                    // 원본 데이터도 디스크에 캐시
-                    .cacheOriginalImage()
-                    // 디스크캐시 만료기한
-                    .diskCacheAccessExtending(ExpirationExtending.expirationTime(.days(7)))
+                    .configureCache(for: cachePolicy)
                     .loadDiskFileSynchronously(false)
                     // 로딩 중 placeholder
                     .placeholder { ProgressView() }
@@ -60,6 +58,36 @@ struct KFRemoteImageView: View {
                             .frame(width: 32, height: 32)
                     }
             }
+        }
+    }
+}
+
+enum CachePolicy {
+    case memoryOnly
+    case diskOnly
+    case memoryAndDisk
+    case memoryAndDiskWithOriginal
+}
+
+extension KFImage {
+    func configureCache(for policy: CachePolicy) -> KFImage {
+        switch policy {
+        case .memoryOnly:
+            self
+                .cacheMemoryOnly()
+                .diskCacheAccessExtending(.none)
+        case .diskOnly:
+            self
+                .cacheMemoryOnly(false)
+                .diskCacheAccessExtending(.expirationTime(.days(7)))
+        case .memoryAndDisk:
+            self
+                .cacheMemoryOnly(false)
+                .diskCacheAccessExtending(.expirationTime(.days(7)))
+        case .memoryAndDiskWithOriginal:
+            self
+                .cacheOriginalImage()
+                .diskCacheAccessExtending(.expirationTime(.days(7)))
         }
     }
 }
