@@ -120,7 +120,8 @@ private extension ActivityView {
     }
     
     func newActivityCard(activity: ActivitySummaryEntity) -> some View {
-        RoundedRectangle(cornerRadius: 20)
+        KFRemoteImageView(path: activity.thumbnailURLs[0], aspectRatio: 1)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
             .overlay {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
@@ -150,6 +151,7 @@ private extension ActivityView {
                         .foregroundStyle(.gray30)
                         .lineLimit(3)
                 }
+                .shadow(radius: 2)
                 .padding()
             }
     }
