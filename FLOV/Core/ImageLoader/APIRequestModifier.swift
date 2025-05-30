@@ -14,15 +14,17 @@ struct APIRequestModifier: ImageDownloadRequestModifier {
     let accessToken: String?
 
     func modified(for request: URLRequest) -> URLRequest? {
-        var r = request
-        r.url = URL(string: baseURL + "/v1" + (request.url?.path ?? ""))!
-        r.setValue(apiKey, forHTTPHeaderField: "SeSACKey")
+        var request = request
+        request.url = URL(string: baseURL + (request.url?.path ?? ""))!
+        request.setValue(apiKey, forHTTPHeaderField: "SeSACKey")
         if let token = accessToken {
-            r.setValue(token, forHTTPHeaderField: "Authorization")
+            request.setValue(token, forHTTPHeaderField: "Authorization")
         }
-        // 디버그 로그
-        print("▶️ KF Request URL: \(r.httpMethod ?? "GET") \(r.url?.absoluteString ?? "")")
-        print("▶️ KF Request Headers: \(r.allHTTPHeaderFields ?? [:])")
-        return r
+        
+        #if DEBUG
+        print("▶️ KF Request URL: \(request.httpMethod ?? "GET") \(request.url?.absoluteString ?? "")")
+        print("▶️ KF Request Headers: \(request.allHTTPHeaderFields ?? [:])")
+        #endif
+        return request
     }
 }
