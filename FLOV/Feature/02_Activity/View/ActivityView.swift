@@ -10,7 +10,7 @@ import SwiftUI
 struct ActivityView: View {
     @EnvironmentObject var pathModel: PathModel
     @StateObject var viewModel: ActivityViewModel
-
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
@@ -81,12 +81,12 @@ private extension ActivityView {
         let cardHeight: CGFloat = 300
         let spacing: CGFloat = -30 // 카드 사이 간격
         let minScale: CGFloat = 0.7 // 옆 카드 최소 스케일
-
+        
         return GeometryReader { geo in
             let screenWidth = geo.size.width
             let cardWidth = screenWidth * cardWidthRatio
             let sidePadding = (screenWidth - cardWidth) / 2
-
+            
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: spacing) {
                     ForEach(viewModel.output.newActivities, id: \.id) { activity in
@@ -120,40 +120,45 @@ private extension ActivityView {
     }
     
     func newActivityCard(activity: ActivitySummaryEntity) -> some View {
-        KFRemoteImageView(path: activity.thumbnailURLs[0], aspectRatio: 1, cachePolicy: .memoryOnly)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .overlay {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        LocationTag(location: activity.country)
-                        Spacer()
-                    }
-                    
+        return KFRemoteImageView(
+            path: activity.thumbnailURLs[0],
+            aspectRatio: 1,
+            cachePolicy: .memoryOnly,
+            height: 300
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    LocationTag(location: activity.country)
                     Spacer()
-                    
-                    Text(activity.title)
-                        .font(.Body.body0)
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                    
-                    HStack(spacing: 2) {
-                        Image(.icnWonWhite)
-                            .resizable()
-                            .frame(width: 16, height: 16)
-                        
-                        Text("\(activity.finalPrice)원")
-                            .font(.Caption.caption0)
-                            .foregroundStyle(.white)
-                    }
-                    
-                    Text(viewModel.output.activityDetails[activity.id]?.description ?? "...")
-                        .font(.Caption.caption1)
-                        .foregroundStyle(.gray30)
-                        .lineLimit(3)
                 }
-                .shadow(radius: 2)
-                .padding()
+                
+                Spacer()
+                
+                Text(activity.title)
+                    .font(.Body.body0)
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                
+                HStack(spacing: 2) {
+                    Image(.icnWonWhite)
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                    
+                    Text("\(activity.finalPrice)원")
+                        .font(.Caption.caption0)
+                        .foregroundStyle(.white)
+                }
+                
+                Text(viewModel.output.activityDetails[activity.id]?.description ?? "...")
+                    .font(.Caption.caption1)
+                    .foregroundStyle(.gray30)
+                    .lineLimit(3)
             }
+            .shadow(radius: 2)
+            .padding()
+        }
     }
 }
 

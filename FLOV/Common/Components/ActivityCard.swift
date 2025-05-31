@@ -28,8 +28,12 @@ struct ActivityCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topLeading) {
-                KFRemoteImageView(path: activity.thumbnailURLs[0], aspectRatio: 16/9, cachePolicy: .memoryAndDiskWithOriginal)
-                    .frame(height: isRecommended ? 120 : 180)
+                KFRemoteImageView(
+                    path: activity.thumbnailURLs[0],
+                    aspectRatio: 18/9,
+                    cachePolicy: .memoryAndDiskWithOriginal,
+                    height: isRecommended ? 120 : 180
+                )
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)

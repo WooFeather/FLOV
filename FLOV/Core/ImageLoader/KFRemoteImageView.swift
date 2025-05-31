@@ -12,58 +12,65 @@ struct KFRemoteImageView: View {
     let path: String
     let aspectRatio: CGFloat
     let cachePolicy: CachePolicy
-
+    let targetSize: CGSize
+    
     let baseURL = Config.baseURL
     let apiKey = Config.sesacKey
     let accessToken = TokenManager.shared.accessToken
     
-    private var fileExtension: String {
-        URL(string: path)?.pathExtension.lowercased() ?? ""
+    init(
+        path: String,
+        aspectRatio: CGFloat,
+        cachePolicy: CachePolicy,
+        height: CGFloat
+    ) {
+        self.path = path
+        self.aspectRatio = aspectRatio
+        self.cachePolicy = cachePolicy
+        let width = height * aspectRatio
+        self.targetSize = CGSize(width: width, height: height)
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            let urlString = URL(string: baseURL + "/v1" + path)!
-            if urlString.isImageType {
-                KFImage(urlString)
-                    .requestModifier(APIRequestModifier(baseURL: baseURL, apiKey: apiKey, accessToken: accessToken))
-                    .onSuccess { result in
-                        print("✅ SUCCESS: \(result.source.url?.absoluteString ?? "")")
-                    }
-                    .onFailure { error in
-                        print("❌ FAILED: \(error) ➕ URL: \(path)")
-                    }
-                    .downsampling(size: geometry.size)
-                    .scaleFactor(UIScreen.main.scale)
-                    .configureCache(for: cachePolicy)
-                    .loadDiskFileSynchronously(false)
-                    .placeholder { ProgressView() }
-                    .cancelOnDisappear(true)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .clipped()
-            } else if urlString.isVideoType {
-                VideoThumbnailLoaderView(
-                    videoURL: urlString,
-                    targetSize: geometry.size,
-                    contentAspectRatio: aspectRatio,
+        let url = URL(string: baseURL + "/v1" + path)!
+        
+        if url.isImageType {
+            KFImage(url)
+                .requestModifier(APIRequestModifier(
+                    baseURL: baseURL,
                     apiKey: apiKey,
                     accessToken: accessToken
-                )
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .overlay {
-                    Image(.imgPlay)
-                        .resizable()
-                        .frame(width: 32, height: 32)
-                }
+                ))
+                .downsampling(size: targetSize)
+                .scaleFactor(UIScreen.main.scale)
+                .configureCache(for: cachePolicy)
+                .loadDiskFileSynchronously(false)
+                .placeholder { ProgressView() }
+                .cancelOnDisappear(true)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: targetSize.width, height: targetSize.height)
                 .clipped()
-            } else {
-                RoundedRectangle(cornerRadius: 8)
-                    .foregroundStyle(Color.colBlack)
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
+                .allowsHitTesting(false)
+        } else if url.isVideoType {
+            VideoThumbnailLoaderView(
+                videoURL: url,
+                targetSize: targetSize,
+                contentAspectRatio: aspectRatio,
+                apiKey: apiKey,
+                accessToken: accessToken
+            )
+            .frame(width: targetSize.width, height: targetSize.height)
+            .overlay {
+                Image(.imgPlay)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
+            .clipped()
+        } else {
+            RoundedRectangle(cornerRadius: 8)
+                .foregroundStyle(Color.colBlack)
+                .frame(width: targetSize.width, height: targetSize.height)
         }
     }
 }
