@@ -12,7 +12,7 @@ import Kingfisher
 struct VideoThumbnailLoaderView: View {
     let videoURL: URL
     let targetSize: CGSize
-    let contentAspectRatio: CGFloat
+    let aspectRatio: CGFloat
     let apiKey: String
     let accessToken: String?
 

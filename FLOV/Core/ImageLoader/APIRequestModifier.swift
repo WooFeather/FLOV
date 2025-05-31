@@ -9,13 +9,11 @@ import Foundation
 import Kingfisher
 
 struct APIRequestModifier: ImageDownloadRequestModifier {
-    let baseURL: String
     let apiKey: String
     let accessToken: String?
 
     func modified(for request: URLRequest) -> URLRequest? {
         var request = request
-        request.url = URL(string: baseURL + (request.url?.path ?? ""))!
         request.setValue(apiKey, forHTTPHeaderField: "SeSACKey")
         if let token = accessToken {
             request.setValue(token, forHTTPHeaderField: "Authorization")

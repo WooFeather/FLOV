@@ -36,11 +36,7 @@ struct KFRemoteImageView: View {
         
         if url.isImageType {
             KFImage(url)
-                .requestModifier(APIRequestModifier(
-                    baseURL: baseURL,
-                    apiKey: apiKey,
-                    accessToken: accessToken
-                ))
+                .requestModifier(APIRequestModifier(apiKey: apiKey, accessToken: accessToken))
                 .downsampling(size: targetSize)
                 .scaleFactor(UIScreen.main.scale)
                 .configureCache(for: cachePolicy)
@@ -56,7 +52,7 @@ struct KFRemoteImageView: View {
             VideoThumbnailLoaderView(
                 videoURL: url,
                 targetSize: targetSize,
-                contentAspectRatio: aspectRatio,
+                aspectRatio: aspectRatio,
                 apiKey: apiKey,
                 accessToken: accessToken
             )

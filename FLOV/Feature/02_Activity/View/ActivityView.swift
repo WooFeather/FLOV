@@ -120,7 +120,7 @@ private extension ActivityView {
     }
     
     func newActivityCard(activity: ActivitySummaryEntity) -> some View {
-        return KFRemoteImageView(
+        KFRemoteImageView(
             path: activity.thumbnailURLs[0],
             aspectRatio: 1,
             cachePolicy: .memoryOnly,

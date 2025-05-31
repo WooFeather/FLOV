@@ -34,11 +34,11 @@ struct ActivityCard: View {
                     cachePolicy: .memoryAndDiskWithOriginal,
                     height: isRecommended ? 120 : 180
                 )
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.colLight, lineWidth: 4)
-                    )
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.colLight, lineWidth: 4)
+                )
                 
                 VStack {
                     HStack {
