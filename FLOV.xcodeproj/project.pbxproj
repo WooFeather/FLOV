@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
-		792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8952DCFB7FE0074FB34 /* Config.xcconfig */; };
 		793178442DE8739700D0CC75 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 793178432DE8739700D0CC75 /* Kingfisher */; };
 		79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C32DD47766008F95BE /* Alamofire */; };
 		79F4B4C72DD47774008F95BE /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C62DD47774008F95BE /* KakaoSDKAuth */; };
@@ -151,7 +150,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */,
 				792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

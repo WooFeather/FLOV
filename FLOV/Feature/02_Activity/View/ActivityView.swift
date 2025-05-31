@@ -106,6 +106,9 @@ private extension ActivityView {
                                             .padding()
                                     }
                                 }
+                                .asButton {
+                                    pathModel.push(.activityDetail(id: activity.id))
+                                }
                         }
                         .frame(width: cardWidth, height: cardHeight)
                         .onAppear {
@@ -198,6 +201,9 @@ private extension ActivityView {
                     }
                     .onAppear {
                         viewModel.action(.fetchActivityDetail(id: activity.id))
+                    }
+                    .asButton {
+                        pathModel.push(.activityDetail(id: activity.id))
                     }
                 }
             }
@@ -317,6 +323,9 @@ private extension ActivityView {
                        viewModel.output.nextCursor != nil {
                         viewModel.action(.fetchMoreActivities)
                     }
+                }
+                .asButton {
+                    pathModel.push(.activityDetail(id: activity.id))
                 }
             }
             
