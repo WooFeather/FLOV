@@ -35,7 +35,7 @@ final class ActivityDetailViewModel: ViewModelType {
     }
     
     struct Output {
-        var activityDetails: ActivityDetailEntity? = nil
+        var activityDetails: ActivityDetailEntity = MockDataBuilder.details
         var isLoading = false
     }
 }
