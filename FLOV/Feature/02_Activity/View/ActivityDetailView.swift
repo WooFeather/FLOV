@@ -147,13 +147,37 @@ private extension ActivityDetailView {
     }
     
     func restrictionView() -> some View {
-        ZStack {
-            VStack {
-                Text("연령제한: \(viewModel.output.activityDetails.restrictions.minAge)")
+        HStack {
+            restrictionComponents(.age, value: "\(viewModel.output.activityDetails.restrictions.minAge)세")
+            Spacer()
+            restrictionComponents(.height, value: "\(viewModel.output.activityDetails.restrictions.minHeight)cm")
+            Spacer()
+            restrictionComponents(.people, value: "\(viewModel.output.activityDetails.restrictions.maxParticipants)명")
+        }
+        .padding()
+        .clipShape(
+            RoundedRectangle(cornerRadius: 16)
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.gray30, lineWidth: 1)
+        }
+    }
+    
+    func restrictionComponents(_ restriction: Restrictions, value: String) -> some View {
+        HStack(spacing: 8) {
+            Image(restriction.icon)
+                .resizable()
+                .frame(width: 32, height: 32)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(restriction.title)
+                    .font(.Caption.caption2)
+                    .foregroundStyle(.gray45)
                 
-                Text("신장제한: \(viewModel.output.activityDetails.restrictions.minHeight)")
-                
-                Text("최대참가인원: \(viewModel.output.activityDetails.restrictions.maxParticipants)")
+                Text(value)
+                    .font(.Body.body3.bold())
+                    .foregroundStyle(.gray75)
             }
         }
     }
@@ -165,6 +189,34 @@ private extension ActivityDetailView {
                 originPrice: viewModel.output.activityDetails.summary.originalPrice,
                 finalPrice: viewModel.output.activityDetails.summary.finalPrice
             )
+        }
+    }
+    
+    enum Restrictions {
+        case age
+        case height
+        case people
+        
+        var icon: ImageResource {
+            switch self {
+            case .age:
+                return .restrictionAge
+            case .height:
+                return .restrictionHeight
+            case .people:
+                return .restrictionPeople
+            }
+        }
+        
+        var title: String {
+            switch self {
+            case .age:
+                return "연령제한"
+            case .height:
+                return "신장제한"
+            case .people:
+                return "최대참가인원"
+            }
         }
     }
 }
