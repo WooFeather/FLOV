@@ -28,6 +28,7 @@ struct ActivityDetailView: View {
                 keepButton()
             }
         }
+        .ignoresSafeArea()
     }
 }
 
@@ -42,7 +43,6 @@ private extension ActivityDetailView {
                 reservationView()
             }
         }
-        .ignoresSafeArea()
     }
 }
 
@@ -190,9 +190,26 @@ private extension ActivityDetailView {
 // MARK: - Payment
 private extension ActivityDetailView {
     func paymentView() -> some View {
-        ZStack {
+        HStack {
+            Text("\(viewModel.output.activityDetails.summary.finalPrice)원")
+                .font(.Title.title1.bold())
+                .foregroundStyle(.gray90)
             
+            Spacer()
+            
+            ActionButton(text: "결제하기") {
+                // TODO: 결제뷰로 이동
+            }
+            .frame(width: 140)
         }
+        .padding()
+        .frame(height: 100, alignment: .top)
+        .frame(maxWidth: .infinity)
+        .background(
+            .ultraThinMaterial,
+            in: .rect
+        )
+        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
     }
 }
 
