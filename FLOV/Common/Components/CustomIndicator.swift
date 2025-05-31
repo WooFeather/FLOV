@@ -22,7 +22,6 @@ struct CustomIndicator: View {
             }
         }
         .shadow(color: .white, radius: 2)
-        .padding(.bottom, 100)
         .animation(.easeInOut, value: currentIndex)
     }
 }

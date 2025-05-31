@@ -34,7 +34,7 @@ struct ActivityDetailView: View {
 // MARK: - DetailInfo
 private extension ActivityDetailView {
     func detailInfoView() -> some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             LazyVStack(alignment: .leading) {
                 thumbnailView()
                 headerView()
@@ -71,8 +71,22 @@ private extension ActivityDetailView {
             VStack {
                 Spacer()
                 CustomIndicator(count: urls.count, currentIndex: currentIndex)
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.clear,
+                        Color.white.opacity(0.3),
+                        Color.white.opacity(0.5),
+                        Color.white.opacity(0.8),
+                        Color.white
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
             }
         }
+        .offset(y: -50)
     }
 }
 
@@ -105,6 +119,7 @@ private extension ActivityDetailView {
             priceView()
         }
         .padding()
+        .offset(y: -170)
     }
     
     func countView() -> some View {
