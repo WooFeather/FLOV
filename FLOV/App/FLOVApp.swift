@@ -8,12 +8,14 @@
 import SwiftUI
 import KakaoSDKAuth
 import KakaoSDKCommon
+import Kingfisher
 
 @main
 struct FLOVApp: App {
     init() {
         /// KakaoSDK 초기화
         KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
+        KingfisherConfig()
     }
     
     var body: some Scene {
@@ -27,4 +29,11 @@ struct FLOVApp: App {
                 }
         }
     }
+}
+
+private func KingfisherConfig() {
+    let cache = KingfisherManager.shared.cache
+    cache.memoryStorage.config.totalCostLimit = 50 * 1024 * 1024
+    cache.diskStorage.config.sizeLimit = 200 * 1024 * 1024
+    cache.diskStorage.config.expiration = .days(7)
 }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
 		792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8952DCFB7FE0074FB34 /* Config.xcconfig */; };
+		793178442DE8739700D0CC75 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 793178432DE8739700D0CC75 /* Kingfisher */; };
 		79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C32DD47766008F95BE /* Alamofire */; };
 		79F4B4C72DD47774008F95BE /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C62DD47774008F95BE /* KakaoSDKAuth */; };
 		79F4B4C92DD47774008F95BE /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C82DD47774008F95BE /* KakaoSDKCommon */; };
@@ -51,6 +52,7 @@
 				79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */,
 				79F4B4C92DD47774008F95BE /* KakaoSDKCommon in Frameworks */,
 				79F4B4C72DD47774008F95BE /* KakaoSDKAuth in Frameworks */,
+				793178442DE8739700D0CC75 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +101,7 @@
 				79F4B4C62DD47774008F95BE /* KakaoSDKAuth */,
 				79F4B4C82DD47774008F95BE /* KakaoSDKCommon */,
 				79F4B4CA2DD47774008F95BE /* KakaoSDKUser */,
+				793178432DE8739700D0CC75 /* Kingfisher */,
 			);
 			productName = FLOV;
 			productReference = 792CF87E2DCFB3880074FB34 /* FLOV.app */;
@@ -131,6 +134,7 @@
 			packageReferences = (
 				79F4B4C22DD47766008F95BE /* XCRemoteSwiftPackageReference "Alamofire" */,
 				79F4B4C52DD47774008F95BE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 792CF87F2DCFB3880074FB34 /* Products */;
@@ -385,6 +389,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
 		79F4B4C22DD47766008F95BE /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire";
@@ -404,6 +416,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		793178432DE8739700D0CC75 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		79F4B4C32DD47766008F95BE /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 79F4B4C22DD47766008F95BE /* XCRemoteSwiftPackageReference "Alamofire" */;
