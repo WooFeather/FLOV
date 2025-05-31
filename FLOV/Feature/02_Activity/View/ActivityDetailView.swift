@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct ActivityDetailView: View {
+    @EnvironmentObject var pathModel: PathModel
+    @StateObject var viewModel: ActivityDetailViewModel
+    
     var body: some View {
-        Text("ActivityDetailView")
+        Text(viewModel.output.activityDetails?.summary.title ?? "ActivityDetailView")
     }
-}
-
-#Preview {
-    ActivityDetailView()
 }

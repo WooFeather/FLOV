@@ -16,7 +16,7 @@ enum Screen: Identifiable, Hashable {
     
     // 02_Activity
     case activity
-    case activityDetail
+    case activityDetail(id: String)
     
     // 03_Post
     case post
