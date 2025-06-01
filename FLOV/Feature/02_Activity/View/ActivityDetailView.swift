@@ -36,9 +36,11 @@ struct ActivityDetailView: View {
 private extension ActivityDetailView {
     func detailInfoView() -> some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading) {
-                thumbnailView()
-                headerView()
+            VStack(alignment: .leading) {
+                VStack(spacing: -170) {
+                    thumbnailView()
+                    headerView()
+                }
                 curriculumView()
                 reservationView()
             }
@@ -119,7 +121,6 @@ private extension ActivityDetailView {
             priceView()
         }
         .padding()
-        .offset(y: -170)
     }
     
     func countView() -> some View {
@@ -178,7 +179,6 @@ private extension ActivityDetailView {
     
     func priceView() -> some View {
         VStack {
-            // TODO: 새로운 PriceView로 변경
             LargePriceView(
                 originPrice: viewModel.output.activityDetails.summary.originalPrice,
                 finalPrice: viewModel.output.activityDetails.summary.finalPrice
@@ -219,7 +219,68 @@ private extension ActivityDetailView {
 private extension ActivityDetailView {
     func curriculumView() -> some View {
         VStack {
+            SectionHeader(title: "액티비티 커리큘럼", color: .gray45)
+            curriculumInfoView()
+        }
+    }
+    
+    func curriculumInfoView() -> some View {
+        let schedules = viewModel.output.activityDetails.schedule
+        
+        return VStack(alignment: .leading, spacing: 12) {
+            LazyVStack(alignment: .leading) {
+                ForEach(schedules.indices, id: \.self) { idx in
+                    let schedule = schedules[idx]
+                    timelineRowView(
+                        schedule: schedule,
+                        isLast: idx == schedules.count - 1
+                    )
+                }
+            }
+            .padding(.top,36)
+            .padding(.horizontal)
             
+            // TODO: LocationView
+        }
+        .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    func timelineRowView(schedule: ScheduleEntity, isLast: Bool) -> some View {
+        if let duration = schedule.duration,
+           let description = schedule.description {
+            HStack(alignment: .top, spacing: 20) {
+                VStack(spacing: 4) {
+                    Circle()
+                        .fill(Color.colLight)
+                        .frame(width: 8, height: 8)
+                    
+                    if !isLast {
+                        Rectangle()
+                            .fill(Color.colLight)
+                            .frame(width: 2)
+                            .frame(minHeight: 28)
+                    }
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(duration)
+                        .font(.Caption.caption2.weight(.medium))
+                        .foregroundColor(.gray45)
+                    
+                    Text(description)
+                        .font(.Body.body3.bold())
+                        .foregroundColor(.gray75)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .offset(y: -20)
+                
+                Spacer()
+            }
+            .padding(.bottom, isLast ? 0 : 4)
+        } else {
+            EmptyResultView()
         }
     }
 }

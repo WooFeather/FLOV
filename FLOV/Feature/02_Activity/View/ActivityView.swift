@@ -169,21 +169,9 @@ private extension ActivityView {
 private extension ActivityView {
     func recommendedActivityView() -> some View {
         VStack {
-            recommendedActivityHeader()
+            SectionHeader(title: "추천 액티비티")
             recommendedActivityList()
         }
-    }
-    
-    func recommendedActivityHeader() -> some View {
-        HStack {
-            Text("추천 액티비티")
-                .foregroundStyle(.gray90)
-                .font(.Body.body2.bold())
-            
-            Spacer()
-        }
-        .padding(.top)
-        .padding(.horizontal)
     }
     
     func recommendedActivityList() -> some View {
@@ -216,7 +204,7 @@ private extension ActivityView {
 private extension ActivityView {
     func allActivityView() -> some View {
         VStack {
-            allActivityHeader()
+            SectionHeader(title: "전체 액티비티")
             filterButtonsView()
             
             if viewModel.output.isLoadingAll {
@@ -228,18 +216,6 @@ private extension ActivityView {
                 allActivityList()
             }
         }
-    }
-    
-    func allActivityHeader() -> some View {
-        HStack {
-            Text("전체 액티비티")
-                .foregroundStyle(.gray90)
-                .font(.Body.body2.bold())
-            
-            Spacer()
-        }
-        .padding(.top)
-        .padding(.horizontal)
     }
     
     func filterButtonsView() -> some View {
