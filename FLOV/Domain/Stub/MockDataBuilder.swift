@@ -79,4 +79,49 @@ struct MockDataBuilder {
             updatedAt: "2025-05-31T04:33:35.121Z".toDate(format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ") ?? Date()
         )
     }
+    
+    static var reservation: [ReservationEntity] {
+        return [
+            ReservationEntity(itemName: "8월 4일", times: [
+                TimeSlotEntity(time: "10:00", isReserved: true),
+                TimeSlotEntity(time: "11:00", isReserved: true),
+                TimeSlotEntity(time: "12:00", isReserved: true),
+                TimeSlotEntity(time: "13:00", isReserved: true),
+                TimeSlotEntity(time: "14:00", isReserved: true),
+                TimeSlotEntity(time: "15:00", isReserved: true),
+                TimeSlotEntity(time: "16:00", isReserved: true),
+                TimeSlotEntity(time: "17:00", isReserved: true)
+            ]),
+            ReservationEntity(itemName: "8월 5일", times: [
+                TimeSlotEntity(time: "10:00", isReserved: true),
+                TimeSlotEntity(time: "11:00", isReserved: false),
+                TimeSlotEntity(time: "12:00", isReserved: false),
+                TimeSlotEntity(time: "13:00", isReserved: true),
+                TimeSlotEntity(time: "14:00", isReserved: false),
+                TimeSlotEntity(time: "15:00", isReserved: false),
+                TimeSlotEntity(time: "16:00", isReserved: false),
+                TimeSlotEntity(time: "17:00", isReserved: false)
+            ]),
+            ReservationEntity(itemName: "8월 6일", times: [
+                TimeSlotEntity(time: "10:00", isReserved: false),
+                TimeSlotEntity(time: "11:00", isReserved: false),
+                TimeSlotEntity(time: "12:00", isReserved: true),
+                TimeSlotEntity(time: "13:00", isReserved: true),
+                TimeSlotEntity(time: "14:00", isReserved: false),
+                TimeSlotEntity(time: "15:00", isReserved: false),
+                TimeSlotEntity(time: "16:00", isReserved: false),
+                TimeSlotEntity(time: "17:00", isReserved: false)
+            ]),
+            ReservationEntity(itemName: "12월 31일", times: [
+                TimeSlotEntity(time: "10:00", isReserved: true),
+                TimeSlotEntity(time: "11:00", isReserved: true),
+                TimeSlotEntity(time: "12:00", isReserved: true),
+                TimeSlotEntity(time: "13:00", isReserved: true),
+                TimeSlotEntity(time: "14:00", isReserved: true),
+                TimeSlotEntity(time: "15:00", isReserved: true),
+                TimeSlotEntity(time: "16:00", isReserved: true),
+                TimeSlotEntity(time: "17:00", isReserved: true)
+            ])
+        ]
+    }
 }

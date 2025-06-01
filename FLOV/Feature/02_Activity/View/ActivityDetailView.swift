@@ -37,7 +37,7 @@ private extension ActivityDetailView {
     func detailInfoView() -> some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading) {
-                VStack(spacing: -170) {
+                VStack(spacing: -150) {
                     thumbnailView()
                     headerView()
                 }
@@ -88,7 +88,7 @@ private extension ActivityDetailView {
                 .frame(height: 120)
             }
         }
-        .offset(y: -50)
+        .offset(y: -30)
     }
 }
 
@@ -104,7 +104,7 @@ private extension ActivityDetailView {
             HStack(spacing: 12) {
                 Text(viewModel.output.activityDetails.summary.country)
                     .font(.Body.body1.bold())
-                    .foregroundStyle(.gray60)
+                    .foregroundStyle(.gray75)
                 
                 PointView(point: viewModel.output.activityDetails.summary.pointReward ?? 0)
                 
@@ -288,8 +288,108 @@ private extension ActivityDetailView {
 // MARK: - Reservation
 private extension ActivityDetailView {
     func reservationView() -> some View {
-        VStack {
+        VStack(alignment: .leading) {
+            SectionHeader(title: "액티비티 예약", color: .gray45)
+            dateSelectionView()
+            timeSlotView()
+        }
+    }
+    
+    func dateSelectionView() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(viewModel.output.reservations, id: \.itemName) { reservation in
+                    let isAvailable = viewModel.isDateAvailable(reservation.itemName)
+                    let isSelected = viewModel.output.selectedDate == reservation.itemName
+                    
+                    Text(reservation.itemName)
+                        .asButton {
+                            if isAvailable {
+                                viewModel.action(.selectDate(itemName: reservation.itemName))
+                            }
+                        }
+                        .font(isSelected ? .Body.body3.weight(.bold) : .Body.body3.weight(.medium))
+                        .frame(width: 78, height: 32)
+                        .foregroundStyle(
+                            isSelected ? .colDeep :
+                                isAvailable ? .gray75 : .gray45
+                        )
+                        .background(
+                            isSelected ? .colDeep.opacity(0.5) :
+                                isAvailable ? Color.white : Color.gray15
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(
+                                    isSelected ? Color.colDeep : Color.gray30,
+                                    lineWidth: 2
+                                )
+                        )
+                        .clipShape(Capsule())
+                        .disabled(!isAvailable)
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    func timeSlotView() -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            let timeSlots = viewModel.getTimeSlotsForSelectedDate()
+            let morningSlots = timeSlots.filter { !viewModel.isAfternoon($0.time) }
+            let afternoonSlots = timeSlots.filter { viewModel.isAfternoon($0.time) }
             
+            if !morningSlots.isEmpty {
+                timeSlotSection(title: "오전", slots: morningSlots)
+            }
+            
+            if !afternoonSlots.isEmpty {
+                timeSlotSection(title: "오후", slots: afternoonSlots)
+            }
+        }
+        .padding()
+        .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+        .padding()
+    }
+    
+    func timeSlotSection(title: String, slots: [TimeSlotEntity]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.Body.body3.weight(.medium))
+                .foregroundColor(.gray45)
+            
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
+                ForEach(Array(slots.enumerated()), id: \.offset) { index, slot in
+                    let isSelected = viewModel.output.selectedTimeSlot?.time == slot.time
+                    let isAvailable = !slot.isReserved
+                    
+                    Text(viewModel.formatTime(slot.time))
+                        .asButton {
+                            if isAvailable {
+                                viewModel.action(.selectTimeSlot(timeSlot: slot))
+                            }
+                        }
+                        .font(isSelected ? .Body.body3.weight(.bold) : .Body.body3.weight(.medium))
+                        .frame(width: 68, height: 32)
+                        .foregroundStyle(
+                            isSelected ? .colDeep :
+                                isAvailable ? .gray75 : .gray45
+                        )
+                        .background(
+                            isSelected ? .colDeep.opacity(0.5) :
+                                isAvailable ? Color.white : Color.gray15
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(
+                                    isSelected ? Color.colDeep : Color.gray30,
+                                    lineWidth: 2
+                                )
+                        )
+                        .clipShape(Capsule())
+                        .disabled(!isAvailable)
+                }
+            }
         }
     }
 }

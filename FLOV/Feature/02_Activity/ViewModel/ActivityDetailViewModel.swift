@@ -37,17 +37,29 @@ final class ActivityDetailViewModel: ViewModelType {
     struct Output {
         var activityDetails: ActivityDetailEntity = MockDataBuilder.details
         var isLoading = false
+        
+        var reservations: [ReservationEntity] = []
+        var selectedDate: String? = nil
+        var selectedTimeSlot: TimeSlotEntity? = nil
     }
 }
 
 // MARK: - Action
 extension ActivityDetailViewModel {
     enum Action {
-        
+        case selectDate(itemName: String)
+        case selectTimeSlot(timeSlot: TimeSlotEntity)
     }
-    
+
     func action(_ action: Action) {
-        
+        switch action {
+        case .selectDate(let itemName):
+            output.selectedDate = itemName
+            output.selectedTimeSlot = nil
+            
+        case .selectTimeSlot(let timeSlot):
+            output.selectedTimeSlot = timeSlot
+        }
     }
 }
 
@@ -71,8 +83,74 @@ extension ActivityDetailViewModel {
             let response = try await activityRepository.detailLookup(activityId: id)
             
             output.activityDetails = response
+            setupReservationData(response)
         } catch {
             print(error)
         }
+    }
+    
+    private func setupReservationData(_ response: ActivityDetailEntity) {
+        output.reservations = response.reservations
+        
+        /// 선택 가능한 첫 번째 날짜를 자동 선택
+        if let firstAvailableDate = getFirstAvailableDate() {
+            output.selectedDate = firstAvailableDate
+        }
+    }
+    
+    /// 선택 가능한 첫 번째 날짜 찾기
+    private func getFirstAvailableDate() -> String? {
+        return output.reservations.first { reservation in
+            !reservation.times.allSatisfy { $0.isReserved }
+        }?.itemName
+    }
+}
+
+// MARK: - Helper
+extension ActivityDetailViewModel {
+    /// 날짜가 선택 가능한지 확인
+    func isDateAvailable(_ itemName: String) -> Bool {
+        guard let reservation = output.reservations.first(where: { $0.itemName == itemName }) else {
+            return false
+        }
+        return !reservation.times.allSatisfy { $0.isReserved }
+    }
+    
+    /// 선택된 날짜의 시간 슬롯 가져오기
+    func getTimeSlotsForSelectedDate() -> [TimeSlotEntity] {
+        guard let selectedDate = output.selectedDate,
+              let reservation = output.reservations.first(where: { $0.itemName == selectedDate }) else {
+            return []
+        }
+        return reservation.times
+    }
+    
+    /// 시간을 12시간제로 변환
+    func formatTime(_ time: String?) -> String {
+        guard let time = time else { return "" }
+        
+        let components = time.split(separator: ":")
+        guard let hour = Int(components.first ?? "0") else { return time }
+        
+        if hour == 0 {
+            return "12:\(components.dropFirst().joined(separator: ":"))"
+        } else if hour < 12 {
+            return "\(hour):\(components.dropFirst().joined(separator: ":"))"
+        } else if hour == 12 {
+            return time
+        } else {
+            let convertedHour = hour - 12
+            return "\(convertedHour):\(components.dropFirst().joined(separator: ":"))"
+        }
+    }
+    
+    /// 오전/오후 구분
+    func isAfternoon(_ time: String?) -> Bool {
+        guard let time = time else { return false }
+        
+        let components = time.split(separator: ":")
+        guard let hour = Int(components.first ?? "0") else { return false }
+        
+        return hour >= 12
     }
 }
