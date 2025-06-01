@@ -16,7 +16,7 @@ private struct NavigationToolbarModifier: ViewModifier {
 }
 
 extension View {
-    public func asNavigationToolbar() -> some View {
+    func asNavigationToolbar() -> some View {
         modifier(NavigationToolbarModifier())
     }
 }

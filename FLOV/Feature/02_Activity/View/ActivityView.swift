@@ -267,11 +267,10 @@ private extension ActivityView {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 2)
                     .background(viewModel.output.selectedCountry == country ? Color.colDeep.opacity(0.5) : Color.white)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 2)
+                    .asRoundedBackground(
+                        cornerRadius: 10,
+                        strokeColor: viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
             .padding(.horizontal)

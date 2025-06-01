@@ -44,11 +44,7 @@ struct StatusTag: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(.gray45.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.colLight, lineWidth: 1)
-        )
+        .asRoundedBackground(cornerRadius: 8, strokeColor: .colLight)
     }
 }
 

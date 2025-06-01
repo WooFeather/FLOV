@@ -155,13 +155,7 @@ private extension ActivityDetailView {
             restrictionComponents(.people, value: "\(viewModel.output.activityDetails.restrictions.maxParticipants)명")
         }
         .padding()
-        .clipShape(
-            RoundedRectangle(cornerRadius: 16)
-        )
-        .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray30, lineWidth: 1)
-        }
+        .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
     }
     
     func restrictionComponents(_ restriction: Restrictions, value: String) -> some View {
@@ -185,7 +179,7 @@ private extension ActivityDetailView {
     func priceView() -> some View {
         VStack {
             // TODO: 새로운 PriceView로 변경
-            PriceView(
+            LargePriceView(
                 originPrice: viewModel.output.activityDetails.summary.originalPrice,
                 finalPrice: viewModel.output.activityDetails.summary.finalPrice
             )
