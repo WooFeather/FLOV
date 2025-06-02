@@ -43,6 +43,7 @@ private extension ActivityDetailView {
                 }
                 curriculumView()
                 reservationView()
+                creatorView()
             }
         }
     }
@@ -417,6 +418,59 @@ private extension ActivityDetailView {
             in: .rect
         )
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+    }
+}
+
+// MARK: - Creator
+private extension ActivityDetailView {
+    func creatorView() -> some View {
+        VStack {
+            SectionHeader(title: "호스트 정보", color: .gray45)
+            creatorInfoView()
+        }
+    }
+    
+    func creatorInfoView() -> some View {
+        HStack(spacing: 12) {
+            KFRemoteImageView(
+                path: viewModel.output.activityDetails.creator.profileImageURL ?? "",
+                aspectRatio: 1,
+                cachePolicy: .memoryOnly,
+                height: 38
+            )
+            .clipShape(Circle())
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(viewModel.output.activityDetails.creator.nick)
+                    .font(.Body.body3.bold())
+                    .foregroundStyle(.gray75)
+                
+                Text(viewModel.output.activityDetails.creator.introduction ?? "")
+                    .font(.Caption.caption1.weight(.regular))
+                    .foregroundStyle(.gray45)
+                    .lineLimit(1)
+            }
+            Spacer()
+            
+            chatButton()
+        }
+        .padding()
+        .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+        .padding(.horizontal)
+        .padding(.bottom)
+    }
+    
+    func chatButton() -> some View {
+        Text("채팅하기")
+            .font(.Caption.caption1.weight(.semibold))
+            .foregroundStyle(.white)
+            .padding()
+            .frame(width: 78, height: 32)
+            .background(.colBlack)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .asButton {
+                // TODO: 채팅뷰로 이동
+            }
     }
 }
 
