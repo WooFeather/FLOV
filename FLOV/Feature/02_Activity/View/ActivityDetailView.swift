@@ -22,6 +22,7 @@ struct ActivityDetailView: View {
                 paymentView()
             }
         }
+        .toolbarBackground(.hidden, for: .navigationBar)
         .asNavigationToolbar()
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
