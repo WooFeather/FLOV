@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
-		792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8952DCFB7FE0074FB34 /* Config.xcconfig */; };
 		793178442DE8739700D0CC75 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 793178432DE8739700D0CC75 /* Kingfisher */; };
 		79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C32DD47766008F95BE /* Alamofire */; };
 		79F4B4C72DD47774008F95BE /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C62DD47774008F95BE /* KakaoSDKAuth */; };
@@ -115,7 +114,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					792CF87D2DCFB3880074FB34 = {
 						CreatedOnToolsVersion = 16.2;
@@ -151,7 +150,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				792CF8962DCFB7FE0074FB34 /* Config.xcconfig in Resources */,
 				792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +203,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = MXGCKXDXUM;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -268,6 +267,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MXGCKXDXUM;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -298,7 +298,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FLOV/Preview Content\"";
-				DEVELOPMENT_TEAM = MXGCKXDXUM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLOV/Info.plist;
@@ -336,7 +335,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FLOV/Preview Content\"";
-				DEVELOPMENT_TEAM = MXGCKXDXUM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLOV/Info.plist;

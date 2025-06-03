@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=Height.png",
+      "filename" : "restriction_age.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Property 1=Height@2x.png",
+      "filename" : "restriction_age@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Property 1=Height@3x.png",
+      "filename" : "restriction_age@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -106,6 +106,9 @@ private extension ActivityView {
                                             .padding()
                                     }
                                 }
+                                .asButton {
+                                    pathModel.push(.activityDetail(id: activity.id))
+                                }
                         }
                         .frame(width: cardWidth, height: cardHeight)
                         .onAppear {
@@ -166,21 +169,9 @@ private extension ActivityView {
 private extension ActivityView {
     func recommendedActivityView() -> some View {
         VStack {
-            recommendedActivityHeader()
+            SectionHeader(title: "추천 액티비티")
             recommendedActivityList()
         }
-    }
-    
-    func recommendedActivityHeader() -> some View {
-        HStack {
-            Text("추천 액티비티")
-                .foregroundStyle(.gray90)
-                .font(.Body.body2.bold())
-            
-            Spacer()
-        }
-        .padding(.top)
-        .padding(.horizontal)
     }
     
     func recommendedActivityList() -> some View {
@@ -199,6 +190,9 @@ private extension ActivityView {
                     .onAppear {
                         viewModel.action(.fetchActivityDetail(id: activity.id))
                     }
+                    .asButton {
+                        pathModel.push(.activityDetail(id: activity.id))
+                    }
                 }
             }
             .padding()
@@ -210,7 +204,7 @@ private extension ActivityView {
 private extension ActivityView {
     func allActivityView() -> some View {
         VStack {
-            allActivityHeader()
+            SectionHeader(title: "전체 액티비티")
             filterButtonsView()
             
             if viewModel.output.isLoadingAll {
@@ -222,18 +216,6 @@ private extension ActivityView {
                 allActivityList()
             }
         }
-    }
-    
-    func allActivityHeader() -> some View {
-        HStack {
-            Text("전체 액티비티")
-                .foregroundStyle(.gray90)
-                .font(.Body.body2.bold())
-            
-            Spacer()
-        }
-        .padding(.top)
-        .padding(.horizontal)
     }
     
     func filterButtonsView() -> some View {
@@ -261,11 +243,10 @@ private extension ActivityView {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 2)
                     .background(viewModel.output.selectedCountry == country ? Color.colDeep.opacity(0.5) : Color.white)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30, lineWidth: 2)
+                    .asRoundedBackground(
+                        cornerRadius: 10,
+                        strokeColor: viewModel.output.selectedCountry == country ? Color.colDeep : Color.gray30
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
             .padding(.horizontal)
@@ -317,6 +298,9 @@ private extension ActivityView {
                        viewModel.output.nextCursor != nil {
                         viewModel.action(.fetchMoreActivities)
                     }
+                }
+                .asButton {
+                    pathModel.push(.activityDetail(id: activity.id))
                 }
             }
             

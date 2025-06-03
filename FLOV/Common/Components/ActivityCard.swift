@@ -34,11 +34,7 @@ struct ActivityCard: View {
                     cachePolicy: .memoryAndDiskWithOriginal,
                     height: isRecommended ? 120 : 180
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.colLight, lineWidth: 4)
-                )
+                .asRoundedBackground(cornerRadius: 16, strokeColor: .colLight)
                 
                 VStack {
                     HStack {
@@ -55,18 +51,21 @@ struct ActivityCard: View {
                     
                     // TODO: detail의 endDate를 통해 countdown 계산 후 특정 기준을 충족할 경우 .deadline을 보여줌
                     HStack {
-                        if isRecommended {
-                            StatusTag(
-                                status: activity.tags[0].contains("Hot") ? .hot(orderCount: nil) : .new
-                            )
-                            Spacer()
-                        } else {
-                            StatusTag(
-                                status: activity.tags[0].contains("Hot") ? .hot(orderCount: orderCount) : .new,
-                                isLongTag: true
-                            )
-                            .offset(y: 16)
+                        if let tag = activity.tags.first {
+                            if isRecommended {
+                                StatusTag(
+                                    status: tag.contains("Hot") ? .hot(orderCount: nil) : .new
+                                )
+                                Spacer()
+                            } else {
+                                StatusTag(
+                                    status: tag.contains("Hot") ? .hot(orderCount: orderCount) : .new,
+                                    isLongTag: true
+                                )
+                                .offset(y: 16)
+                            }
                         }
+                        
                     }
                 }
                 .shadow(radius: 2)
@@ -87,7 +86,7 @@ struct ActivityCard: View {
                     }
                 }
                 
-                Text(description ?? "\(activity.tags[0]) & \(activity.category)")
+                Text(description ?? "설명이 없습니다.")
                     .font(.Caption.caption1)
                     .foregroundColor(.gray60)
                     .lineLimit(2)
