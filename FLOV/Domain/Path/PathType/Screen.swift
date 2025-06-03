@@ -35,5 +35,8 @@ enum Screen: Identifiable, Hashable {
     // 07_Notification
     case notification
     
+    // 0_Chatting
+    case chatRoom(id: String)
+    
     var id: Self { self }
 }
