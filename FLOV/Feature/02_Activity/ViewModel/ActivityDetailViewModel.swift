@@ -31,12 +31,13 @@ final class ActivityDetailViewModel: ViewModelType {
     }
     
     struct Input {
-        
+        let keepToggle = PassthroughSubject<Bool, Never>()
     }
     
     struct Output {
         var activityDetails: ActivityDetailEntity = MockDataBuilder.details
         var isLoading = false
+        var isKeep = false
         
         var reservations: [ReservationEntity] = []
         var selectedDate: String? = nil
@@ -47,16 +48,18 @@ final class ActivityDetailViewModel: ViewModelType {
 // MARK: - Action
 extension ActivityDetailViewModel {
     enum Action {
+        case keepToggle(keepStatus: Bool)
         case selectDate(itemName: String)
         case selectTimeSlot(timeSlot: TimeSlotEntity)
     }
 
     func action(_ action: Action) {
         switch action {
+        case .keepToggle(let keepStatus):
+            input.keepToggle.send(keepStatus)
         case .selectDate(let itemName):
             output.selectedDate = itemName
             output.selectedTimeSlot = nil
-            
         case .selectTimeSlot(let timeSlot):
             output.selectedTimeSlot = timeSlot
         }
@@ -69,6 +72,15 @@ extension ActivityDetailViewModel {
         Task {
             await fetchActivityDetail(id: activityId)
         }
+        
+        input.keepToggle
+            .sink { [weak self] status in
+                guard let self = self else { return }
+                Task {
+                    await self.keepToggle(id: self.activityId, keepStatus: status)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -83,6 +95,7 @@ extension ActivityDetailViewModel {
             let response = try await activityRepository.detailLookup(activityId: id)
             
             output.activityDetails = response
+            output.isKeep = response.summary.isKeep
             setupReservationData(response)
         } catch {
             print(error)
@@ -103,6 +116,16 @@ extension ActivityDetailViewModel {
         return output.reservations.first { reservation in
             !reservation.times.allSatisfy { $0.isReserved }
         }?.itemName
+    }
+    
+    @MainActor
+    private func keepToggle(id: String, keepStatus: Bool) async {
+        do {
+            let response = try await activityRepository.keep(activityId: id, request: .init(keepStatus: keepStatus))
+            output.isKeep = response.keepStatus
+        } catch {
+            print(error)
+        }
     }
 }
 

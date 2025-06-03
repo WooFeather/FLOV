@@ -478,9 +478,10 @@ private extension ActivityDetailView {
 // MARK: - Toolbar
 private extension ActivityDetailView {
     func keepButton() -> some View {
-        Image(.icnLikeEmpty)
+        let isKeep = viewModel.output.isKeep
+        return Image(isKeep ? .icnLikeFill : .icnLikeEmpty)
             .asButton {
-                // TODO: keepAPI 통신
+                viewModel.action(.keepToggle(keepStatus: !isKeep))
             }
     }
 }
