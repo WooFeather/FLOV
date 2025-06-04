@@ -13,7 +13,7 @@ enum ChatAPI {
     case chatListLookup
     case sendMessage(roomId: String, request: SendMessageRequest)
     case messageListLookup(roomId: String, next: String?)
-    case uploadFiles(roomId: String, request: UploadFilesRequest)
+    case uploadFiles(roomId: String)
 }
 
 extension ChatAPI: Router {
@@ -23,7 +23,7 @@ extension ChatAPI: Router {
             return "/v1/chats"
         case .sendMessage(let roomId, _), .messageListLookup(let roomId, _):
             return "/v1/chats/\(roomId)"
-        case .uploadFiles(let roomId, _):
+        case .uploadFiles(let roomId):
             return "/v1/chats/\(roomId)/files"
         }
     }
@@ -61,7 +61,7 @@ extension ChatAPI: Router {
     
     var params: Parameters {
         switch self {
-        case .sendMessage(let roomId, _), .uploadFiles(let roomId, _):
+        case .sendMessage(let roomId, _), .uploadFiles(let roomId):
             return ["room_id": roomId]
         case .messageListLookup(let roomId, let next):
             var parameters: Parameters = ["room_id": roomId]
@@ -80,10 +80,10 @@ extension ChatAPI: Router {
             return nil
         case .sendMessage(_, let request):
             return request
-        case .messageListLookup(let roomId, _):
+        case .messageListLookup:
             return nil
-        case .uploadFiles(_, let request):
-            return request
+        case .uploadFiles:
+            return nil
         }
     }
 }

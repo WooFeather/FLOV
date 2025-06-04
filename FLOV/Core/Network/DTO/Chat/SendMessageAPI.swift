@@ -12,3 +12,6 @@ struct SendMessageRequest: Encodable {
     let content: String
     let files: [String]?
 }
+
+// MARK: - SendMessageResponse
+/// ChatRoomResponse로 대체
