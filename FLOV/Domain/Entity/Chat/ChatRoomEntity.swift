@@ -9,8 +9,8 @@ import Foundation
 
 struct ChatRoomEntity {
     let roomId: String
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
     let participants: [UserEntity]
     let lastChat: ChatMessageEntity?
 }

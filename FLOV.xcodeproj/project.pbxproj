@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		791B11C02DF1D260003461D6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 791B11BF2DF1D260003461D6 /* RealmSwift */; };
+		791B11C92DF1D309003461D6 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 791B11C82DF1D309003461D6 /* SocketIO */; };
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
 		793178442DE8739700D0CC75 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 793178432DE8739700D0CC75 /* Kingfisher */; };
 		79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C32DD47766008F95BE /* Alamofire */; };
@@ -47,7 +49,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				791B11C02DF1D260003461D6 /* RealmSwift in Frameworks */,
 				79F4B4CB2DD47774008F95BE /* KakaoSDKUser in Frameworks */,
+				791B11C92DF1D309003461D6 /* SocketIO in Frameworks */,
 				79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */,
 				79F4B4C92DD47774008F95BE /* KakaoSDKCommon in Frameworks */,
 				79F4B4C72DD47774008F95BE /* KakaoSDKAuth in Frameworks */,
@@ -101,6 +105,8 @@
 				79F4B4C82DD47774008F95BE /* KakaoSDKCommon */,
 				79F4B4CA2DD47774008F95BE /* KakaoSDKUser */,
 				793178432DE8739700D0CC75 /* Kingfisher */,
+				791B11BF2DF1D260003461D6 /* RealmSwift */,
+				791B11C82DF1D309003461D6 /* SocketIO */,
 			);
 			productName = FLOV;
 			productReference = 792CF87E2DCFB3880074FB34 /* FLOV.app */;
@@ -134,6 +140,8 @@
 				79F4B4C22DD47766008F95BE /* XCRemoteSwiftPackageReference "Alamofire" */,
 				79F4B4C52DD47774008F95BE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				791B11BE2DF1D260003461D6 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				791B11C72DF1D309003461D6 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 792CF87F2DCFB3880074FB34 /* Products */;
@@ -387,6 +395,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		791B11BE2DF1D260003461D6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 20.0.2;
+			};
+		};
+		791B11C72DF1D309003461D6 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 16.1.1;
+			};
+		};
 		793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -414,6 +438,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		791B11BF2DF1D260003461D6 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 791B11BE2DF1D260003461D6 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		791B11C82DF1D309003461D6 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 791B11C72DF1D309003461D6 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
+			productName = SocketIO;
+		};
 		793178432DE8739700D0CC75 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */;
