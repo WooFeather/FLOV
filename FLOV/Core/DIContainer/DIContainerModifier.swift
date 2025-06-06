@@ -19,6 +19,8 @@ struct DIContainerModifier: ViewModifier {
         let authRepository = AuthRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
         let userRepository = UserRepository(networkManager: networkManager, authManager: authManager)
         let activityRepository = ActivityRepository(networkManager: networkManager)
+        let chatRepository = ChatRepository(networkManager: networkManager)
+        let chatService = ChatService(chatRepository: chatRepository)
         
         self.container = DIContainer(
             services: .init(
@@ -26,7 +28,9 @@ struct DIContainerModifier: ViewModifier {
                 userRepository: userRepository,
                 authRepository: authRepository,
                 activityRepository: activityRepository,
-                authManager: authManager
+                authManager: authManager,
+                chatRepository: chatRepository,
+                chatService: chatService
             )
         )
     }

@@ -10,8 +10,8 @@ import SocketIO
 import Combine
 
 protocol SocketManagerType: ObservableObject {
-    func connect(roomId: String)
-    func disconnect()
+    func connect(roomId: String) async
+    func disconnect() async
     func sendMessage(roomId: String, content: String)
     var messageReceived: AnyPublisher<ChatMessageEntity, Never> { get }
     var connectionStatus: AnyPublisher<SocketIOStatus, Never> { get }
@@ -38,8 +38,8 @@ final class SocketManager: SocketManagerType {
     
     private init() {}
     
-    func connect(roomId: String) {
-        disconnect() // 기존 연결 해제
+    func connect(roomId: String) async {
+        await disconnect() // 기존 연결 해제
         
         currentRoomId = roomId
         
@@ -70,7 +70,7 @@ final class SocketManager: SocketManagerType {
         print("🔌 Socket connecting to: \(socketURL)")
     }
     
-    func disconnect() {
+    func disconnect() async {
         socket?.disconnect()
         socket?.removeAllHandlers()
         socket = nil

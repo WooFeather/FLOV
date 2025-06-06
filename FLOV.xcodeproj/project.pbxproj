@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		791B11C02DF1D260003461D6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 791B11BF2DF1D260003461D6 /* RealmSwift */; };
 		791B11C92DF1D309003461D6 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 791B11C82DF1D309003461D6 /* SocketIO */; };
+		791B11D22DF2A44B003461D6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 791B11BF2DF1D260003461D6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
 		793178442DE8739700D0CC75 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 793178432DE8739700D0CC75 /* Kingfisher */; };
 		79F4B4C42DD47766008F95BE /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C32DD47766008F95BE /* Alamofire */; };
@@ -16,6 +17,20 @@
 		79F4B4C92DD47774008F95BE /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4C82DD47774008F95BE /* KakaoSDKCommon */; };
 		79F4B4CB2DD47774008F95BE /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 79F4B4CA2DD47774008F95BE /* KakaoSDKUser */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		791B11D32DF2A44B003461D6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				791B11D22DF2A44B003461D6 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		792CF87E2DCFB3880074FB34 /* FLOV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FLOV.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +105,7 @@
 				792CF87A2DCFB3880074FB34 /* Sources */,
 				792CF87B2DCFB3880074FB34 /* Frameworks */,
 				792CF87C2DCFB3880074FB34 /* Resources */,
+				791B11D32DF2A44B003461D6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

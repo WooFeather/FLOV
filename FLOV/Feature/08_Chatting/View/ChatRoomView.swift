@@ -13,5 +13,11 @@ struct ChatRoomView: View {
     
     var body: some View {
         Text(viewModel.opponentId)
+            .onAppear {
+                viewModel.action(.createChatRoom(viewModel.opponentId))
+            }
+            .onDisappear {
+                viewModel.action(.disconnectSocket)
+            }
     }
 }

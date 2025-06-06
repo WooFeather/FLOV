@@ -20,8 +20,8 @@ struct CreateChatRequest: Encodable {
 /// CreateChatResponse, SendMessageResponse 공용 DTO
 struct ChatRoomResponse: Decodable {
     let roomId: String
-    let createdAt: Date
-    let updatedAt: Date
+    let createdAt: String
+    let updatedAt: String
     let participants: [UserInfo]
     let lastChat: ChatMessage?
     
@@ -75,8 +75,8 @@ extension ChatRoomResponse {
     func toEntity() -> ChatRoomEntity {
         return .init(
             roomId: roomId,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
+            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
             participants: participants.map {
                 .init(
                     id: $0.userId,

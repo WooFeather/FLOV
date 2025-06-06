@@ -22,7 +22,7 @@ protocol ChatServiceType {
 // MARK: - Chat Service Implementation
 @MainActor
 final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
-    private let chatRepository: ChatRepositoryType
+    private let chatRepository: any ChatRepositoryType
     private let socketManager: any SocketManagerType
     private let realm: Realm
     private var cancellables = Set<AnyCancellable>()
@@ -35,7 +35,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     }
     
     init(
-        chatRepository: ChatRepositoryType,
+        chatRepository: any ChatRepositoryType,
         socketManager: any SocketManagerType = SocketManager.shared,
         realm: Realm = try! Realm()
     ) {
@@ -61,7 +61,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         try await loadChatHistory(roomId: chatRoom.roomId)
         
         // 4. 소켓 연결
-        connectSocket(roomId: chatRoom.roomId)
+        await connectSocket(roomId: chatRoom.roomId)
         
         return chatRoom.roomId
     }
@@ -96,7 +96,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         
         // 1. HTTP로 메시지 전송
         let sendRequest = SendMessageRequest(content: content, files: files)
-        let response = try await chatRepository.sendMessage(roomId: roomId, request: sendRequest)
+        _ = try await chatRepository.sendMessage(roomId: roomId, request: sendRequest)
         
         // 2. 소켓을 통해서도 메시지 전송 (실시간 알림용)
         socketManager.sendMessage(roomId: roomId, content: content)
@@ -105,12 +105,12 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     }
     
     // MARK: - 소켓 연결/해제
-    func connectSocket(roomId: String) {
-        socketManager.connect(roomId: roomId)
+    func connectSocket(roomId: String) async {
+        await socketManager.connect(roomId: roomId)
     }
     
-    func disconnectSocket() {
-        socketManager.disconnect()
+    func disconnectSocket() async {
+        await socketManager.disconnect()
     }
     
     // MARK: - Private Methods
