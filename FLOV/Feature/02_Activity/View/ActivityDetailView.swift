@@ -29,6 +29,9 @@ struct ActivityDetailView: View {
                 keepButton()
             }
         }
+        .onAppear {
+            viewModel.action(.fetchActivityDetail)
+        }
         .ignoresSafeArea()
     }
 }
