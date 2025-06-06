@@ -9,7 +9,6 @@ import Foundation
 import Combine
 
 final class ChatRoomViewModel: ViewModelType {
-    private let chatRepository: ChatRepositoryType
     private let chatService: ChatServiceType
     let opponentId: String
     var chatRoomId: String?
@@ -18,14 +17,12 @@ final class ChatRoomViewModel: ViewModelType {
     @Published var output: Output
     
     init(
-        chatRepository: ChatRepositoryType,
         chatService: ChatServiceType,
         opponentId: String,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
         input: Input = Input(),
         output: Output = Output()
     ) {
-        self.chatRepository = chatRepository
         self.chatService = chatService
         self.opponentId = opponentId
         self.cancellables = cancellables
@@ -89,6 +86,15 @@ extension ChatRoomViewModel {
             }
             .store(in: &cancellables)
         
+        chatService.messages
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] messages in
+                guard let self = self else { return }
+                
+                self.output.messages = messages
+            }
+            .store(in: &cancellables)
+        
         input.sendMessage
             .sink { [weak self] in
                 guard let self = self else { return }
@@ -105,10 +111,8 @@ extension ChatRoomViewModel {
 extension ChatRoomViewModel {
     private func createChatRoom(opponentId: String) async {
         do {
-            let response = try await chatRepository.createChat(request: .init(opponentId: opponentId))
-            chatRoomId = response.roomId
-            
-            await connectSocket()
+            let roomId = try await chatService.enterChatRoom(opponentId: opponentId)
+            chatRoomId = roomId
         } catch {
             print(error)
         }
@@ -125,14 +129,21 @@ extension ChatRoomViewModel {
     
     @MainActor
     private func sendMessage() async {
-        defer {
-            output.chatText = ""
+        guard !output.chatText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let chatRoomId = chatRoomId else {
+            print("❌ Cannot send empty message or missing room ID")
+            return
         }
         
+        let messageContent = output.chatText
+        output.chatText = ""
+        
         do {
-            try await chatService.sendMessage(roomId: chatRoomId ?? "", content: output.chatText, files: nil)
+            try await chatService.sendMessage(roomId: chatRoomId, content: messageContent, files: nil)
         } catch {
-            print(error)
+            print("❌ Error sending message: \(error)")
+            // 에러 발생 시 메시지 복원
+            output.chatText = messageContent
         }
     }
 }

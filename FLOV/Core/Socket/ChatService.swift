@@ -94,12 +94,18 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     func sendMessage(roomId: String, content: String, files: [String]?) async throws {
         print("📤 Sending message: \(content)")
         
-        // 1. HTTP로 메시지 전송
+        // 1. HTTP로 메시지 전송하고 응답 받기
         let sendRequest = SendMessageRequest(content: content, files: files)
-        _ = try await chatRepository.sendMessage(roomId: roomId, request: sendRequest)
+        let sentMessage = try await chatRepository.sendMessage(roomId: roomId, request: sendRequest)
+        
+        // 2. 전송된 메시지를 DB에 저장
+        try await saveMessageToDB(sentMessage)
+        
+        // 3. UI 즉시 업데이트
+        await loadMessagesFromDB(roomId: roomId)
         
         // 2. 소켓을 통해서도 메시지 전송 (실시간 알림용)
-        socketManager.sendMessage(roomId: roomId, content: content)
+        // socketManager.sendMessage(roomId: roomId, content: content)
         
         print("✅ Message sent successfully")
     }
@@ -185,7 +191,11 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
             .filter("roomId == %@", roomId)
             .sorted(byKeyPath: "createdAt", ascending: true)
         
-        chatMessages = Array(messages.map { $0.toEntity() })
+        // 메인 스레드에서 @Published 속성 업데이트
+        await MainActor.run {
+            self.chatMessages = Array(messages.map { $0.toEntity() })
+            print("🔄 UI Updated with \(self.chatMessages.count) messages")
+        }
     }
     
     private func getLastMessageDate(roomId: String) async -> Date? {

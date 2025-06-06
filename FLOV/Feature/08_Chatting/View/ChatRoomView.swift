@@ -40,6 +40,7 @@ private extension ChatRoomView {
     func messageRowView(_ message: ChatMessageEntity) -> some View {
         HStack {
             // TODO: userId에 따라 위치 변경
+            Spacer()
             Text(message.content)
                 .padding()
                 .background(.colDeep)
