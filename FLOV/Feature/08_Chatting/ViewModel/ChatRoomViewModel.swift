@@ -37,10 +37,12 @@ final class ChatRoomViewModel: ViewModelType {
     struct Input {
         let createChatRoom = PassthroughSubject<String, Never>()
         let disconnectSocket = PassthroughSubject<Void, Never>()
+        let sendMessage = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
-        var messages: [ChatMessage] = []
+        var messages: [ChatMessageEntity] = []
+        var chatText = ""
     }
 }
 
@@ -49,6 +51,7 @@ extension ChatRoomViewModel {
     enum Action {
         case createChatRoom(String)
         case disconnectSocket
+        case sendMessage
     }
 
     func action(_ action: Action) {
@@ -57,6 +60,8 @@ extension ChatRoomViewModel {
             input.createChatRoom.send(opponentId)
         case .disconnectSocket:
             input.disconnectSocket.send(())
+        case .sendMessage:
+            input.sendMessage.send(())
         }
     }
 }
@@ -83,6 +88,16 @@ extension ChatRoomViewModel {
                 }
             }
             .store(in: &cancellables)
+        
+        input.sendMessage
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                Task {
+                    await self.sendMessage()
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -106,5 +121,18 @@ extension ChatRoomViewModel {
     
     private func disconnectSocket() async {
         await chatService.disconnectSocket()
+    }
+    
+    @MainActor
+    private func sendMessage() async {
+        defer {
+            output.chatText = ""
+        }
+        
+        do {
+            try await chatService.sendMessage(roomId: chatRoomId ?? "", content: output.chatText, files: nil)
+        } catch {
+            print(error)
+        }
     }
 }

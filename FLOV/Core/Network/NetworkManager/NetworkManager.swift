@@ -39,7 +39,7 @@ final class NetworkManager: NetworkManagerType {
         if (200..<300).contains(status) {
             do {
                 let decoded: T = try JSONDecoder().decode(T.self, from: data)
-                NetworkLog.success(url: dataResponse.response?.url?.absoluteString ?? "", statusCode: status, data: data)
+                NetworkLog.success(url: dataResponse.response?.url?.absoluteString ?? "", statusCode: status, data: decoded)
                 return decoded
             } catch {
                 throw NetworkError.decoding(error)

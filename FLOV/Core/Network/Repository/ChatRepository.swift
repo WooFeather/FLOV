@@ -11,7 +11,7 @@ import Alamofire
 protocol ChatRepositoryType {
     func createChat(request: CreateChatRequest) async throws -> ChatRoomEntity
     func chatListLookup() async throws -> [ChatRoomEntity]
-    func sendMessage(roomId: String, request: SendMessageRequest) async throws -> ChatRoomEntity
+    func sendMessage(roomId: String, request: SendMessageRequest) async throws -> ChatMessageEntity
     func messageListLookup(roomId: String, next: String?) async throws -> [ChatRoomEntity]
     func uploadFiles(roomId: String, fileDatas: [Data]) async throws -> UploadFilesEntity
 }
@@ -39,8 +39,8 @@ final class ChatRepository: ChatRepositoryType {
         return entity
     }
     
-    func sendMessage(roomId: String, request: SendMessageRequest) async throws -> ChatRoomEntity {
-        let response: ChatRoomResponse = try await networkManager.callRequest(ChatAPI.sendMessage(roomId: roomId, request: request))
+    func sendMessage(roomId: String, request: SendMessageRequest) async throws -> ChatMessageEntity {
+        let response: ChatMessage = try await networkManager.callRequest(ChatAPI.sendMessage(roomId: roomId, request: request))
         
         let entity = response.toEntity()
         

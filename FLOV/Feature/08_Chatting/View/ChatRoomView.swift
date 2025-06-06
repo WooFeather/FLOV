@@ -12,12 +12,55 @@ struct ChatRoomView: View {
     @StateObject var viewModel: ChatRoomViewModel
     
     var body: some View {
-        Text(viewModel.opponentId)
-            .onAppear {
-                viewModel.action(.createChatRoom(viewModel.opponentId))
+        VStack {
+            chatListView()
+            chatFieldView()
+        }
+        .onAppear {
+            viewModel.action(.createChatRoom(viewModel.opponentId))
+        }
+        .onDisappear {
+            viewModel.action(.disconnectSocket)
+        }
+    }
+}
+
+// MARK: - ChatListView
+private extension ChatRoomView {
+    func chatListView() -> some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(viewModel.output.messages, id: \.chatId) { message in
+                    messageRowView(message)
+                }
             }
-            .onDisappear {
-                viewModel.action(.disconnectSocket)
-            }
+        }
+    }
+    
+    func messageRowView(_ message: ChatMessageEntity) -> some View {
+        HStack {
+            // TODO: userId에 따라 위치 변경
+            Text(message.content)
+                .padding()
+                .background(.colDeep)
+                .foregroundStyle(.gray90)
+                .asRoundedBackground(cornerRadius: 12, strokeColor: .gray30)
+        }
+    }
+}
+
+// MARK: - ChatFieldView
+private extension ChatRoomView {
+    func chatFieldView() -> some View {
+        HStack {
+            TextField("메시지 입력", text: $viewModel.output.chatText)
+                .textFieldStyle(.roundedBorder)
+            
+            Text("전송")
+                .asButton {
+                    viewModel.action(.sendMessage)
+                }
+        }
+        .padding()
     }
 }

@@ -54,8 +54,8 @@ struct ChatMessage: Decodable {
     let chatId: String
     let roomId: String
     let content: String
-    let createdAt: Date
-    let updatedAt: Date
+    let createdAt: String
+    let updatedAt: String
     let sender: UserInfo
     let files: [String]
     
@@ -92,8 +92,8 @@ extension ChatRoomResponse {
                     chatId: $0.chatId,
                     roomId: $0.roomId,
                     content: $0.content,
-                    createdAt: $0.createdAt,
-                    updatedAt: $0.updatedAt,
+                    createdAt: $0.createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+                    updatedAt: $0.updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
                     sender: .init(
                         id: $0.sender.userId,
                         email: nil,
@@ -105,6 +105,27 @@ extension ChatRoomResponse {
                     files: $0.files
                 )
             }
+        )
+    }
+}
+
+extension ChatMessage {
+    func toEntity() -> ChatMessageEntity {
+        return .init(
+            chatId: chatId,
+            roomId: roomId,
+            content: content,
+            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            sender: .init(
+                id: sender.userId,
+                email: nil,
+                nick: sender.nick,
+                profileImageURL: sender.profileImage,
+                phoneNumber: nil,
+                introduction: sender.introduction
+            ),
+            files: files
         )
     }
 }
