@@ -27,7 +27,6 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     private let realm: Realm
     private var cancellables = Set<AnyCancellable>()
     
-    // Published properties for SwiftUI
     @Published private var chatMessages: [ChatMessageEntity] = []
     
     var messages: AnyPublisher<[ChatMessageEntity], Never> {

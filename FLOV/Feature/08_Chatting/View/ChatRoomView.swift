@@ -28,10 +28,21 @@ struct ChatRoomView: View {
 // MARK: - ChatListView
 private extension ChatRoomView {
     func chatListView() -> some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(viewModel.output.messages, id: \.chatId) { message in
-                    messageRowView(message)
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack {
+                    ForEach(viewModel.output.messages, id: \.chatId) { message in
+                        messageRowView(message)
+                            .id(message.chatId)
+                    }
+                }
+            }
+            .onChange(of: viewModel.output.messages.count) { _ in
+                // 메시지 개수가 변경되면 자동 스크롤
+                if let lastMessage = viewModel.output.messages.last {
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        proxy.scrollTo(lastMessage.chatId, anchor: .bottom)
+                    }
                 }
             }
         }
