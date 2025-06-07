@@ -90,6 +90,8 @@ struct ActivityCard: View {
                     .font(.Caption.caption1)
                     .foregroundColor(.gray60)
                     .lineLimit(2)
+                    .frame(minHeight: 40)
+                    .multilineTextAlignment(.leading)
                 
                 PriceView(
                     originPrice: activity.originalPrice,

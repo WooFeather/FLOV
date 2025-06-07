@@ -16,6 +16,8 @@ final class DIContainer {
         let authRepository: AuthRepositoryType
         let activityRepository: ActivityRepositoryType
         let authManager: AuthManager
+        let chatRepository: ChatRepositoryType
+        let chatService: ChatServiceType
     }
     
     init(

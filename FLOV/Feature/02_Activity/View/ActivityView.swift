@@ -158,6 +158,7 @@ private extension ActivityView {
                     .font(.Caption.caption1)
                     .foregroundStyle(.gray30)
                     .lineLimit(3)
+                    .multilineTextAlignment(.leading)
             }
             .shadow(radius: 2)
             .padding()
