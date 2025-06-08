@@ -13,8 +13,8 @@ struct ChatRoomView: View {
     
     var body: some View {
         VStack {
-            chatListView()
-            chatFieldView()
+            messageListView()
+            sendFieldView()
         }
         .onAppear {
             viewModel.action(.createChatRoom(viewModel.opponentId))
@@ -27,7 +27,7 @@ struct ChatRoomView: View {
 
 // MARK: - ChatListView
 private extension ChatRoomView {
-    func chatListView() -> some View {
+    func messageListView() -> some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack {
@@ -71,7 +71,7 @@ private extension ChatRoomView {
 
 // MARK: - ChatFieldView
 private extension ChatRoomView {
-    func chatFieldView() -> some View {
+    func sendFieldView() -> some View {
         HStack {
             TextField("메시지 입력", text: $viewModel.output.chatText)
                 .textFieldStyle(.roundedBorder)
