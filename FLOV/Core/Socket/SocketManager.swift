@@ -15,6 +15,7 @@ protocol SocketManagerType: ObservableObject {
     func sendMessage(roomId: String, content: String)
     var messageReceived: AnyPublisher<ChatMessageEntity, Never> { get }
     var connectionStatus: AnyPublisher<SocketIOStatus, Never> { get }
+    var currentRoomId: String? { get }
 }
 
 final class SocketManager: SocketManagerType {
@@ -22,7 +23,7 @@ final class SocketManager: SocketManagerType {
     
     private var manager: SocketIO.SocketManager?
     private var socket: SocketIOClient?
-    private var currentRoomId: String?
+    private(set) var currentRoomId: String?
     
     // Combine Publishers
     private let messageSubject = PassthroughSubject<ChatMessageEntity, Never>()
@@ -74,8 +75,14 @@ final class SocketManager: SocketManagerType {
         socket?.removeAllHandlers()
         socket = nil
         manager = nil
-        currentRoomId = nil
         print("🔌 Socket disconnected")
+    }
+    
+    /// 앱이 포그라운드로 돌아왔을 때, 마지막 방이 있으면 재연결
+    func reconnectIfNeeded() async {
+        guard let roomId = currentRoomId else { return }
+        print("🌱 Reconnecting to room \(roomId)")
+        await connect(roomId: roomId)
     }
     
     func sendMessage(roomId: String, content: String) {
