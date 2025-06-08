@@ -11,7 +11,7 @@ import Alamofire
 import Firebase
 import FirebaseMessaging
 
-class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
@@ -52,7 +52,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 }
 
-// TODO: 로그아웃시 토큰 초기화 및 로그인시 재발급
 extension AppDelegate: MessagingDelegate {
     // FCM 등록 토큰 수신
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
@@ -74,5 +73,29 @@ extension AppDelegate: MessagingDelegate {
             )
           .deviceTokenUpdate(request: .init(deviceToken: fcmToken))
         }
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    // 포그라운드에서 Alert 띄워줄지 여부
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print(notification)
+        print(notification.request.content.title)
+        print(notification.request.content.userInfo)
+        
+        // TODO: 대화중인 채팅방에서는 포그라운드 알림을 받지 않기 -> 어떤 값으로 분기처리할지 추후에 처리
+        // guard let user = notification.request.content.userInfo["user"] as? String else { return }
+        
+        completionHandler([.list, .banner, .badge, .sound])
+    }
+    
+    // 푸시 탭했을 때 특정 화면으로 이동
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print(response.notification)
+        print(response.notification.request.content.title)
+        print(response.notification.request.content.userInfo)
+        
+        // TODO: 푸시를 탭했을 때 유저 ID에 대응하여 채팅방으로 이동
+        // guard let user = response.notification.request.content.userInfo["user"] as? String else { return }
     }
 }
