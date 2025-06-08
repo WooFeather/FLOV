@@ -86,9 +86,10 @@ extension EmailSignInViewModel {
 // MARK: - Functions
 extension EmailSignInViewModel {
     private func emailLogin() async throws {
-        let response = try await userRepository.login(request: .init(email: input.email, password: input.password, deviceToken: nil))
+        let deviceToken = try await UserSecurityManager.shared.fetchFCMToken()
         
-        dump(response)
+        let response = try await userRepository.login(request: .init(email: input.email, password: input.password, deviceToken: deviceToken))
+        UserSecurityManager.shared.userId = response.user.id
     }
     
     @MainActor

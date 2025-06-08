@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct EmptyResultView: View {
+    var text = "결과를 찾을 수 없습니다."
+    
     var body: some View {
         VStack {
-            Text("결과를 찾을 수 없습니다")
+            Text(text)
                 .font(.Caption.caption0)
                 .foregroundStyle(.gray60)
         }

@@ -16,7 +16,7 @@ struct KFRemoteImageView: View {
     
     let baseURL = Config.baseURL
     let apiKey = Config.sesacKey
-    let accessToken = TokenManager.shared.accessToken
+    let accessToken = UserSecurityManager.shared.accessToken
     
     init(
         path: String,

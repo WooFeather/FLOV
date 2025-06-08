@@ -12,6 +12,9 @@ import Kingfisher
 
 @main
 struct FLOVApp: App {
+    @Environment(\.scenePhase) private var scenePhase
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     init() {
         /// KakaoSDK 초기화
         KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
@@ -27,6 +30,20 @@ struct FLOVApp: App {
                         _ = AuthController.handleOpenUrl(url: url)
                     }
                 }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            switch newPhase {
+            case .active:
+                Task {
+                    await SocketManager.shared.reconnectIfNeeded() // TODO: 연결 해제된 사이의 내역 가져와야 함
+                }
+            case .inactive, .background:
+                Task {
+                    await SocketManager.shared.disconnect()
+                }
+            @unknown default:
+                break
+            }
         }
     }
 }

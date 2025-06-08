@@ -41,6 +41,17 @@ extension PathModel {
             ProfileEditView()
         case .notification:
             NotificationView()
+        case .recentNoti:
+            RecentNotiView()
+        case .chatList:
+            let vm = ChatListViewModel(chatRepository: container.services.chatRepository)
+            ChatListView(viewModel: vm)
+        case .chatRoom(let id):
+            let vm = ChatRoomViewModel(
+                chatService: container.services.chatService,
+                opponentId: id
+            )
+            ChatRoomView(viewModel: vm)
         }
     }
         

@@ -117,9 +117,13 @@ extension SignInViewModel {
             }
         }
         
-        _ = try await userRepository.kakaoLogin(
-            request: .init(oauthToken: oauth.accessToken, deviceToken: nil)
+        let deviceToken = try await UserSecurityManager.shared.fetchFCMToken()
+        
+        let response = try await userRepository.kakaoLogin(
+            request: .init(oauthToken: oauth.accessToken, deviceToken: deviceToken)
         )
+        
+        UserSecurityManager.shared.userId = response.user.id
     }
     
     private func appleLogin(result: Result<ASAuthorization, Error>) async throws {
@@ -137,9 +141,13 @@ extension SignInViewModel {
                 .compactMap { $0 }
                 .joined()
             
-            _ = try await userRepository.appleLogin(
-                request: .init(idToken: idToken, deviceToken: nil, nick: name)
+            let deviceToken = try await UserSecurityManager.shared.fetchFCMToken()
+            
+            let response = try await userRepository.appleLogin(
+                request: .init(idToken: idToken, deviceToken: deviceToken, nick: name)
             )
+            
+            UserSecurityManager.shared.userId = response.user.id
             
         case .failure(let error):
             throw error

@@ -13,12 +13,14 @@ struct DIContainerModifier: ViewModifier {
     
     init() {
         let authManager = AuthManager()
-        let authInterceptor = AuthInterceptor(tokenManager: TokenManager.shared, authManager: authManager)
+        let authInterceptor = AuthInterceptor(tokenManager: UserSecurityManager.shared, authManager: authManager)
         let session = Session(interceptor: authInterceptor)
-        let networkManager = NetworkManager(tokenManager: TokenManager.shared, authManager: authManager, session: session)
-        let authRepository = AuthRepository(networkManager: networkManager, tokenManager: TokenManager.shared)
+        let networkManager = NetworkManager(tokenManager: UserSecurityManager.shared, authManager: authManager, session: session)
+        let authRepository = AuthRepository(networkManager: networkManager, tokenManager: UserSecurityManager.shared)
         let userRepository = UserRepository(networkManager: networkManager, authManager: authManager)
         let activityRepository = ActivityRepository(networkManager: networkManager)
+        let chatRepository = ChatRepository(networkManager: networkManager)
+        let chatService = ChatService(chatRepository: chatRepository)
         
         self.container = DIContainer(
             services: .init(
@@ -26,7 +28,9 @@ struct DIContainerModifier: ViewModifier {
                 userRepository: userRepository,
                 authRepository: authRepository,
                 activityRepository: activityRepository,
-                authManager: authManager
+                authManager: authManager,
+                chatRepository: chatRepository,
+                chatService: chatService
             )
         )
     }

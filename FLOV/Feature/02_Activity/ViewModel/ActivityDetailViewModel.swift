@@ -31,6 +31,7 @@ final class ActivityDetailViewModel: ViewModelType {
     }
     
     struct Input {
+        let fetchActivityDetail = PassthroughSubject<Void, Never>()
         let keepToggle = PassthroughSubject<Bool, Never>()
     }
     
@@ -48,6 +49,7 @@ final class ActivityDetailViewModel: ViewModelType {
 // MARK: - Action
 extension ActivityDetailViewModel {
     enum Action {
+        case fetchActivityDetail
         case keepToggle(keepStatus: Bool)
         case selectDate(itemName: String)
         case selectTimeSlot(timeSlot: TimeSlotEntity)
@@ -55,6 +57,8 @@ extension ActivityDetailViewModel {
 
     func action(_ action: Action) {
         switch action {
+        case .fetchActivityDetail:
+            input.fetchActivityDetail.send(())
         case .keepToggle(let keepStatus):
             input.keepToggle.send(keepStatus)
         case .selectDate(let itemName):
@@ -69,9 +73,14 @@ extension ActivityDetailViewModel {
 // MARK: - Transform
 extension ActivityDetailViewModel {
     func transform() {
-        Task {
-            await fetchActivityDetail(id: activityId)
-        }
+        input.fetchActivityDetail
+            .sink { [weak self] in
+                guard let self = self else { return }
+                Task {
+                    await self.fetchActivityDetail(id: self.activityId)
+                }
+            }
+            .store(in: &cancellables)
         
         input.keepToggle
             .sink { [weak self] status in

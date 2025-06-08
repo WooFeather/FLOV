@@ -29,6 +29,9 @@ struct ActivityDetailView: View {
                 keepButton()
             }
         }
+        .onAppear {
+            viewModel.action(.fetchActivityDetail)
+        }
         .ignoresSafeArea()
     }
 }
@@ -462,7 +465,9 @@ private extension ActivityDetailView {
     }
     
     func chatButton() -> some View {
-        Text("채팅하기")
+        let opponentId = viewModel.output.activityDetails.creator.id
+        
+        return Text("채팅하기")
             .font(.Caption.caption1.weight(.semibold))
             .foregroundStyle(.white)
             .padding()
@@ -470,7 +475,7 @@ private extension ActivityDetailView {
             .background(.colBlack)
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .asButton {
-                // TODO: 채팅뷰로 이동
+                pathModel.push(.chatRoom(id: opponentId))
             }
     }
 }
