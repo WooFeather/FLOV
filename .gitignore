@@ -1,5 +1,5 @@
 *.xcconfig
-googleService.plist
+GoogleService-Info.plist
 
 # Created by https://www.toptal.com/developers/gitignore/api/cocoapods,swift,xcode
 # Edit at https://www.toptal.com/developers/gitignore?templates=cocoapods,swift,xcode
