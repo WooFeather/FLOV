@@ -117,8 +117,10 @@ extension SignInViewModel {
             }
         }
         
+        let deviceToken = try await TokenManager.shared.fetchFCMToken()
+        
         _ = try await userRepository.kakaoLogin(
-            request: .init(oauthToken: oauth.accessToken, deviceToken: nil)
+            request: .init(oauthToken: oauth.accessToken, deviceToken: deviceToken)
         )
     }
     
@@ -137,8 +139,10 @@ extension SignInViewModel {
                 .compactMap { $0 }
                 .joined()
             
+            let deviceToken = try await TokenManager.shared.fetchFCMToken()
+            
             _ = try await userRepository.appleLogin(
-                request: .init(idToken: idToken, deviceToken: nil, nick: name)
+                request: .init(idToken: idToken, deviceToken: deviceToken, nick: name)
             )
             
         case .failure(let error):

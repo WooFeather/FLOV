@@ -12,6 +12,8 @@ import Kingfisher
 
 @main
 struct FLOVApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     init() {
         /// KakaoSDK 초기화
         KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)

@@ -25,6 +25,7 @@ final class AuthManager: ObservableObject {
     @MainActor
     func signOut() {
         TokenManager.shared.clearAuthTokens()
+        TokenManager.shared.clearFCMToken()
         isSigned = false
     }
 }
