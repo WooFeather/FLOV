@@ -58,6 +58,8 @@ extension AppDelegate: MessagingDelegate {
         guard let fcmToken = fcmToken else { return }
         print("🔑 New FCM token:", fcmToken)
         
+        TokenManager.shared.fcmToken = fcmToken
+        
         Task {
           try await UserRepository(
                 networkManager: NetworkManager(

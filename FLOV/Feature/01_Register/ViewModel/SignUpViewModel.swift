@@ -156,6 +156,8 @@ extension SignUpViewModel {
     
     @MainActor
     private func join() async throws {
+        let deviceToken = try await TokenManager.shared.fetchFCMToken()
+        
         _ = try await userRepository.join(
             request: .init(
                 email : input.email,
@@ -163,7 +165,7 @@ extension SignUpViewModel {
                 nick : input.nickname,
                 phoneNum : nil,
                 introduction: nil,
-                deviceToken : nil
+                deviceToken : deviceToken
             )
         )
         
@@ -171,7 +173,7 @@ extension SignUpViewModel {
             request: .init(
                 email : input.email,
                 password : input.password,
-                deviceToken: nil
+                deviceToken: deviceToken
             )
         )
         
