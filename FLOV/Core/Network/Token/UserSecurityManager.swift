@@ -8,12 +8,12 @@
 import Foundation
 import FirebaseMessaging
 
-final class TokenManager: Sendable {
-    static let shared = TokenManager()
+final class UserSecurityManager: Sendable {
+    static let shared = UserSecurityManager()
     private let keychain = KeychainManager.shared
 
     private enum Key: String {
-        case accessToken, refreshToken, fcmToken
+        case accessToken, refreshToken, fcmToken, userId
     }
     
     private init() {}
@@ -53,6 +53,19 @@ final class TokenManager: Sendable {
                 keychain.save(token, forKey: Key.fcmToken.rawValue)
             } else {
                 keychain.delete(Key.fcmToken.rawValue)
+            }
+        }
+    }
+    
+    var userId: String? {
+        get {
+            keychain.read(Key.userId.rawValue)
+        }
+        set {
+            if let id = newValue {
+                keychain.save(id, forKey: Key.userId.rawValue)
+            } else {
+                keychain.delete(Key.userId.rawValue)
             }
         }
     }
@@ -102,5 +115,9 @@ final class TokenManager: Sendable {
               print("FCM 토큰 삭제 완료")
             }
         }
+    }
+    
+    func clearUserId() {
+        keychain.delete(Key.userId.rawValue)
     }
 }

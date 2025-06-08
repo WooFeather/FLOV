@@ -41,18 +41,18 @@ extension ChatAPI: Router {
         switch self {
         case .createChat, .sendMessage:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "application/json"
             ]
         case .chatListLookup, .messageListLookup:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
             ]
         case .uploadFiles:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "multipart/form-data"
             ]

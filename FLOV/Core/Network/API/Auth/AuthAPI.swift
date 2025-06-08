@@ -32,8 +32,8 @@ extension AuthAPI: Router {
         case .refresh:
             return [
                 "Content-Type": "application/json",
-                "RefreshToken": TokenManager.shared.refreshToken ?? "",
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "RefreshToken": UserSecurityManager.shared.refreshToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
             ]
         }

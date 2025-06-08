@@ -51,18 +51,18 @@ extension ActivityAPI: Router {
         switch self {
         case .fileUpload:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "multipart/form-data"
             ]
         case .listLookup, .detailLookup, .newListLookup, .search, .keepLookup:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
             ]
         case .keep:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "application/json"
             ]

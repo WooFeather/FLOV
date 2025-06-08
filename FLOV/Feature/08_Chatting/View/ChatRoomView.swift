@@ -50,14 +50,22 @@ private extension ChatRoomView {
     
     func messageRowView(_ message: ChatMessageEntity) -> some View {
         HStack {
-            // TODO: userId에 따라 위치 변경
-            Spacer()
-            Text(message.content)
-                .padding()
-                .background(.colDeep)
-                .foregroundStyle(.gray90)
-                .asRoundedBackground(cornerRadius: 12, strokeColor: .gray30)
+            if message.sender.id == UserSecurityManager.shared.userId {
+                Spacer()
+                Text(message.content)
+                    .padding()
+                    .background(.colDeep)
+                    .foregroundStyle(.gray90)
+                    .asRoundedBackground(cornerRadius: 12, strokeColor: .gray30)
+            } else {
+                Text(message.content)
+                    .padding()
+                    .foregroundStyle(.gray90)
+                    .asRoundedBackground(cornerRadius: 12, strokeColor: .gray30)
+                Spacer()
+            }
         }
+        .padding(.horizontal)
     }
 }
 

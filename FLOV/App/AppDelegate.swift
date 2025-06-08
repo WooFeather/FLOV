@@ -58,14 +58,14 @@ extension AppDelegate: MessagingDelegate {
         guard let fcmToken = fcmToken else { return }
         print("🔑 New FCM token:", fcmToken)
         
-        TokenManager.shared.fcmToken = fcmToken
+        UserSecurityManager.shared.fcmToken = fcmToken
         
-        guard TokenManager.shared.accessToken != nil else { return }
+        guard UserSecurityManager.shared.accessToken != nil else { return }
         
         Task {
           try await UserRepository(
                 networkManager: NetworkManager(
-                    tokenManager: TokenManager.shared,
+                    tokenManager: UserSecurityManager.shared,
                     authManager: AuthManager(),
                     session: Session()
                 ),

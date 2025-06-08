@@ -65,18 +65,18 @@ extension UserAPI: Router {
             ]
         case .profileLookup, .searchUser:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
             ]
         case .deviceTokenUpdate, .profileUpdate:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "application/json"
             ]
         case .profileImageUpload:
             return [
-                "Authorization": TokenManager.shared.accessToken ?? "",
+                "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "multipart/form-data"
             ]

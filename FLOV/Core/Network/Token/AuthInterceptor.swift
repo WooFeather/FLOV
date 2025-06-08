@@ -10,7 +10,7 @@ import Alamofire
 
 // MARK: - Auth Interceptor
 final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
-    private let tokenManager: TokenManager
+    private let tokenManager: UserSecurityManager
     private let authManager: AuthManager
     
     // 토큰 갱신 동기화를 위한 프로퍼티들
@@ -18,7 +18,7 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
     private var isRefreshing = false
     private var requestsToRetry: [(RetryResult) -> Void] = []
     
-    init(tokenManager: TokenManager, authManager: AuthManager) {
+    init(tokenManager: UserSecurityManager, authManager: AuthManager) {
         self.tokenManager = tokenManager
         self.authManager = authManager
     }

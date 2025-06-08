@@ -14,11 +14,11 @@ protocol NetworkManagerType {
 }
 
 final class NetworkManager: NetworkManagerType {
-    private let tokenManager: TokenManager
+    private let tokenManager: UserSecurityManager
     private let authManager: AuthManager
     private let session: Session
     
-    init(tokenManager: TokenManager, authManager: AuthManager, session: Session) {
+    init(tokenManager: UserSecurityManager, authManager: AuthManager, session: Session) {
         self.tokenManager = tokenManager
         self.authManager = authManager
         self.session = session

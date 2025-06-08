@@ -13,9 +13,9 @@ protocol AuthRepositoryType {
 
 final class AuthRepository: AuthRepositoryType {
     private let networkManager: NetworkManagerType
-    private let tokenManager: TokenManager
+    private let tokenManager: UserSecurityManager
     
-    init(networkManager: NetworkManagerType, tokenManager: TokenManager) {
+    init(networkManager: NetworkManagerType, tokenManager: UserSecurityManager) {
         self.networkManager = networkManager
         self.tokenManager = tokenManager
     }

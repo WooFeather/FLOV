@@ -44,7 +44,7 @@ final class SocketManager: SocketManagerType {
         currentRoomId = roomId
         
         guard let baseURL = URL(string: Config.baseURL),
-              let accessToken = TokenManager.shared.accessToken else {
+              let accessToken = UserSecurityManager.shared.accessToken else {
             print("❌ Socket connection failed - Invalid URL or Token")
             return
         }
