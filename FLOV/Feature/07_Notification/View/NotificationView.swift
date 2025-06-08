@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NotificationView: View {
+    @EnvironmentObject var pathModel: PathModel
     @State private var selectedTab: Int = 0
     private let tabs = ["최근 알림", "채팅 내역"]
     
@@ -16,9 +17,9 @@ struct NotificationView: View {
             tabSwitchView()
             
             TabView(selection: $selectedTab) {
-                RecentNotiView()
+                pathModel.build(.recentNoti)
                     .tag(0)
-                ChatListView()
+                pathModel.build(.chatList)
                     .tag(1)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
