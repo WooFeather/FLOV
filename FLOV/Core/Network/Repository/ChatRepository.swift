@@ -12,7 +12,7 @@ protocol ChatRepositoryType {
     func createChat(request: CreateChatRequest) async throws -> ChatRoomEntity
     func chatListLookup() async throws -> [ChatRoomEntity]
     func sendMessage(roomId: String, request: SendMessageRequest) async throws -> ChatMessageEntity
-    func messageListLookup(roomId: String, next: String?) async throws -> [ChatRoomEntity]
+    func messageListLookup(roomId: String, next: String?) async throws -> [ChatMessageEntity]
     func uploadFiles(roomId: String, fileDatas: [Data]) async throws -> UploadFilesEntity
 }
 
@@ -47,8 +47,8 @@ final class ChatRepository: ChatRepositoryType {
         return entity
     }
     
-    func messageListLookup(roomId: String, next: String?) async throws -> [ChatRoomEntity] {
-        let response: ListLookupResponse = try await networkManager.callRequest(ChatAPI.messageListLookup(roomId: roomId, next: next))
+    func messageListLookup(roomId: String, next: String?) async throws -> [ChatMessageEntity] {
+        let response: MessageLookupResponse = try await networkManager.callRequest(ChatAPI.messageListLookup(roomId: roomId, next: next))
         
         let entity = response.data.map { $0.toEntity() }
         

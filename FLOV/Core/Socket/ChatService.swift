@@ -68,25 +68,34 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     // MARK: - 채팅 히스토리 로드
     func loadChatHistory(roomId: String) async throws {
         print("📚 Loading chat history for room: \(roomId)")
-        
-        // 1. DB에서 마지막 메시지 날짜 조회
-        let lastMessageDate = await getLastMessageDate(roomId: roomId)
-        let nextCursor = lastMessageDate != nil ? ISO8601DateFormatter().string(from: lastMessageDate!) : nil
-        
-        // 2. 서버에서 새로운 메시지 조회
-        let newMessages = try await chatRepository.messageListLookup(roomId: roomId, next: nextCursor)
-        
-        // 3. 새로운 메시지들을 DB에 저장
-        for chatRoom in newMessages {
-            if let lastChat = chatRoom.lastChat {
-                try await saveMessageToDB(lastChat)
-            }
+
+        // 0) UI에 보일 채팅 배열 초기화 (다른 채팅방 들어갔을때 대비)
+        await MainActor.run { chatMessages = [] }
+
+        // 1) DB에 저장된 메시지 중, 이 방의 마지막 메시지 날짜 가져오기
+        let stored = realm.objects(ChatMessageObject.self)
+            .filter("roomId == %@", roomId)
+            .sorted(byKeyPath: "createdAt", ascending: true)
+        let lastDateInDB = stored.last?.createdAt
+
+        // 2) 서버 호출 시 커서: DB가 비어있다면 nil → 과거 전체를 가져옴
+        let nextCursor: String? = lastDateInDB.map {
+            ISO8601DateFormatter().string(from: $0)
         }
-        
-        // 4. DB에서 전체 메시지 로드하여 UI 업데이트
+
+        // 3) 서버에서 “newMessages” 받아오기
+        let newMessages: [ChatMessageEntity] = try await
+            chatRepository.messageListLookup(roomId: roomId, next: nextCursor)
+
+        // 4) 받은 모든 메시지를 DB에 저장
+        for msg in newMessages {
+            try await saveMessageToDB(msg)
+        }
+
+        // 5) DB에서 다시 불러와서 Published 프로퍼티 업데이트
         await loadMessagesFromDB(roomId: roomId)
-        
-        print("✅ Loaded \(newMessages.count) new messages")
+
+        print("✅ Loaded \(newMessages.count) new messages (cursor: \(nextCursor ?? "nil"))")
     }
     
     // MARK: - 메시지 전송
@@ -103,8 +112,8 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         // 3. UI 즉시 업데이트
         await loadMessagesFromDB(roomId: roomId)
         
-        // 2. 소켓을 통해서도 메시지 전송 (실시간 알림용)
-        // socketManager.sendMessage(roomId: roomId, content: content)
+        // 4. 소켓을 통해서도 메시지 전송 (실시간 알림용)
+         socketManager.sendMessage(roomId: roomId, content: content)
         
         print("✅ Message sent successfully")
     }

@@ -8,7 +8,6 @@
 import Foundation
 
 // MARK: - ChatListLookupResponse
-/// chattListLookup과 messageListLookup 공용DTO
 struct ListLookupResponse: Decodable {
     let data: [ChatRoomResponse]
 }

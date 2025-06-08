@@ -53,15 +53,17 @@ private extension ChatRoomView {
             if message.sender.id == UserSecurityManager.shared.userId {
                 Spacer()
                 Text(message.content)
-                    .padding()
+                    .padding(.vertical, 9)
+                    .padding(.horizontal, 10)
                     .background(.colDeep)
                     .foregroundStyle(.gray90)
-                    .asRoundedBackground(cornerRadius: 12, strokeColor: .gray30)
+                    .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
             } else {
                 Text(message.content)
-                    .padding()
+                    .padding(.vertical, 9)
+                    .padding(.horizontal, 10)
                     .foregroundStyle(.gray90)
-                    .asRoundedBackground(cornerRadius: 12, strokeColor: .gray30)
+                    .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
                 Spacer()
             }
         }
