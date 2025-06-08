@@ -52,6 +52,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 }
 
+// TODO: 로그아웃시 토큰 초기화 및 로그인시 재발급
 extension AppDelegate: MessagingDelegate {
     // FCM 등록 토큰 수신
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
@@ -59,6 +60,8 @@ extension AppDelegate: MessagingDelegate {
         print("🔑 New FCM token:", fcmToken)
         
         TokenManager.shared.fcmToken = fcmToken
+        
+        guard TokenManager.shared.accessToken != nil else { return }
         
         Task {
           try await UserRepository(

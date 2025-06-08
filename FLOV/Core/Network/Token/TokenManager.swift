@@ -92,4 +92,15 @@ final class TokenManager: Sendable {
             }
         }
     }
+    
+    func clearFCMToken() {
+        keychain.delete(Key.fcmToken.rawValue)
+        Messaging.messaging().deleteToken { error in
+            if let error = error {
+              print("FCM deleteToken 실패:", error)
+            } else {
+              print("FCM 토큰 삭제 완료")
+            }
+        }
+    }
 }
