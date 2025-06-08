@@ -61,9 +61,8 @@ final class SocketManager: SocketManagerType {
         // 소켓 URL 구성: {baseURL}:{port}/chats-{room_id}
         let socketURL = "\(baseURL)/chats-\(roomId)"
         
-        manager = SocketIO.SocketManager(socketURL: URL(string: socketURL)!, config: config)
-        socket = manager?.defaultSocket
-        
+        manager = SocketIO.SocketManager(socketURL: baseURL, config: config)
+        socket = manager?.socket(forNamespace: "/chats-\(roomId)")
         setupSocketEvents()
         socket?.connect()
         
