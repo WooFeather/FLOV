@@ -16,6 +16,7 @@ protocol ChatServiceType {
     func sendMessage(roomId: String, content: String, files: [String]?) async throws
     func connectSocket(roomId: String) async
     func disconnectSocket() async
+    func loadChatRoomInfo(opponentId: String) async throws -> ChatRoomEntity
     var messages: AnyPublisher<[ChatMessageEntity], Never> { get }
 }
 
@@ -127,8 +128,15 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         await socketManager.disconnect()
     }
     
-    // MARK: - Private Methods
+    // MARK: - 편의 메서드
+    func loadChatRoomInfo(opponentId: String) async throws -> ChatRoomEntity {
+        let createChatRequest = CreateChatRequest(opponentId: opponentId)
+        let chatRoom = try await chatRepository.createChat(request: createChatRequest)
+        
+        return chatRoom
+    }
     
+    // MARK: - Private Methods
     private func setupSocketMessageListener() {
         // 소켓으로부터 메시지 수신 시 처리
         socketManager.messageReceived

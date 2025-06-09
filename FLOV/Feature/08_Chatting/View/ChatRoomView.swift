@@ -18,9 +18,15 @@ struct ChatRoomView: View {
         }
         .onAppear {
             viewModel.action(.createChatRoom(viewModel.opponentId))
+            viewModel.action(.loadChatRoomInfo(viewModel.opponentId))
         }
         .onDisappear {
             viewModel.action(.disconnectSocket)
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                toolbarTitle()
+            }
         }
     }
 }
@@ -30,7 +36,7 @@ private extension ChatRoomView {
     func messageListView() -> some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack {
+                LazyVStack(spacing: 8) {
                     ForEach(viewModel.output.messages, id: \.chatId) { message in
                         messageRowView(message)
                             .id(message.chatId)
@@ -53,17 +59,21 @@ private extension ChatRoomView {
             if message.sender.id == UserSecurityManager.shared.userId {
                 Spacer()
                 Text(message.content)
+                    .font(.Body.body1.weight(.medium))
                     .padding(.vertical, 9)
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, 12)
                     .background(.colDeep)
                     .foregroundStyle(.gray90)
                     .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+                    .frame(maxWidth: 280, alignment: .trailing)
             } else {
                 Text(message.content)
+                    .font(.Body.body1.weight(.medium))
                     .padding(.vertical, 9)
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, 12)
                     .foregroundStyle(.gray90)
                     .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+                    .frame(maxWidth: 280, alignment: .leading)
                 Spacer()
             }
         }
@@ -84,5 +94,15 @@ private extension ChatRoomView {
                 }
         }
         .padding()
+    }
+}
+
+// MARK: - Toolbar
+private extension ChatRoomView {
+    func toolbarTitle() -> some View {
+        Text(viewModel.output.opponentInfo?.nick ?? "CHATTING")
+            .foregroundStyle(.colDeep)
+            .font(.Caption.caption0)
+            .lineLimit(1)
     }
 }

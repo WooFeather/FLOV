@@ -33,6 +33,7 @@ final class ChatRoomViewModel: ViewModelType {
     
     struct Input {
         let createChatRoom = PassthroughSubject<String, Never>()
+        let loadChatRoomInfo = PassthroughSubject<String, Never>()
         let disconnectSocket = PassthroughSubject<Void, Never>()
         let sendMessage = PassthroughSubject<Void, Never>()
     }
@@ -40,6 +41,7 @@ final class ChatRoomViewModel: ViewModelType {
     struct Output {
         var messages: [ChatMessageEntity] = []
         var chatText = ""
+        var opponentInfo: UserEntity?
     }
 }
 
@@ -47,6 +49,7 @@ final class ChatRoomViewModel: ViewModelType {
 extension ChatRoomViewModel {
     enum Action {
         case createChatRoom(String)
+        case loadChatRoomInfo(String)
         case disconnectSocket
         case sendMessage
     }
@@ -55,6 +58,8 @@ extension ChatRoomViewModel {
         switch action {
         case .createChatRoom(let opponentId):
             input.createChatRoom.send(opponentId)
+        case .loadChatRoomInfo(let opponentId):
+            input.loadChatRoomInfo.send(opponentId)
         case .disconnectSocket:
             input.disconnectSocket.send(())
         case .sendMessage:
@@ -72,6 +77,16 @@ extension ChatRoomViewModel {
                 
                 Task {
                     await self.createChatRoom(opponentId: opponentId)
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.loadChatRoomInfo
+            .sink { [weak self] opponentId in
+                guard let self = self else { return }
+                
+                Task {
+                    await self.loadChatRoomInfo(opponentId: opponentId)
                 }
             }
             .store(in: &cancellables)
@@ -113,6 +128,21 @@ extension ChatRoomViewModel {
         do {
             let roomId = try await chatService.enterChatRoom(opponentId: opponentId)
             chatRoomId = roomId
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func loadChatRoomInfo(opponentId: String) async {
+        do {
+            let chatRoom = try await chatService.loadChatRoomInfo(opponentId: opponentId)
+            let currentUserId = UserSecurityManager.shared.userId
+            let opponent = chatRoom.participants
+                .first { $0.id != currentUserId }
+                ?? chatRoom.participants.first { $0.id == currentUserId }
+                ?? chatRoom.participants.first!
+            output.opponentInfo = opponent
         } catch {
             print(error)
         }
