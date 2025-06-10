@@ -35,6 +35,7 @@ final class ChatRoomViewModel: ViewModelType {
         let createChatRoom = PassthroughSubject<String, Never>()
         let loadChatRoomInfo = PassthroughSubject<String, Never>()
         let disconnectSocket = PassthroughSubject<Void, Never>()
+        let reconnectSocket = PassthroughSubject<Void, Never>()
         let sendMessage = PassthroughSubject<Void, Never>()
         let updateChatText = PassthroughSubject<String, Never>()
     }
@@ -53,6 +54,7 @@ extension ChatRoomViewModel {
         case createChatRoom(String)
         case loadChatRoomInfo(String)
         case disconnectSocket
+        case reconnectSocket
         case sendMessage
         case updateChatText(String)
     }
@@ -65,6 +67,8 @@ extension ChatRoomViewModel {
             input.loadChatRoomInfo.send(opponentId)
         case .disconnectSocket:
             input.disconnectSocket.send(())
+        case .reconnectSocket:
+            input.reconnectSocket.send(())
         case .sendMessage:
             input.sendMessage.send(())
         case .updateChatText(let newText):
@@ -102,6 +106,16 @@ extension ChatRoomViewModel {
                 
                 Task {
                     await self.disconnectSocket()
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.reconnectSocket
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                
+                Task {
+                    await self.reconnectSocket()
                 }
             }
             .store(in: &cancellables)
@@ -171,6 +185,15 @@ extension ChatRoomViewModel {
     
     private func disconnectSocket() async {
         await chatService.disconnectSocket()
+    }
+    
+    private func reconnectSocket() async {
+        guard let chatRoomId else { return }
+        do {
+           try await chatService.reconnectSocket(roomId: chatRoomId)
+        } catch {
+            print(error)
+        }
     }
     
     @MainActor

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatRoomView: View {
     @EnvironmentObject var pathModel: PathModel
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject var viewModel: ChatRoomViewModel
     
     var body: some View {
@@ -22,6 +23,16 @@ struct ChatRoomView: View {
         }
         .onDisappear {
             viewModel.action(.disconnectSocket)
+        }
+        .onChange(of: scenePhase) { newPhase in
+            switch newPhase {
+            case .active:
+                    viewModel.action(.reconnectSocket)
+            case .inactive, .background:
+                    viewModel.action(.disconnectSocket)
+            @unknown default:
+                break
+            }
         }
         .toolbar {
             ToolbarItem(placement: .principal) {

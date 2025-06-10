@@ -16,6 +16,7 @@ protocol ChatServiceType {
     func sendMessage(roomId: String, content: String, files: [String]?) async throws
     func connectSocket(roomId: String) async
     func disconnectSocket() async
+    func reconnectSocket(roomId: String) async throws
     func loadChatRoomInfo(opponentId: String) async throws -> ChatRoomEntity
     var messages: AnyPublisher<[ChatMessageEntity], Never> { get }
 }
@@ -69,10 +70,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     // MARK: - 채팅 히스토리 로드
     func loadChatHistory(roomId: String) async throws {
         print("📚 Loading chat history for room: \(roomId)")
-
-        // 0) UI에 보일 채팅 배열 초기화 (다른 채팅방 들어갔을때 대비)
-        await MainActor.run { chatMessages = [] }
-
+        
         // 1) DB에 저장된 메시지 중, 이 방의 마지막 메시지 날짜 가져오기
         let stored = realm.objects(ChatMessageObject.self)
             .filter("roomId == %@", roomId)
@@ -128,6 +126,13 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     
     func disconnectSocket() async {
         await socketManager.disconnect()
+    }
+    
+    func reconnectSocket(roomId: String) async throws {
+        try await loadChatHistory(roomId: roomId)
+        
+        await socketManager.connect(roomId: roomId)
+        print("🌱 Reconnecting to room \(roomId)")
     }
     
     // MARK: - 편의 메서드
