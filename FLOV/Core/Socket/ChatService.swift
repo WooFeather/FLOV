@@ -107,6 +107,8 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         let sendRequest = SendMessageRequest(content: content, files: files)
         let sentMessage = try await chatRepository.sendMessage(roomId: roomId, request: sendRequest)
         
+        // TODO: HTTP통신이 실패했을 경우 DB에서 분기처리(Bool)
+        
         // 2. 전송된 메시지를 DB에 저장
         try await saveMessageToDB(sentMessage)
         
@@ -114,7 +116,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         await loadMessagesFromDB(roomId: roomId)
         
         // 4. 소켓을 통해서도 메시지 전송 (실시간 알림용)
-         socketManager.sendMessage(roomId: roomId, content: content)
+        // socketManager.sendMessage(roomId: roomId, content: content)
         
         print("✅ Message sent successfully")
     }

@@ -36,12 +36,14 @@ final class ChatRoomViewModel: ViewModelType {
         let loadChatRoomInfo = PassthroughSubject<String, Never>()
         let disconnectSocket = PassthroughSubject<Void, Never>()
         let sendMessage = PassthroughSubject<Void, Never>()
+        let updateChatText = PassthroughSubject<String, Never>()
     }
     
     struct Output {
         var messages: [ChatMessageEntity] = []
         var chatText = ""
         var opponentInfo: UserEntity?
+        var isSendButtonEnabled = false
     }
 }
 
@@ -52,6 +54,7 @@ extension ChatRoomViewModel {
         case loadChatRoomInfo(String)
         case disconnectSocket
         case sendMessage
+        case updateChatText(String)
     }
 
     func action(_ action: Action) {
@@ -64,6 +67,8 @@ extension ChatRoomViewModel {
             input.disconnectSocket.send(())
         case .sendMessage:
             input.sendMessage.send(())
+        case .updateChatText(let newText):
+            input.updateChatText.send(newText)
         }
     }
 }
@@ -119,6 +124,17 @@ extension ChatRoomViewModel {
                 }
             }
             .store(in: &cancellables)
+        
+        // 새로 추가: 텍스트 업데이트 처리
+        input.updateChatText
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newText in
+                guard let self = self else { return }
+                
+                self.output.chatText = newText
+                self.updateSendButtonState()
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -159,7 +175,7 @@ extension ChatRoomViewModel {
     
     @MainActor
     private func sendMessage() async {
-        guard !output.chatText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+        guard output.isSendButtonEnabled,
               let chatRoomId = chatRoomId else {
             print("❌ Cannot send empty message or missing room ID")
             return
@@ -167,6 +183,7 @@ extension ChatRoomViewModel {
         
         let messageContent = output.chatText
         output.chatText = ""
+        updateSendButtonState()
         
         do {
             try await chatService.sendMessage(roomId: chatRoomId, content: messageContent, files: nil)
@@ -174,6 +191,14 @@ extension ChatRoomViewModel {
             print("❌ Error sending message: \(error)")
             // 에러 발생 시 메시지 복원
             output.chatText = messageContent
+            updateSendButtonState()
         }
+    }
+    
+    // 전송 버튼 상태 업데이트
+    private func updateSendButtonState() {
+        output.isSendButtonEnabled = !output.chatText
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .isEmpty
     }
 }

@@ -120,16 +120,38 @@ private extension ChatRoomView {
 // MARK: - ChatFieldView
 private extension ChatRoomView {
     func sendFieldView() -> some View {
-        HStack {
-            TextField("메시지 입력", text: $viewModel.output.chatText)
-                .textFieldStyle(.roundedBorder)
+        VStack(spacing: 0) {
+            Divider()
+                .background(.gray45)
             
-            Text("전송")
-                .asButton {
-                    viewModel.action(.sendMessage)
-                }
+            // TODO: 텍스트필드 높이 동적 조절
+            HStack(alignment: .bottom, spacing: 12) {
+                TextEditor(text: $viewModel.output.chatText)
+                    .font(.Body.body1.weight(.medium))
+                    .scrollContentBackground(.hidden)
+                    .background(.clear)
+                    .onChange(of: viewModel.output.chatText) { newValue in
+                        viewModel.action(.updateChatText(newValue))
+                    }
+                    .offset(x: 10, y: 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.gray30)
+                    )
+                    .frame(height: 44)
+                
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundColor(viewModel.output.isSendButtonEnabled ? .colBlack : .gray)
+                    .asButton {
+                        viewModel.action(.sendMessage)
+                    }
+                    .disabled(!viewModel.output.isSendButtonEnabled)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.white)
         }
-        .padding()
     }
 }
 
