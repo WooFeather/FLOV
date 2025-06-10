@@ -36,7 +36,7 @@ private extension ChatRoomView {
     func messageListView() -> some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 8) {
+                LazyVStack(spacing: 12) {
                     ForEach(viewModel.output.messages, id: \.chatId) { message in
                         messageRowView(message)
                             .id(message.chatId)
@@ -55,29 +55,65 @@ private extension ChatRoomView {
     }
     
     func messageRowView(_ message: ChatMessageEntity) -> some View {
-        HStack {
-            if message.sender.id == UserSecurityManager.shared.userId {
+        let isMyMessage = message.sender.id == UserSecurityManager.shared.userId
+        return HStack(alignment: .top, spacing: 8) {
+            if isMyMessage {
                 Spacer()
-                Text(message.content)
-                    .font(.Body.body1.weight(.medium))
-                    .padding(.vertical, 9)
-                    .padding(.horizontal, 12)
-                    .background(.colDeep)
-                    .foregroundStyle(.gray90)
-                    .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
-                    .frame(maxWidth: 280, alignment: .trailing)
+                myBubble(message)
             } else {
-                Text(message.content)
-                    .font(.Body.body1.weight(.medium))
-                    .padding(.vertical, 9)
-                    .padding(.horizontal, 12)
-                    .foregroundStyle(.gray90)
-                    .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
-                    .frame(maxWidth: 280, alignment: .leading)
+                opponentBubble(message)
                 Spacer()
             }
         }
+        .frame(maxWidth: .infinity, alignment: isMyMessage ? .trailing : .leading)
         .padding(.horizontal)
+    }
+    
+    func myBubble(_ message: ChatMessageEntity) -> some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            Text(message.createdAt.toString(format: "a h:mm") ?? "")
+                .font(.Caption.caption2.weight(.regular))
+                .foregroundStyle(.gray60)
+            
+            Text(message.content)
+                .font(.Body.body1.weight(.medium))
+                .padding(.vertical, 9)
+                .padding(.horizontal, 12)
+                .background(.colDeep)
+                .foregroundStyle(.gray90)
+                .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+        }
+    }
+    
+    func opponentBubble(_ message: ChatMessageEntity) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            KFRemoteImageView(
+                path: message.sender.profileImageURL ?? "",
+                aspectRatio: 1,
+                cachePolicy: .memoryAndDiskWithOriginal,
+                height: 40
+            )
+            .clipShape(Circle())
+            
+            HStack(alignment: .bottom, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(message.sender.nick)
+                        .font(.Caption.caption1.weight(.semibold))
+                        .foregroundStyle(.gray60)
+                    
+                    Text(message.content)
+                        .font(.Body.body1.weight(.medium))
+                        .padding(.vertical, 9)
+                        .padding(.horizontal, 12)
+                        .foregroundStyle(.gray90)
+                        .asRoundedBackground(cornerRadius: 16, strokeColor: .gray30)
+                }
+                
+                Text(message.createdAt.toString(format: "a h:mm") ?? "")
+                    .font(.Caption.caption2.weight(.regular))
+                    .foregroundStyle(.gray60)
+            }
+        }
     }
 }
 
