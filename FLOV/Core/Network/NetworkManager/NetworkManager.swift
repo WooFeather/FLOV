@@ -66,6 +66,7 @@ final class NetworkManager: NetworkManagerType {
         }
     }
     
+    // TODO: Interceptor가 안먹는다면 to, method 파라미터 사용해야 될수도
     func uploadMultipart<T: Decodable, U: Router>(_ api: U, formDataBuilder: @escaping (MultipartFormData) -> Void) async throws -> T {
         // Multipart 업로드 요청 → Data + HTTPURLResponse 수신
         let dataResponse = await session.upload(

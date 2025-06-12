@@ -66,7 +66,7 @@ extension NotificationView {
 // MARK: - Toolbar
 extension NotificationView {
     func toolbarTitle() -> some View {
-        Text("NOTIFICATION")
+        Text("NOTIFICATIONS")
             .foregroundStyle(.colDeep)
             .font(.Caption.caption0)
     }

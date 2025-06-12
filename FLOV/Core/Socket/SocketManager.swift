@@ -12,7 +12,6 @@ import Combine
 protocol SocketManagerType: ObservableObject {
     func connect(roomId: String) async
     func disconnect() async
-    func sendMessage(roomId: String, content: String)
     var messageReceived: AnyPublisher<ChatMessageEntity, Never> { get }
     var connectionStatus: AnyPublisher<SocketIOStatus, Never> { get }
     var currentRoomId: String? { get }
@@ -76,29 +75,6 @@ final class SocketManager: SocketManagerType {
         socket = nil
         manager = nil
         print("🔌 Socket disconnected")
-    }
-    
-    /// 앱이 포그라운드로 돌아왔을 때, 마지막 방이 있으면 재연결
-    func reconnectIfNeeded() async {
-        guard let roomId = currentRoomId else { return }
-        print("🌱 Reconnecting to room \(roomId)")
-        await connect(roomId: roomId)
-    }
-    
-    func sendMessage(roomId: String, content: String) {
-        guard let socket = socket, socket.status == .connected else {
-            print("❌ Socket not connected")
-            return
-        }
-        
-        let messageData: [String: Any] = [
-            "room_id": roomId,
-            "content": content,
-            "created_at": ISO8601DateFormatter().string(from: Date())
-        ]
-        
-        socket.emit("chat", messageData)
-        print("📤 Message sent: \(content)")
     }
     
     private func setupSocketEvents() {

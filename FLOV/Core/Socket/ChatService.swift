@@ -16,6 +16,8 @@ protocol ChatServiceType {
     func sendMessage(roomId: String, content: String, files: [String]?) async throws
     func connectSocket(roomId: String) async
     func disconnectSocket() async
+    func reconnectSocket(roomId: String) async throws
+    func loadChatRoomInfo(opponentId: String) async throws -> ChatRoomEntity
     var messages: AnyPublisher<[ChatMessageEntity], Never> { get }
 }
 
@@ -68,10 +70,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
     // MARK: - 채팅 히스토리 로드
     func loadChatHistory(roomId: String) async throws {
         print("📚 Loading chat history for room: \(roomId)")
-
-        // 0) UI에 보일 채팅 배열 초기화 (다른 채팅방 들어갔을때 대비)
-        await MainActor.run { chatMessages = [] }
-
+        
         // 1) DB에 저장된 메시지 중, 이 방의 마지막 메시지 날짜 가져오기
         let stored = realm.objects(ChatMessageObject.self)
             .filter("roomId == %@", roomId)
@@ -106,6 +105,8 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         let sendRequest = SendMessageRequest(content: content, files: files)
         let sentMessage = try await chatRepository.sendMessage(roomId: roomId, request: sendRequest)
         
+        // TODO: HTTP통신이 실패했을 경우 DB에서 분기처리(Bool)
+        
         // 2. 전송된 메시지를 DB에 저장
         try await saveMessageToDB(sentMessage)
         
@@ -113,7 +114,7 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         await loadMessagesFromDB(roomId: roomId)
         
         // 4. 소켓을 통해서도 메시지 전송 (실시간 알림용)
-         socketManager.sendMessage(roomId: roomId, content: content)
+        // socketManager.sendMessage(roomId: roomId, content: content)
         
         print("✅ Message sent successfully")
     }
@@ -127,8 +128,22 @@ final class ChatService: ObservableObject, @preconcurrency ChatServiceType {
         await socketManager.disconnect()
     }
     
-    // MARK: - Private Methods
+    func reconnectSocket(roomId: String) async throws {
+        try await loadChatHistory(roomId: roomId)
+        
+        await socketManager.connect(roomId: roomId)
+        print("🌱 Reconnecting to room \(roomId)")
+    }
     
+    // MARK: - 편의 메서드
+    func loadChatRoomInfo(opponentId: String) async throws -> ChatRoomEntity {
+        let createChatRequest = CreateChatRequest(opponentId: opponentId)
+        let chatRoom = try await chatRepository.createChat(request: createChatRequest)
+        
+        return chatRoom
+    }
+    
+    // MARK: - Private Methods
     private func setupSocketMessageListener() {
         // 소켓으로부터 메시지 수신 시 처리
         socketManager.messageReceived
