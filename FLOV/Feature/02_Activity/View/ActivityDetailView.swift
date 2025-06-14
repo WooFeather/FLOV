@@ -410,7 +410,7 @@ private extension ActivityDetailView {
             Spacer()
             
             ActionButton(text: "결제하기") {
-                // TODO: 결제뷰로 이동
+                pathModel.push(.payment)
             }
             .frame(width: 140)
         }
