@@ -9,6 +9,9 @@ import Foundation
 
 enum FullScreenCover: Identifiable, Hashable {
     
+    // 02_Activity
+    case payment(price: Int)
+    
     // 03_Post
     case postWrite
     
