@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import WebKit
+import iamport_ios
 
 struct ActivityDetailView: View {
     @EnvironmentObject var pathModel: PathModel
     @StateObject var viewModel: ActivityDetailViewModel
     @State private var currentIndex = 0
+    @State private var webView: WKWebView?
     
     var body: some View {
         VStack {
@@ -399,32 +402,6 @@ private extension ActivityDetailView {
     }
 }
 
-// MARK: - Payment
-private extension ActivityDetailView {
-    func paymentView() -> some View {
-        HStack {
-            Text("\(viewModel.output.activityDetails.summary.finalPrice)원")
-                .font(.Title.title1.bold())
-                .foregroundStyle(.gray90)
-            
-            Spacer()
-            
-            ActionButton(text: "결제하기") {
-                pathModel.push(.payment)
-            }
-            .frame(width: 140)
-        }
-        .padding()
-        .frame(height: 100, alignment: .top)
-        .frame(maxWidth: .infinity)
-        .background(
-            .ultraThinMaterial,
-            in: .rect
-        )
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
-    }
-}
-
 // MARK: - Creator
 private extension ActivityDetailView {
     func creatorView() -> some View {
@@ -477,6 +454,55 @@ private extension ActivityDetailView {
             .asButton {
                 pathModel.push(.chatRoom(id: opponentId))
             }
+    }
+}
+
+// MARK: - Payment
+private extension ActivityDetailView {
+    func paymentView() -> some View {
+        let price = viewModel.output.activityDetails.summary.finalPrice
+        
+        return HStack {
+            Text("\(price)원")
+                .font(.Title.title1.bold())
+                .foregroundStyle(.gray90)
+            
+            Spacer()
+            
+            ActionButton(text: "결제하기") {
+                // TODO: Order API를 타고 order_code받아서 paymentSheet로 넘기기
+                pathModel.presentFullScreenCover(.payment(price: price))
+            }
+            .frame(width: 140)
+        }
+        .padding()
+        .frame(height: 100, alignment: .top)
+        .frame(maxWidth: .infinity)
+        .background(
+            .ultraThinMaterial,
+            in: .rect
+        )
+        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+    }
+    
+    // 결제 응답 처리
+    // TODO: response를 Notification으로 onAppear로 받을때 실행
+    private func handlePaymentResponse(_ response: IamportResponse?) {
+        guard let response = response else {
+            print("결제 응답이 없습니다.")
+            return
+        }
+        
+        print("결제 결과: \(response)")
+        
+        // 결제 성공/실패에 따른 처리
+        if response.success == true {
+            // 결제 성공 시 서버에 검증 요청 등
+            print("결제 성공: \(response.imp_uid ?? "")")
+        } else {
+            // 결제 실패 시 처리
+            print("결제 실패: \(response.error_msg ?? "")")
+        }
     }
 }
 
