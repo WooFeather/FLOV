@@ -24,15 +24,69 @@ struct PaymentFullScreen: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
-// MARK: - Payment Sheet ViewController
-class PaymentSheetViewController: UIViewController {
+// MARK: - PaymentSheetViewController
+final class PaymentSheetViewController: UIViewController {
     var price: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.requestIamportPayment()
+        }
+    }
+}
+
+// MARK: - IamportConfiguration
+extension PaymentSheetViewController {
+    // 아임포트 SDK 결제 요청
+    func requestIamportPayment() {
+        let userCode = "imp14511373" // SLP userCode
+        let payment = createPaymentData()
+        
+        Iamport.shared.payment(
+            viewController: self,
+            userCode: userCode,
+            payment: payment
+        ) { [weak self] response in
+            NotificationCenter.default.post(
+                name: .paymentCompleted,
+                object: nil,
+                userInfo: ["response": response ?? [:]]
+            )
+            
+            DispatchQueue.main.async {
+                self?.dismiss(animated: true)
+            }
+        }
+    }
+    
+    // 아임포트 결제 데이터 생성
+    func createPaymentData() -> IamportPayment {
+        return IamportPayment(
+            pg: PG.html5_inicis.makePgRawName(pgId: "INIpayTest"),
+            merchant_uid: "HBNY413003", // TODO: /v1/orders 라우터응답값 order_code 사용
+            amount: "\(price)"
+        ).then {
+            $0.pay_method = PayMethod.card.rawValue
+            $0.name = "액티비티 결제" // TODO: 액티비티 제목 받아서 처리
+            $0.buyer_name = "홍길동"
+            $0.app_scheme = "kakao\(Config.kakaoNativeAppKey)" // 결제 후 돌아올 앱스킴
+        }
+    }
+}
+
+// MARK: - ViewConfiguration
+extension PaymentSheetViewController {
+    private func configView() {
         view.backgroundColor = .systemBackground
-        setupNavigationBar()
+        configNavigationBar()
         
         let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -46,16 +100,7 @@ class PaymentSheetViewController: UIViewController {
         ])
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        // 뷰가 완전히 나타난 후 결제 시작
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.requestIamportPayment()
-        }
-    }
-    
-    private func setupNavigationBar() {
+    private func configNavigationBar() {
         title = "결제하기"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
@@ -66,37 +111,5 @@ class PaymentSheetViewController: UIViewController {
     
     @objc private func cancelTapped() {
         self.dismiss(animated: true)
-    }
-    
-    // 아임포트 SDK 결제 요청
-    func requestIamportPayment() {
-        let userCode = "imp14511373" // SLP userCode
-        let payment = createPaymentData()
-        
-        // UIKit 방식으로 결제 요청 (이미 검증된 방식)
-        Iamport.shared.payment(
-            viewController: self,
-            userCode: userCode,
-            payment: payment
-        ) { [weak self] response in
-            DispatchQueue.main.async {
-                // TODO: NotificationCenter로 response 전달
-                self?.dismiss(animated: true)
-            }
-        }
-    }
-    
-    // 아임포트 결제 데이터 생성
-    func createPaymentData() -> IamportPayment {
-        return IamportPayment(
-            pg: PG.html5_inicis.makePgRawName(pgId: "INIpayTest"),
-            merchant_uid: "HBNY413003", // /v1/orders 라우터응답값 order_code
-            amount: "\(price)" // 실제 결제 금액 사용
-        ).then {
-            $0.pay_method = PayMethod.card.rawValue
-            $0.name = "액티비티 결제" // 결제 유저가 보기에 적절한 값으로 수정
-            $0.buyer_name = "홍길동"
-            $0.app_scheme = "kakao\(Config.kakaoNativeAppKey)" // 결제 후 돌아올 앱스킴
-        }
     }
 }

@@ -13,7 +13,6 @@ struct ActivityDetailView: View {
     @EnvironmentObject var pathModel: PathModel
     @StateObject var viewModel: ActivityDetailViewModel
     @State private var currentIndex = 0
-    @State private var webView: WKWebView?
     
     var body: some View {
         VStack {
@@ -483,10 +482,13 @@ private extension ActivityDetailView {
             in: .rect
         )
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+        .onReceive(NotificationCenter.default.publisher(for: .paymentCompleted)) { note in
+            guard let response = note.userInfo?["response"] as? IamportResponse else { return }
+            
+            handlePaymentResponse(response)
+        }
     }
     
-    // 결제 응답 처리
-    // TODO: response를 Notification으로 onAppear로 받을때 실행
     private func handlePaymentResponse(_ response: IamportResponse?) {
         guard let response = response else {
             print("결제 응답이 없습니다.")
@@ -497,7 +499,7 @@ private extension ActivityDetailView {
         
         // 결제 성공/실패에 따른 처리
         if response.success == true {
-            // 결제 성공 시 서버에 검증 요청 등
+            // 결제 성공 시 영수증검증 API 타기
             print("결제 성공: \(response.imp_uid ?? "")")
         } else {
             // 결제 실패 시 처리

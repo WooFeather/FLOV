@@ -59,7 +59,6 @@ extension PathModel {
     func build(_ fullScreenCover: FullScreenCover) -> some View {
         switch fullScreenCover {
         case .payment(let price):
-            // TODO: ViewModel로 이동
             PaymentFullScreen(price: price)
         case .postWrite:
             PostWriteView()
