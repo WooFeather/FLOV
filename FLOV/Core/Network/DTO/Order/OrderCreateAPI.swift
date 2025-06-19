@@ -54,8 +54,8 @@ extension OrderCreateResponse {
             participantCount: nil,
             activity: nil,
             paidAt: nil,
-            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            updatedAt: updatedAt.toIsoDate() ?? Date()
         )
     }
 }

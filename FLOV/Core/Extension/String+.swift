@@ -14,4 +14,11 @@ extension String {
         dateFormatter.dateFormat = format
         return dateFormatter.date(from: self)
     }
+    
+    func toIsoDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_kr")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        return dateFormatter.date(from: self)
+    }
 }

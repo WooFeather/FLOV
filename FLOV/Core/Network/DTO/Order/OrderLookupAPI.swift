@@ -92,9 +92,9 @@ extension OrderResponse {
                 tags: activity.tags,
                 pointReward: activity.pointReward
             ),
-            paidAt: paidAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ"),
-            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+            paidAt: paidAt.toIsoDate(),
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            updatedAt: updatedAt.toIsoDate() ?? Date()
         )
     }
 }

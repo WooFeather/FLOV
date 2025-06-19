@@ -83,7 +83,7 @@ extension PaymentSheetViewController {
         ).then {
             $0.pay_method = PayMethod.card.rawValue
             $0.name = name
-            $0.buyer_name = "홍길동"
+            $0.buyer_name = "조우현"
             $0.app_scheme = "kakao\(Config.kakaoNativeAppKey)" // 결제 후 돌아올 앱스킴
         }
     }
