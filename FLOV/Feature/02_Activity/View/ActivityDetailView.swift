@@ -505,9 +505,9 @@ private extension ActivityDetailView {
         
         // 결제 성공/실패에 따른 처리
         if response.success == true {
-            // TODO: 영수증검증
             print("결제 성공: \(response.imp_uid ?? "")")
-            // TODO: 예약 완료 toast나 alert
+            viewModel.action(.validatePayment(impUid: response.imp_uid ?? ""))
+            // TODO: output의 paymentSuccess를 기준으로 예약 완료 toast나 alert
         } else {
             // 결제 실패 시 처리
             print("결제 실패: \(response.error_msg ?? "")")

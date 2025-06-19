@@ -22,6 +22,7 @@ struct DIContainerModifier: ViewModifier {
         let chatRepository = ChatRepository(networkManager: networkManager)
         let chatService = ChatService(chatRepository: chatRepository)
         let orderRepository = OrderRepository(networkManager: networkManager)
+        let paymentRepository = PaymentRepository(networkManager: networkManager)
         
         self.container = DIContainer(
             services: .init(
@@ -32,7 +33,8 @@ struct DIContainerModifier: ViewModifier {
                 authManager: authManager,
                 chatRepository: chatRepository,
                 chatService: chatService,
-                orderRepository: orderRepository
+                orderRepository: orderRepository,
+                paymentRepository: paymentRepository
             )
         )
     }

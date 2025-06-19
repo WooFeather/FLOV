@@ -8,9 +8,11 @@
 import Foundation
 import Combine
 
+// TODO: Repository들 Service로 뺴기
 final class ActivityDetailViewModel: ViewModelType {
     private let activityRepository: ActivityRepositoryType
     private let orderRepository: OrderRepositoryType
+    private let paymentRepository: PaymentRepositoryType
     private let activityId: String
     var cancellables: Set<AnyCancellable>
     var input: Input
@@ -19,6 +21,7 @@ final class ActivityDetailViewModel: ViewModelType {
     init(
         activityRepository: ActivityRepositoryType,
         orderRepository: OrderRepositoryType,
+        paymentRepository: PaymentRepositoryType,
         activityId: String,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
         input: Input = Input(),
@@ -26,6 +29,7 @@ final class ActivityDetailViewModel: ViewModelType {
     ) {
         self.activityRepository = activityRepository
         self.orderRepository = orderRepository
+        self.paymentRepository = paymentRepository
         self.activityId = activityId
         self.cancellables = cancellables
         self.input = input
@@ -37,6 +41,7 @@ final class ActivityDetailViewModel: ViewModelType {
         let fetchActivityDetail = PassthroughSubject<Void, Never>()
         let keepToggle = PassthroughSubject<Bool, Never>()
         let createOrder = PassthroughSubject<Void, Never>()
+        let validatePayment = PassthroughSubject<String, Never>()
     }
     
     struct Output {
@@ -49,6 +54,8 @@ final class ActivityDetailViewModel: ViewModelType {
         var selectedTimeSlot: TimeSlotEntity? = nil
         
         var orderCode: String? = nil
+        
+        var paymentSuccess: Bool = false
     }
 }
 
@@ -60,6 +67,7 @@ extension ActivityDetailViewModel {
         case selectDate(itemName: String)
         case selectTimeSlot(timeSlot: TimeSlotEntity)
         case createOrder
+        case validatePayment(impUid: String)
     }
 
     func action(_ action: Action) {
@@ -75,6 +83,8 @@ extension ActivityDetailViewModel {
             output.selectedTimeSlot = timeSlot
         case .createOrder:
             input.createOrder.send(())
+        case .validatePayment(let impUid):
+            input.validatePayment.send(impUid)
         }
     }
 }
@@ -105,6 +115,15 @@ extension ActivityDetailViewModel {
                 guard let self = self else { return }
                 Task {
                     await self.createOrder()
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.validatePayment
+            .sink { [weak self] impUid in
+                guard let self = self else { return }
+                Task {
+                    await self.validatePayment(impUid: impUid)
                 }
             }
             .store(in: &cancellables)
@@ -154,6 +173,7 @@ extension ActivityDetailViewModel {
             print(error)
         }
     }
+    
     @MainActor
     private func createOrder() async {
         do {
@@ -168,6 +188,20 @@ extension ActivityDetailViewModel {
             )
             
             output.orderCode = response.orderCode
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func validatePayment(impUid: String) async {
+        do {
+            _ = try await paymentRepository.paymentValidation(request: .init(impUid: impUid))
+            
+            output.paymentSuccess = true
+            
+            await fetchActivityDetail(id: activityId)
+            output.selectedTimeSlot = nil
         } catch {
             print(error)
         }
