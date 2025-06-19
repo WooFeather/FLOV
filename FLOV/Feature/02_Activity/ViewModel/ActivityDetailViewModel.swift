@@ -104,7 +104,7 @@ extension ActivityDetailViewModel {
             let response = try await activityRepository.detailLookup(activityId: id)
             
             output.activityDetails = response
-            output.isKeep = response.summary.isKeep
+            output.isKeep = response.summary.isKeep ?? false
             setupReservationData(response)
         } catch {
             print(error)

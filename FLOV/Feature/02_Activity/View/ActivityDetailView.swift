@@ -103,13 +103,13 @@ private extension ActivityDetailView {
 private extension ActivityDetailView {
     func headerView() -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(viewModel.output.activityDetails.summary.title)
+            Text(viewModel.output.activityDetails.summary.title ?? "알 수 없음")
                 .font(.Body.body0)
                 .foregroundStyle(.gray90)
                 .lineLimit(1)
             
             HStack(spacing: 12) {
-                Text(viewModel.output.activityDetails.summary.country)
+                Text(viewModel.output.activityDetails.summary.country ?? "알 수 없음")
                     .font(.Body.body1.bold())
                     .foregroundStyle(.gray75)
                 
@@ -147,7 +147,7 @@ private extension ActivityDetailView {
                     .resizable()
                     .frame(width: 16, height: 16)
                 
-                Text("KEEP \(viewModel.output.activityDetails.summary.keepCount)회")
+                Text("KEEP \(viewModel.output.activityDetails.summary.keepCount ?? 0)회")
                     .font(.Body.body3.weight(.medium))
                     .foregroundStyle(.gray45)
             }

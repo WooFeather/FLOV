@@ -56,3 +56,45 @@ struct OrderActivitySummary: Decodable {
     let tags: [String]
     let pointReward: Int?
 }
+
+// MARK: - Mapper
+extension Review {
+    func toEntity() -> ReviewEntity {
+        return .init(
+            id: id,
+            rating: rating
+        )
+    }
+}
+
+extension OrderResponse {
+    func toEntity() -> OrderEntity {
+        return .init(
+            orderId: orderId,
+            orderCode: orderCode,
+            totalPrice: totalPrice,
+            review: review?.toEntity(),
+            reservationItemName: reservationItemName,
+            reservationItemTime: reservationItemTime,
+            participantCount: participantCount,
+            activity: .init(
+                id: activity.id,
+                title: activity.title,
+                country: activity.country,
+                category: activity.category,
+                thumbnailURLs: activity.thumbnails,
+                location: (
+                    latitude: activity.geolocation.latitude,
+                    longitude: activity.geolocation.longitude
+                ),
+                originalPrice: activity.price.original,
+                finalPrice: activity.price.final,
+                tags: activity.tags,
+                pointReward: activity.pointReward
+            ),
+            paidAt: paidAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ"),
+            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+        )
+    }
+}

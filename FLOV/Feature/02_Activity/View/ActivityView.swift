@@ -133,13 +133,13 @@ private extension ActivityView {
         .overlay {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    LocationTag(location: activity.country)
+                    LocationTag(location: activity.country ?? "알 수 없음")
                     Spacer()
                 }
                 
                 Spacer()
                 
-                Text(activity.title)
+                Text(activity.title ?? "알 수 없음")
                     .font(.Body.body0)
                     .foregroundStyle(.white)
                     .lineLimit(1)

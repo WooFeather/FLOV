@@ -40,3 +40,22 @@ struct OrderCreateResponse: Decodable {
         case updatedAt
     }
 }
+
+// MARK: - Mapper
+extension OrderCreateResponse {
+    func toEntity() -> OrderEntity {
+        return .init(
+            orderId: orderId,
+            orderCode: orderCode,
+            totalPrice: totalPrice,
+            review: nil,
+            reservationItemName: nil,
+            reservationItemTime: nil,
+            participantCount: nil,
+            activity: nil,
+            paidAt: nil,
+            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+        )
+    }
+}

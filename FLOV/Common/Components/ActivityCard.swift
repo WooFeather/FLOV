@@ -22,7 +22,7 @@ struct ActivityCard: View {
         self.description = description
         self.orderCount = orderCount
         self.keepButtonTapped = keepButtonTapped
-        _isKeep = State(initialValue: activity.isKeep)
+        _isKeep = State(initialValue: activity.isKeep ?? false)
     }
     
     var body: some View {
@@ -44,7 +44,7 @@ struct ActivityCard: View {
                                 keepButtonTapped(isKeep)
                             }
                         Spacer()
-                        LocationTag(location: activity.country)
+                        LocationTag(location: activity.country ?? "알 수 없음")
                     }
                     
                     Spacer()
@@ -74,12 +74,12 @@ struct ActivityCard: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 12) {
-                    Text(activity.title)
+                    Text(activity.title ?? "알 수 없음")
                         .font(.Body.body1.bold())
                         .foregroundColor(.gray90)
                         .lineLimit(1)
                     
-                    LikeCountView(likeCount: activity.keepCount)
+                    LikeCountView(likeCount: activity.keepCount ?? 0)
                     
                     if !isRecommended {
                         PointView(point: activity.pointReward ?? 0)

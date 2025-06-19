@@ -9,15 +9,15 @@ import Foundation
 
 struct ActivitySummaryEntity {
     let id: String
-    let title: String
-    let country: String
-    let category: String
+    let title: String?
+    let country: String?
+    let category: String?
     let thumbnailURLs: [String]
     let location: (latitude: Double, longitude: Double)
     let originalPrice: Int
     let finalPrice: Int
     let tags: [String]
     let pointReward: Int?
-    var isKeep: Bool
-    var keepCount: Int
+    var isKeep: Bool?
+    var keepCount: Int?
 }
