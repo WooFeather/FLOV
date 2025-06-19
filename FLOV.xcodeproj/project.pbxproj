@@ -10,6 +10,7 @@
 		791B11C02DF1D260003461D6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 791B11BF2DF1D260003461D6 /* RealmSwift */; };
 		791B11C92DF1D309003461D6 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = 791B11C82DF1D309003461D6 /* SocketIO */; };
 		791B11D22DF2A44B003461D6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 791B11BF2DF1D260003461D6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		792C6BEE2DFC4AEC0068FE1D /* iamport-ios in Frameworks */ = {isa = PBXBuildFile; productRef = 792C6BED2DFC4AEC0068FE1D /* iamport-ios */; };
 		792CF8942DCFB6BE0074FB34 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 792CF8932DCFB6BE0074FB34 /* .gitignore */; };
 		793178442DE8739700D0CC75 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 793178432DE8739700D0CC75 /* Kingfisher */; };
 		79C1FE562DF5551F006D6141 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 79C1FE552DF5551F006D6141 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -77,6 +78,7 @@
 				79C1FE582DF5551F006D6141 /* FirebaseCrashlytics in Frameworks */,
 				793178442DE8739700D0CC75 /* Kingfisher in Frameworks */,
 				79C1FE562DF5551F006D6141 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				792C6BEE2DFC4AEC0068FE1D /* iamport-ios in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +134,7 @@
 				79C1FE552DF5551F006D6141 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				79C1FE572DF5551F006D6141 /* FirebaseCrashlytics */,
 				79C1FE592DF5551F006D6141 /* FirebaseMessaging */,
+				792C6BED2DFC4AEC0068FE1D /* iamport-ios */,
 			);
 			productName = FLOV;
 			productReference = 792CF87E2DCFB3880074FB34 /* FLOV.app */;
@@ -168,6 +171,7 @@
 				791B11BE2DF1D260003461D6 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				791B11C72DF1D309003461D6 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */,
 				79C1FE542DF5551F006D6141 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				792C6BEC2DFC4AEC0068FE1D /* XCRemoteSwiftPackageReference "iamport-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 792CF87F2DCFB3880074FB34 /* Products */;
@@ -437,6 +441,14 @@
 				version = 16.1.1;
 			};
 		};
+		792C6BEC2DFC4AEC0068FE1D /* XCRemoteSwiftPackageReference "iamport-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/iamport/iamport-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.7;
+			};
+		};
 		793178422DE8739700D0CC75 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -481,6 +493,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 791B11C72DF1D309003461D6 /* XCRemoteSwiftPackageReference "socket.io-client-swift" */;
 			productName = SocketIO;
+		};
+		792C6BED2DFC4AEC0068FE1D /* iamport-ios */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 792C6BEC2DFC4AEC0068FE1D /* XCRemoteSwiftPackageReference "iamport-ios" */;
+			productName = "iamport-ios";
 		};
 		793178432DE8739700D0CC75 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

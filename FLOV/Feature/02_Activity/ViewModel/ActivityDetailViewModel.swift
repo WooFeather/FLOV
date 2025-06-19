@@ -8,8 +8,11 @@
 import Foundation
 import Combine
 
+// TODO: Repository들 Service로 뺴기
 final class ActivityDetailViewModel: ViewModelType {
     private let activityRepository: ActivityRepositoryType
+    private let orderRepository: OrderRepositoryType
+    private let paymentRepository: PaymentRepositoryType
     private let activityId: String
     var cancellables: Set<AnyCancellable>
     var input: Input
@@ -17,12 +20,16 @@ final class ActivityDetailViewModel: ViewModelType {
     
     init(
         activityRepository: ActivityRepositoryType,
+        orderRepository: OrderRepositoryType,
+        paymentRepository: PaymentRepositoryType,
         activityId: String,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
         input: Input = Input(),
         output: Output = Output()
     ) {
         self.activityRepository = activityRepository
+        self.orderRepository = orderRepository
+        self.paymentRepository = paymentRepository
         self.activityId = activityId
         self.cancellables = cancellables
         self.input = input
@@ -33,6 +40,8 @@ final class ActivityDetailViewModel: ViewModelType {
     struct Input {
         let fetchActivityDetail = PassthroughSubject<Void, Never>()
         let keepToggle = PassthroughSubject<Bool, Never>()
+        let createOrder = PassthroughSubject<Void, Never>()
+        let validatePayment = PassthroughSubject<String, Never>()
     }
     
     struct Output {
@@ -43,6 +52,10 @@ final class ActivityDetailViewModel: ViewModelType {
         var reservations: [ReservationEntity] = []
         var selectedDate: String? = nil
         var selectedTimeSlot: TimeSlotEntity? = nil
+        
+        var orderCode: String? = nil
+        
+        var paymentSuccess: Bool = false
     }
 }
 
@@ -53,6 +66,8 @@ extension ActivityDetailViewModel {
         case keepToggle(keepStatus: Bool)
         case selectDate(itemName: String)
         case selectTimeSlot(timeSlot: TimeSlotEntity)
+        case createOrder
+        case validatePayment(impUid: String)
     }
 
     func action(_ action: Action) {
@@ -66,6 +81,10 @@ extension ActivityDetailViewModel {
             output.selectedTimeSlot = nil
         case .selectTimeSlot(let timeSlot):
             output.selectedTimeSlot = timeSlot
+        case .createOrder:
+            input.createOrder.send(())
+        case .validatePayment(let impUid):
+            input.validatePayment.send(impUid)
         }
     }
 }
@@ -90,6 +109,24 @@ extension ActivityDetailViewModel {
                 }
             }
             .store(in: &cancellables)
+        
+        input.createOrder
+            .sink { [weak self] in
+                guard let self = self else { return }
+                Task {
+                    await self.createOrder()
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.validatePayment
+            .sink { [weak self] impUid in
+                guard let self = self else { return }
+                Task {
+                    await self.validatePayment(impUid: impUid)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -104,7 +141,7 @@ extension ActivityDetailViewModel {
             let response = try await activityRepository.detailLookup(activityId: id)
             
             output.activityDetails = response
-            output.isKeep = response.summary.isKeep
+            output.isKeep = response.summary.isKeep ?? false
             setupReservationData(response)
         } catch {
             print(error)
@@ -132,6 +169,39 @@ extension ActivityDetailViewModel {
         do {
             let response = try await activityRepository.keep(activityId: id, request: .init(keepStatus: keepStatus))
             output.isKeep = response.keepStatus
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func createOrder() async {
+        do {
+            let response = try await orderRepository.orderCreate(
+                request: .init(
+                    activityId: activityId,
+                    reservationItemName: output.selectedDate ?? "",
+                    reservationItemTime: output.selectedTimeSlot?.time ?? "",
+                    participantCount: 1,
+                    totalPrice: output.activityDetails.summary.finalPrice
+                )
+            )
+            
+            output.orderCode = response.orderCode
+        } catch {
+            print(error)
+        }
+    }
+    
+    @MainActor
+    private func validatePayment(impUid: String) async {
+        do {
+            _ = try await paymentRepository.paymentValidation(request: .init(impUid: impUid))
+            
+            output.paymentSuccess = true
+            
+            await fetchActivityDetail(id: activityId)
+            output.selectedTimeSlot = nil
         } catch {
             print(error)
         }

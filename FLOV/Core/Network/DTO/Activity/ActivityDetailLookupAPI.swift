@@ -145,7 +145,7 @@ extension ActivityDetailLookupResponse {
             } ?? [],
             reservations: reservationList.map {
                 ReservationEntity(
-                    itemName: $0.itemName.toDate(format: "yyyy-MM-dd")?.toString(format: "M월 d일") ?? "",
+                    itemName: $0.itemName,
                     times: $0.times.map {
                         TimeSlotEntity(
                             time: $0.time,
@@ -166,8 +166,8 @@ extension ActivityDetailLookupResponse {
                 profileImageURL: creator.profileImage,
                 introduction: creator.introduction
             ),
-            createdAt: createdAt?.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-            updatedAt: updatedAt?.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date()
+            createdAt: createdAt?.toIsoDate() ?? Date(),
+            updatedAt: updatedAt?.toIsoDate() ?? Date()
         )
     }
 }

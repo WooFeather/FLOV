@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import WebKit
+import iamport_ios
 
 struct ActivityDetailView: View {
     @EnvironmentObject var pathModel: PathModel
@@ -101,13 +103,13 @@ private extension ActivityDetailView {
 private extension ActivityDetailView {
     func headerView() -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(viewModel.output.activityDetails.summary.title)
+            Text(viewModel.output.activityDetails.summary.title ?? "알 수 없음")
                 .font(.Body.body0)
                 .foregroundStyle(.gray90)
                 .lineLimit(1)
             
             HStack(spacing: 12) {
-                Text(viewModel.output.activityDetails.summary.country)
+                Text(viewModel.output.activityDetails.summary.country ?? "알 수 없음")
                     .font(.Body.body1.bold())
                     .foregroundStyle(.gray75)
                 
@@ -145,7 +147,7 @@ private extension ActivityDetailView {
                     .resizable()
                     .frame(width: 16, height: 16)
                 
-                Text("KEEP \(viewModel.output.activityDetails.summary.keepCount)회")
+                Text("KEEP \(viewModel.output.activityDetails.summary.keepCount ?? 0)회")
                     .font(.Body.body3.weight(.medium))
                     .foregroundStyle(.gray45)
             }
@@ -307,7 +309,7 @@ private extension ActivityDetailView {
                     let isAvailable = viewModel.isDateAvailable(reservation.itemName)
                     let isSelected = viewModel.output.selectedDate == reservation.itemName
                     
-                    Text(reservation.itemName)
+                    Text(reservation.itemName.toDate(format: "yyyy-MM-dd")?.toString(format: "M월 d일") ?? "")
                         .asButton {
                             if isAvailable {
                                 viewModel.action(.selectDate(itemName: reservation.itemName))
@@ -399,32 +401,6 @@ private extension ActivityDetailView {
     }
 }
 
-// MARK: - Payment
-private extension ActivityDetailView {
-    func paymentView() -> some View {
-        HStack {
-            Text("\(viewModel.output.activityDetails.summary.finalPrice)원")
-                .font(.Title.title1.bold())
-                .foregroundStyle(.gray90)
-            
-            Spacer()
-            
-            ActionButton(text: "결제하기") {
-                // TODO: 결제뷰로 이동
-            }
-            .frame(width: 140)
-        }
-        .padding()
-        .frame(height: 100, alignment: .top)
-        .frame(maxWidth: .infinity)
-        .background(
-            .ultraThinMaterial,
-            in: .rect
-        )
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
-    }
-}
-
 // MARK: - Creator
 private extension ActivityDetailView {
     func creatorView() -> some View {
@@ -477,6 +453,65 @@ private extension ActivityDetailView {
             .asButton {
                 pathModel.push(.chatRoom(id: opponentId))
             }
+    }
+}
+
+// MARK: - Payment
+private extension ActivityDetailView {
+    func paymentView() -> some View {
+        let name = viewModel.output.activityDetails.summary.title ?? "액티비티"
+        let price = viewModel.output.activityDetails.summary.finalPrice
+        
+        return HStack {
+            Text("\(price)원")
+                .font(.Title.title1.bold())
+                .foregroundStyle(.gray90)
+            
+            Spacer()
+            
+            // TODO: 이미 예약된 시간인 경우 toast나 alert
+            ActionButton(text: "결제하기") {
+                viewModel.action(.createOrder)
+            }
+            .disabled(viewModel.output.selectedTimeSlot == nil)
+            .frame(width: 140)
+        }
+        .padding()
+        .frame(height: 100, alignment: .top)
+        .frame(maxWidth: .infinity)
+        .background(
+            .ultraThinMaterial,
+            in: .rect
+        )
+        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+        .onChange(of: viewModel.output.orderCode) { newCode in
+            guard let orderCode = newCode else { return }
+            pathModel.presentFullScreenCover(.payment(name: name, price: price, orderCode: orderCode))
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .paymentCompleted)) { note in
+            guard let response = note.userInfo?["response"] as? IamportResponse else { return }
+            
+            handlePaymentResponse(response)
+        }
+    }
+    
+    private func handlePaymentResponse(_ response: IamportResponse?) {
+        guard let response = response else {
+            print("결제 응답이 없습니다.")
+            return
+        }
+        
+        print("결제 결과: \(response)")
+        
+        // 결제 성공/실패에 따른 처리
+        if response.success == true {
+            print("결제 성공: \(response.imp_uid ?? "")")
+            viewModel.action(.validatePayment(impUid: response.imp_uid ?? ""))
+            // TODO: output의 paymentSuccess를 기준으로 예약 완료 toast나 alert
+        } else {
+            // 결제 실패 시 처리
+            print("결제 실패: \(response.error_msg ?? "")")
+        }
     }
 }
 

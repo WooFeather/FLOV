@@ -75,8 +75,8 @@ struct MockDataBuilder {
                 profileImageURL: "/data/profiles/1707716853682.png",
                 introduction: "안녕하세요!"
             ),
-            createdAt: "2025-05-31T04:33:35.121Z".toDate(format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ") ?? Date(),
-            updatedAt: "2025-05-31T04:33:35.121Z".toDate(format: "yyyy-MM-dd'T'HH:mm:ss.SSSZ") ?? Date()
+            createdAt: "2025-05-31T04:33:35.121Z".toIsoDate() ?? Date(),
+            updatedAt: "2025-05-31T04:33:35.121Z".toIsoDate() ?? Date()
         )
     }
     

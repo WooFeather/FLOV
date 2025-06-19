@@ -75,8 +75,8 @@ extension ChatRoomResponse {
     func toEntity() -> ChatRoomEntity {
         return .init(
             roomId: roomId,
-            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            updatedAt: updatedAt.toIsoDate() ?? Date(),
             participants: participants.map {
                 .init(
                     id: $0.userId,
@@ -92,8 +92,8 @@ extension ChatRoomResponse {
                     chatId: $0.chatId,
                     roomId: $0.roomId,
                     content: $0.content,
-                    createdAt: $0.createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-                    updatedAt: $0.updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+                    createdAt: $0.createdAt.toIsoDate() ?? Date(),
+                    updatedAt: $0.updatedAt.toIsoDate() ?? Date(),
                     sender: .init(
                         id: $0.sender.userId,
                         email: nil,
@@ -115,8 +115,8 @@ extension ChatMessage {
             chatId: chatId,
             roomId: roomId,
             content: content,
-            createdAt: createdAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
-            updatedAt: updatedAt.toDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") ?? Date(),
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            updatedAt: updatedAt.toIsoDate() ?? Date(),
             sender: .init(
                 id: sender.userId,
                 email: nil,
