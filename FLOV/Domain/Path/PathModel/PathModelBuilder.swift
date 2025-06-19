@@ -24,7 +24,7 @@ extension PathModel {
             let vm = ActivityViewModel(activityRepository: container.services.activityRepository)
             ActivityView(viewModel: vm)
         case .activityDetail(let id):
-            let vm = ActivityDetailViewModel(activityRepository: container.services.activityRepository, activityId: id)
+            let vm = ActivityDetailViewModel(activityRepository: container.services.activityRepository, orderRepository: container.services.orderRepository, activityId: id)
             ActivityDetailView(viewModel: vm)
         case .post:
             PostView()
@@ -58,8 +58,8 @@ extension PathModel {
     @ViewBuilder
     func build(_ fullScreenCover: FullScreenCover) -> some View {
         switch fullScreenCover {
-        case .payment(let price):
-            PaymentFullScreen(price: price)
+        case .payment(let name, let price, let orderCode):
+            PaymentFullScreen(name: name, price: price, orderCode: orderCode)
         case .postWrite:
             PostWriteView()
         }

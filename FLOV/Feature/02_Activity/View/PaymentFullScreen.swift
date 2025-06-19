@@ -11,11 +11,15 @@ import WebKit
 import iamport_ios
 
 struct PaymentFullScreen: UIViewControllerRepresentable {
+    let name: String
     let price: Int
+    let orderCode: String
     
     func makeUIViewController(context: Context) -> UIViewController {
         let paymentVC = PaymentSheetViewController()
         paymentVC.price = price
+        paymentVC.orderCode = orderCode
+        paymentVC.name = name
         
         let navController = UINavigationController(rootViewController: paymentVC)
         return navController
@@ -26,12 +30,15 @@ struct PaymentFullScreen: UIViewControllerRepresentable {
 
 // MARK: - PaymentSheetViewController
 final class PaymentSheetViewController: UIViewController {
+    var name: String = ""
     var price: Int = 0
+    var orderCode: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configView()
+        print("OrderCode:", orderCode)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -71,11 +78,11 @@ extension PaymentSheetViewController {
     func createPaymentData() -> IamportPayment {
         return IamportPayment(
             pg: PG.html5_inicis.makePgRawName(pgId: "INIpayTest"),
-            merchant_uid: "HBNY413003", // TODO: /v1/orders 라우터응답값 order_code 사용
+            merchant_uid: orderCode,
             amount: "\(price)"
         ).then {
             $0.pay_method = PayMethod.card.rawValue
-            $0.name = "액티비티 결제" // TODO: 액티비티 제목 받아서 처리
+            $0.name = name
             $0.buyer_name = "홍길동"
             $0.app_scheme = "kakao\(Config.kakaoNativeAppKey)" // 결제 후 돌아올 앱스킴
         }
@@ -101,7 +108,7 @@ extension PaymentSheetViewController {
     }
     
     private func configNavigationBar() {
-        title = "결제하기"
+        title = "액티비티 결제"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
             target: self,

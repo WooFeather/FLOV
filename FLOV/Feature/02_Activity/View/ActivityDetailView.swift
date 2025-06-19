@@ -309,7 +309,7 @@ private extension ActivityDetailView {
                     let isAvailable = viewModel.isDateAvailable(reservation.itemName)
                     let isSelected = viewModel.output.selectedDate == reservation.itemName
                     
-                    Text(reservation.itemName)
+                    Text(reservation.itemName.toDate(format: "yyyy-MM-dd")?.toString(format: "M월 d일") ?? "")
                         .asButton {
                             if isAvailable {
                                 viewModel.action(.selectDate(itemName: reservation.itemName))
@@ -459,6 +459,7 @@ private extension ActivityDetailView {
 // MARK: - Payment
 private extension ActivityDetailView {
     func paymentView() -> some View {
+        let name = viewModel.output.activityDetails.summary.title ?? "액티비티"
         let price = viewModel.output.activityDetails.summary.finalPrice
         
         return HStack {
@@ -469,9 +470,9 @@ private extension ActivityDetailView {
             Spacer()
             
             ActionButton(text: "결제하기") {
-                // TODO: Order API를 타고 order_code받아서 paymentSheet로 넘기기
-                pathModel.presentFullScreenCover(.payment(price: price))
+                viewModel.action(.createOrder)
             }
+            .disabled(viewModel.output.selectedTimeSlot == nil)
             .frame(width: 140)
         }
         .padding()
@@ -482,6 +483,10 @@ private extension ActivityDetailView {
             in: .rect
         )
         .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: -4)
+        .onChange(of: viewModel.output.orderCode) { newCode in
+            guard let orderCode = newCode else { return }
+            pathModel.presentFullScreenCover(.payment(name: name, price: price, orderCode: orderCode))
+        }
         .onReceive(NotificationCenter.default.publisher(for: .paymentCompleted)) { note in
             guard let response = note.userInfo?["response"] as? IamportResponse else { return }
             

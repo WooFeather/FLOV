@@ -145,7 +145,7 @@ extension ActivityDetailLookupResponse {
             } ?? [],
             reservations: reservationList.map {
                 ReservationEntity(
-                    itemName: $0.itemName.toDate(format: "yyyy-MM-dd")?.toString(format: "M월 d일") ?? "",
+                    itemName: $0.itemName,
                     times: $0.times.map {
                         TimeSlotEntity(
                             time: $0.time,

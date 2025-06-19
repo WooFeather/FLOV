@@ -10,6 +10,7 @@ import Combine
 
 final class ActivityDetailViewModel: ViewModelType {
     private let activityRepository: ActivityRepositoryType
+    private let orderRepository: OrderRepositoryType
     private let activityId: String
     var cancellables: Set<AnyCancellable>
     var input: Input
@@ -17,12 +18,14 @@ final class ActivityDetailViewModel: ViewModelType {
     
     init(
         activityRepository: ActivityRepositoryType,
+        orderRepository: OrderRepositoryType,
         activityId: String,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
         input: Input = Input(),
         output: Output = Output()
     ) {
         self.activityRepository = activityRepository
+        self.orderRepository = orderRepository
         self.activityId = activityId
         self.cancellables = cancellables
         self.input = input
@@ -33,6 +36,7 @@ final class ActivityDetailViewModel: ViewModelType {
     struct Input {
         let fetchActivityDetail = PassthroughSubject<Void, Never>()
         let keepToggle = PassthroughSubject<Bool, Never>()
+        let createOrder = PassthroughSubject<Void, Never>()
     }
     
     struct Output {
@@ -43,6 +47,8 @@ final class ActivityDetailViewModel: ViewModelType {
         var reservations: [ReservationEntity] = []
         var selectedDate: String? = nil
         var selectedTimeSlot: TimeSlotEntity? = nil
+        
+        var orderCode: String? = nil
     }
 }
 
@@ -53,6 +59,7 @@ extension ActivityDetailViewModel {
         case keepToggle(keepStatus: Bool)
         case selectDate(itemName: String)
         case selectTimeSlot(timeSlot: TimeSlotEntity)
+        case createOrder
     }
 
     func action(_ action: Action) {
@@ -66,6 +73,8 @@ extension ActivityDetailViewModel {
             output.selectedTimeSlot = nil
         case .selectTimeSlot(let timeSlot):
             output.selectedTimeSlot = timeSlot
+        case .createOrder:
+            input.createOrder.send(())
         }
     }
 }
@@ -87,6 +96,15 @@ extension ActivityDetailViewModel {
                 guard let self = self else { return }
                 Task {
                     await self.keepToggle(id: self.activityId, keepStatus: status)
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.createOrder
+            .sink { [weak self] in
+                guard let self = self else { return }
+                Task {
+                    await self.createOrder()
                 }
             }
             .store(in: &cancellables)
@@ -132,6 +150,24 @@ extension ActivityDetailViewModel {
         do {
             let response = try await activityRepository.keep(activityId: id, request: .init(keepStatus: keepStatus))
             output.isKeep = response.keepStatus
+        } catch {
+            print(error)
+        }
+    }
+    @MainActor
+    private func createOrder() async {
+        do {
+            let response = try await orderRepository.orderCreate(
+                request: .init(
+                    activityId: activityId,
+                    reservationItemName: output.selectedDate ?? "",
+                    reservationItemTime: output.selectedTimeSlot?.time ?? "",
+                    participantCount: 1,
+                    totalPrice: output.activityDetails.summary.finalPrice
+                )
+            )
+            
+            output.orderCode = response.orderCode
         } catch {
             print(error)
         }
