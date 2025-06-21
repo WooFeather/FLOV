@@ -12,7 +12,7 @@ enum PostAPI {
     case fileUpload
     case postWrite(request: PostWriteRequest)
     case postLookup(country: String?, category: String?, longitude: Double?, latitude: Double?, maxDistance: String?, limit: Int?, next: String?, orderBy: String?)
-    case searchPost(title: String?)
+    case postSearch(title: String?)
     case postDetailLookup(postId: String)
     case postModification(postId: String, request: PostModificationRequest)
     case postDelete(postId: String)
@@ -30,7 +30,7 @@ extension PostAPI: Router {
             return "/v1/posts"
         case .postLookup:
             return "/v1/posts/geolocation"
-        case .searchPost:
+        case .postSearch:
             return "/v1/posts/search"
         case .postDetailLookup(let postId),
                 .postModification(let postId, _),
@@ -49,7 +49,7 @@ extension PostAPI: Router {
         switch self {
         case .fileUpload, .postWrite, .postLike:
             return .post
-        case .postLookup, .searchPost, .postDetailLookup, .userPostLookup, .likePostLookup:
+        case .postLookup, .postSearch, .postDetailLookup, .userPostLookup, .likePostLookup:
             return .get
         case .postModification:
             return .put
@@ -72,7 +72,7 @@ extension PostAPI: Router {
                 "SeSACKey": Config.sesacKey,
                 "Content-Type": "application/json"
             ]
-        case .postLookup, .searchPost, .postDetailLookup, .postDelete, .userPostLookup, .likePostLookup:
+        case .postLookup, .postSearch, .postDetailLookup, .postDelete, .userPostLookup, .likePostLookup:
             return [
                 "Authorization": UserSecurityManager.shared.accessToken ?? "",
                 "SeSACKey": Config.sesacKey
@@ -95,7 +95,7 @@ extension PostAPI: Router {
             if let next = next { parameters["next"] = next }
             if let orderBy = orderBy { parameters["order_by"] = orderBy }
             return parameters
-        case .searchPost(let title):
+        case .postSearch(let title):
             var parameters: Parameters = [:]
             if let title = title { parameters["title"] = title }
             return parameters
@@ -127,7 +127,7 @@ extension PostAPI: Router {
             return request
         case .postLookup:
             return nil
-        case .searchPost:
+        case .postSearch:
             return nil
         case .postDetailLookup:
             return nil

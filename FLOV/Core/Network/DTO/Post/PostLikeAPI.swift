@@ -7,8 +7,17 @@
 
 import Foundation
 
-// MARK: - LikePostRequest
+// MARK: - PostLikeRequest
 struct PostLikeRequest: Encodable {
+    let likeStatus: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case likeStatus = "like_status"
+    }
+}
+
+// MARK: - PostLikeResponse
+struct PostLikeResponse: Decodable {
     let likeStatus: Bool
     
     enum CodingKeys: String, CodingKey {
