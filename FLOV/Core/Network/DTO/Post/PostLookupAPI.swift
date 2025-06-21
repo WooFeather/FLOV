@@ -50,3 +50,37 @@ struct PostSummary: Decodable {
         case updatedAt
     }
 }
+
+// MARK: - Mapper
+extension PostLookupResponse {
+    func toEntity() -> PostListEntity {
+        return .init(
+            data: data.map { $0.toEntity() },
+            nextCursor: nextCursor
+        )
+    }
+}
+
+extension PostSummary {
+    func toEntity() -> PostEntity {
+        return .init(
+            postId: postId,
+            country: country,
+            category: category,
+            title: title,
+            content: content,
+            activity: activity?.toEntity(),
+            location: (
+                geolocation.latitude,
+                geolocation.longitude
+            ),
+            creator: creator.toEntity(),
+            files: files,
+            isLike: isLike,
+            likeCount: likeCount,
+            comments: nil,
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            updatedAt: updatedAt.toIsoDate() ?? Date()
+        )
+    }
+}

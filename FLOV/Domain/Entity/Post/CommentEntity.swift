@@ -10,7 +10,7 @@ import Foundation
 struct CommentEntity {
     let commentId: String
     let content: String
-    let createdAt: String
+    let createdAt: Date
     let creator: UserEntity
     let replies: [RepliesEntity] // 1뎁스까지만 포함
 }
@@ -18,6 +18,6 @@ struct CommentEntity {
 struct RepliesEntity {
     let commentId: String
     let content: String
-    let createdAt: String
+    let createdAt: Date
     let creator: UserEntity
 }

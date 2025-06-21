@@ -11,3 +11,10 @@ import Foundation
 struct FileUploadResponse: Decodable {
     let files: [String]
 }
+
+// MARK: - Mapper
+extension FileUploadResponse {
+    func toEntity() -> FileUploadEntity {
+        return .init(files: files)
+    }
+}

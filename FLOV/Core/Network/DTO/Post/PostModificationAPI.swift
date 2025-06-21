@@ -29,3 +29,19 @@ struct PostModificationRequest: Encodable {
         case files
     }
 }
+
+// MARK: - Mapper
+extension PostModificationRequest {
+    func toEntity() -> PostModificationEntity {
+        return .init(
+            country: country,
+            category: category,
+            title: title,
+            content: content,
+            activityId: activityId,
+            latitude: latitude,
+            longitude: longitude,
+            files: files
+        )
+    }
+}

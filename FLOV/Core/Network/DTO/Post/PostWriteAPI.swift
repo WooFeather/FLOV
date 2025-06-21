@@ -125,3 +125,85 @@ struct Replies: Decodable {
         case creator
     }
 }
+
+// MARK: - Mapper
+extension PostResponse {
+    func toEntity() -> PostEntity {
+        return .init(
+            postId: postId,
+            country: country,
+            category: category,
+            title: title,
+            content: content,
+            activity: activity?.toEntity(),
+            location: (
+                geolocation.latitude,
+                geolocation.longitude
+            ),
+            creator: creator.toEntity(),
+            files: files,
+            isLike: isLike,
+            likeCount: likeCount,
+            comments: comments.map { $0.toEntity() },
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            updatedAt: updatedAt.toIsoDate() ?? Date()
+        )
+    }
+}
+
+extension PostActivitySummary {
+    func toEntity() -> ActivitySummaryEntity {
+        return .init(
+            id: id,
+            title: title,
+            country: country,
+            category: category,
+            thumbnailURLs: thumbnails,
+            location: (
+                geolocation.latitude,
+                geolocation.longitude
+            ),
+            originalPrice: price.original,
+            finalPrice: price.final,
+            tags: tags,
+            pointReward: pointReward,
+            isAdvertisement: isAdvertisement
+        )
+    }
+}
+
+extension Comment {
+    func toEntity() -> CommentEntity {
+        return .init(
+            commentId: commentId,
+            content: content,
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            creator: creator.toEntity(),
+            replies: replies.map { $0.toEntity() }
+        )
+    }
+}
+
+extension Replies {
+    func toEntity() -> RepliesEntity {
+        return .init(
+            commentId: commentId,
+            content: content,
+            createdAt: createdAt.toIsoDate() ?? Date(),
+            creator: creator.toEntity()
+        )
+    }
+}
+
+extension UserInfo {
+    func toEntity() -> UserEntity {
+        return .init(
+            id: userId,
+            email: nil,
+            nick: nick,
+            profileImageURL: profileImage,
+            phoneNumber: nil,
+            introduction: introduction
+        )
+    }
+}

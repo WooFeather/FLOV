@@ -20,6 +20,6 @@ struct PostEntity {
     let isLike: Bool
     let likeCount: Int
     let comments: [CommentEntity]?
-    let createdAt: String
-    let updatedAt: String
+    let createdAt: Date
+    let updatedAt: Date
 }

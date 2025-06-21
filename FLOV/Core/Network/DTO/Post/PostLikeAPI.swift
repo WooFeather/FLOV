@@ -24,3 +24,10 @@ struct PostLikeResponse: Decodable {
         case likeStatus = "like_status"
     }
 }
+
+// MARK: - Mapper
+extension PostLikeResponse {
+    func toEntity() -> PostLikeEntity {
+        return .init(likeStatus: likeStatus)
+    }
+}

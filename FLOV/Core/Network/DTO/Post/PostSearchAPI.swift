@@ -11,3 +11,13 @@ import Foundation
 struct PostSearchResponse: Decodable {
     let data: [PostSummary]
 }
+
+// MARK: - Mapper
+extension PostSearchResponse {
+    func toEntity() -> PostListEntity {
+        .init(
+            data: data.map { $0.toEntity() },
+            nextCursor: nil
+        )
+    }
+}
