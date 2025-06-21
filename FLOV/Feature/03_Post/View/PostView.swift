@@ -9,11 +9,14 @@ import SwiftUI
 
 struct PostView: View {
     @EnvironmentObject var pathModel: PathModel
+    @StateObject var viewModel: PostViewModel
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
-                Text("PostView")
+                headerView()
+                postListView()
+                Spacer(minLength: 88)
             }
         }
         .asNavigationToolbar()
@@ -26,6 +29,9 @@ struct PostView: View {
                 writeButton()
             }
         }
+        .onAppear {
+            // TODO: 위치기반 게시글 조회
+        }
     }
 }
 
@@ -33,9 +39,13 @@ struct PostView: View {
 private extension PostView {
     func headerView() -> some View {
         VStack {
-            Text("액티비티 포스트")
-            Text("거리 조절뷰")
+            AdBannerView(banners: viewModel.output.ads)
+            filterView()
         }
+    }
+    
+    func filterView() -> some View {
+        Text("filterView")
     }
 }
 
@@ -43,8 +53,17 @@ private extension PostView {
 private extension PostView {
     func postListView() -> some View {
         VStack {
-            Text("PostListView")
+            distanceView()
+            listView()
         }
+    }
+    
+    func distanceView() -> some View {
+        Text("distanceView")
+    }
+    
+    func listView() -> some View {
+        Text("listView")
     }
 }
 
