@@ -90,7 +90,8 @@ extension OrderResponse {
                 originalPrice: activity.price.original,
                 finalPrice: activity.price.final,
                 tags: activity.tags,
-                pointReward: activity.pointReward
+                pointReward: activity.pointReward,
+                isAdvertisement: nil
             ),
             paidAt: paidAt.toIsoDate(),
             createdAt: createdAt.toIsoDate() ?? Date(),

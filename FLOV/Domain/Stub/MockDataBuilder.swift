@@ -46,6 +46,7 @@ struct MockDataBuilder {
                     "New 액티비티 오픈할인"
                 ],
                 pointReward: 1000,
+                isAdvertisement: false,
                 isKeep: true,
                 keepCount: 120
             ),

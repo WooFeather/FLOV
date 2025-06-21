@@ -8,11 +8,80 @@
 import SwiftUI
 
 struct PostView: View {
+    @EnvironmentObject var pathModel: PathModel
+    @StateObject var viewModel: PostViewModel
+    
     var body: some View {
-        Text("PostView")
+        ScrollView(showsIndicators: false) {
+            VStack {
+                headerView()
+                postListView()
+                Spacer(minLength: 88)
+            }
+        }
+        .asNavigationToolbar()
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                toolbarTitle()
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                writeButton()
+            }
+        }
+        .onAppear {
+            // TODO: 위치기반 게시글 조회
+        }
     }
 }
 
-#Preview {
-    PostView()
+// MARK: - HeaderView
+private extension PostView {
+    func headerView() -> some View {
+        VStack {
+            AdBannerView(banners: viewModel.output.ads)
+            filterView()
+        }
+    }
+    
+    func filterView() -> some View {
+        Text("filterView")
+    }
+}
+
+// MARK: - PostListView
+private extension PostView {
+    func postListView() -> some View {
+        VStack {
+            distanceView()
+            listView()
+        }
+    }
+    
+    func distanceView() -> some View {
+        Text("distanceView")
+    }
+    
+    func listView() -> some View {
+        Text("listView")
+    }
+}
+
+// MARK: - Toolbar
+private extension PostView {
+    func toolbarTitle() -> some View {
+        Text("POST")
+            .foregroundStyle(.colDeep)
+            .font(.Caption.caption0)
+            .lineLimit(1)
+    }
+    
+    func writeButton() -> some View {
+        Image(.icnWrite)
+            .resizable()
+            .frame(width: 32, height: 32)
+            .asButton {
+                pathModel.presentFullScreenCover(.postWrite)
+            }
+    }
 }
