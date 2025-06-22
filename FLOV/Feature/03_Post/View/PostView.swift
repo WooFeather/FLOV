@@ -30,7 +30,10 @@ struct PostView: View {
             }
         }
         .onAppear {
-            // TODO: 위치기반 게시글 조회
+            viewModel.action(.fetchPosts)
+        }
+        .refreshable {
+            viewModel.action(.refreshPosts)
         }
     }
 }
@@ -54,7 +57,20 @@ private extension PostView {
     func postListView() -> some View {
         VStack {
             distanceView()
-            listView()
+            if viewModel.output.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.output.posts.isEmpty {
+                EmptyResultView(text: "주변의 게시글이 없습니다.\n범위를 조정해주세요.")
+            } else {
+                listView()
+            }
+            
+            if let errorMessage = viewModel.output.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .padding()
+            }
         }
     }
     
@@ -63,7 +79,12 @@ private extension PostView {
     }
     
     func listView() -> some View {
-        Text("listView")
+        LazyVStack(spacing: 16) {
+            ForEach(viewModel.output.posts, id: \.postId) { post in
+                Text(post.title)
+            }
+        }
+        .padding(.horizontal)
     }
 }
 

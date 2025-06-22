@@ -20,6 +20,8 @@ final class DIContainer {
         let chatService: ChatServiceType
         let orderRepository: OrderRepositoryType
         let paymentRepository: PaymentRepositoryType
+        let postRepository: PostRepositoryType
+        let locationService: LocationServiceType
     }
     
     init(

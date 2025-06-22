@@ -495,6 +495,7 @@ private extension ActivityDetailView {
         }
     }
     
+    // TODO: ViewModel로 이동
     private func handlePaymentResponse(_ response: IamportResponse?) {
         guard let response = response else {
             print("결제 응답이 없습니다.")

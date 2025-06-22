@@ -340,6 +340,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLOV/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FLOV;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재위치 주변의 액티비티 포스트를 조회하기 위해 위치정보 권한 허용이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -377,6 +378,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = FLOV/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FLOV;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 현재위치 주변의 액티비티 포스트를 조회하기 위해 위치정보 권한 허용이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
