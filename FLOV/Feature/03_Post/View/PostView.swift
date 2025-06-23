@@ -48,7 +48,13 @@ private extension PostView {
     }
     
     func filterView() -> some View {
-        Text("filterView")
+        VStack {
+            Text("filterView")
+            
+            if !viewModel.output.infoMessage.isEmpty {
+                Text(viewModel.output.infoMessage)
+            }
+        }
     }
 }
 

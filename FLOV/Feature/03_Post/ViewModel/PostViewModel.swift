@@ -42,6 +42,7 @@ final class PostViewModel: ViewModelType {
         var posts: [PostEntity] = []
         var isLoading: Bool = false
         var errorMessage: String?
+        var infoMessage: String = ""
     }
 }
 
@@ -79,6 +80,23 @@ extension PostViewModel {
             .sink { [weak self] in
                 guard let self else { return }
                 self.fetchPosts()
+            }
+            .store(in: &cancellables)
+        
+        locationService.infoPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] msg in
+                self?.output.infoMessage = msg
+            }
+            .store(in: &cancellables)
+        
+        locationService.authorizationStatus
+            .filter { status in
+                status == .authorizedWhenInUse || status == .authorizedAlways
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.output.infoMessage = ""
             }
             .store(in: &cancellables)
     }
