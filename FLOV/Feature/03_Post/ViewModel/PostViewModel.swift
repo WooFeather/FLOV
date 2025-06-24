@@ -86,16 +86,19 @@ extension PostViewModel {
         
         let fetchStream = initialFetch
             .merge(with: refreshFetch)
-            .handleEvents(
-                receiveOutput: { [weak self] in
-                    self?.locationService.requestLocationPermission()
+            .handleEvents(receiveOutput: { [weak self] in
+                DispatchQueue.main.async {
+                    self?.output.isLoading = true
                 }
-            )
+                
+                self?.locationService.requestLocationPermission()
+            })
         
         fetchStream
             .flatMap { [weak self] _ -> AnyPublisher<CLLocation, Never> in
-                guard let self = self else {
-                    return Empty().eraseToAnyPublisher()
+                guard let self = self else { return Empty().eraseToAnyPublisher() }
+                if let cached = self.locationService.lastKnownLocation {
+                    return Just(cached).eraseToAnyPublisher()
                 }
                 return self.locationService.currentLocation
                     .compactMap { $0 }
@@ -114,7 +117,6 @@ extension PostViewModel {
 private extension PostViewModel {
     @MainActor
     private func fetchPostsWithLocation(_ location: CLLocation) async {
-        output.isLoading = true
         output.errorMessage = nil
         
         do {

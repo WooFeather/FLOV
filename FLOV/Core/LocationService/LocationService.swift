@@ -6,13 +6,14 @@
 //
 
 import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
 
 protocol LocationServiceType {
     var currentLocation: AnyPublisher<CLLocation?, Never> { get }
     var authorizationStatus: AnyPublisher<CLAuthorizationStatus, Never> { get }
     var infoPublisher: AnyPublisher<String, Never> { get }
+    var lastKnownLocation: CLLocation? { get }
     func requestLocationPermission()
 }
 
@@ -26,6 +27,10 @@ final class LocationService: NSObject, LocationServiceType {
         latitude: 37.565679812037345,
         longitude: 126.97796779294629
     )
+    
+    var lastKnownLocation: CLLocation? {
+        locationManager.location
+    }
     
     var currentLocation: AnyPublisher<CLLocation?, Never> {
         currentLocationSubject.eraseToAnyPublisher()
@@ -48,11 +53,20 @@ final class LocationService: NSObject, LocationServiceType {
         switch locationManager.authorizationStatus {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
+            
         case .authorizedWhenInUse, .authorizedAlways:
+            if let cached = locationManager.location {
+                currentLocationSubject.send(cached)
+            }
+            
             locationManager.requestLocation()
+            
         case .denied, .restricted:
-            infoSubject.send("위치 권한이 비활성화되어 있습니다.\n기본 위치로 게시물을 불러옵니다.")
+            infoSubject.send(
+                "위치 권한이 비활성화되어 있습니다.\n기본 위치로 게시물을 불러옵니다."
+            )
             currentLocationSubject.send(defaultLocation)
+            
         @unknown default:
             break
         }
