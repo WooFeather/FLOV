@@ -66,23 +66,6 @@ extension PostViewModel {
 // MARK: - Transform
 extension PostViewModel {
     func transform() {
-        // 뷰가 나타났을 때 위치 기반 게시글 조회
-        input.fetchPosts
-            .prefix(1)
-            .sink { [weak self] in
-                guard let self else { return }
-                self.fetchPosts()
-            }
-            .store(in: &cancellables)
-        
-        // 새로고침
-        input.refreshPosts
-            .sink { [weak self] in
-                guard let self else { return }
-                self.fetchPosts()
-            }
-            .store(in: &cancellables)
-        
         locationService.infoPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] msg in
@@ -91,12 +74,37 @@ extension PostViewModel {
             .store(in: &cancellables)
         
         locationService.authorizationStatus
-            .filter { status in
-                status == .authorizedWhenInUse || status == .authorizedAlways
-            }
+            .filter { $0 == .authorizedWhenInUse || $0 == .authorizedAlways }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.output.infoMessage = ""
+            }
+            .store(in: &cancellables)
+        
+        let initialFetch = input.fetchPosts.prefix(1)
+        let refreshFetch = input.refreshPosts
+        
+        let fetchStream = initialFetch
+            .merge(with: refreshFetch)
+            .handleEvents(
+                receiveOutput: { [weak self] in
+                    self?.locationService.requestLocationPermission()
+                }
+            )
+        
+        fetchStream
+            .flatMap { [weak self] _ -> AnyPublisher<CLLocation, Never> in
+                guard let self = self else {
+                    return Empty().eraseToAnyPublisher()
+                }
+                return self.locationService.currentLocation
+                    .compactMap { $0 }
+                    .prefix(1)
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] location in
+                Task { await self?.fetchPostsWithLocation(location) }
             }
             .store(in: &cancellables)
     }
@@ -104,19 +112,8 @@ extension PostViewModel {
 
 // MARK: - Private Functions
 private extension PostViewModel {
-    func fetchPosts() {
-        // 위치 서비스 요청
-        self.locationService.requestLocationPermission()
-        // 마지막으로 알려진 위치가 있다면 바로 게시글 조회
-        if let lastLocation = locationService.lastKnownLocation {
-            Task {
-                await fetchPostsWithLocation(lastLocation)
-            }
-        }
-    }
-    
     @MainActor
-    func fetchPostsWithLocation(_ location: CLLocation) async {
+    private func fetchPostsWithLocation(_ location: CLLocation) async {
         output.isLoading = true
         output.errorMessage = nil
         
@@ -126,18 +123,17 @@ private extension PostViewModel {
                 category: nil,
                 longitude: location.coordinate.longitude,
                 latitude: location.coordinate.latitude,
-                maxDistance: "100000000", // 100000km
+                maxDistance: "100000000",
                 limit: nil,
                 next: nil,
-                orderBy: "createdAt" // 최신순
+                orderBy: "createdAt"
             )
-            
             output.posts = response.data
-            output.isLoading = false
         } catch {
             output.errorMessage = "게시글을 불러오는데 실패했습니다."
-            output.isLoading = false
             print("Error fetching posts: \(error)")
         }
+        
+        output.isLoading = false
     }
 }
