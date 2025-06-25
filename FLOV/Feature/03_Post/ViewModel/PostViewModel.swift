@@ -35,6 +35,7 @@ final class PostViewModel: ViewModelType {
     struct Input {
         let fetchPosts = PassthroughSubject<Void, Never>()
         let refreshPosts = PassthroughSubject<Void, Never>()
+        let setDistance = PassthroughSubject<Int, Never>()
     }
     
     struct Output {
@@ -43,6 +44,7 @@ final class PostViewModel: ViewModelType {
         var isLoading: Bool = false
         var errorMessage: String?
         var infoMessage: String = ""
+        var selectedDistance: Int = 10000 // 기본값 10km
     }
 }
 
@@ -51,6 +53,7 @@ extension PostViewModel {
     enum Action {
         case fetchPosts
         case refreshPosts
+        case setDistance(Int)
     }
     
     func action(_ action: Action) {
@@ -59,6 +62,8 @@ extension PostViewModel {
             input.fetchPosts.send(())
         case .refreshPosts:
             input.refreshPosts.send(())
+        case .setDistance(let distance):
+            input.setDistance.send(distance)
         }
     }
 }
@@ -107,7 +112,33 @@ extension PostViewModel {
             }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] location in
-                Task { await self?.fetchPostsWithLocation(location) }
+                Task {
+                    await self?.fetchPostsWithLocation(
+                        location,
+                        maxDistance: String(self?.output.selectedDistance ?? 1000),
+                        next: nil,
+                        orderBy: .createdAt
+                    )
+                }
+            }
+            .store(in: &cancellables)
+        
+        input.setDistance
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] distance in
+                self?.output.selectedDistance = distance
+                
+                if let location = self?.locationService.lastKnownLocation {
+                    self?.output.isLoading = true
+                    Task {
+                        await self?.fetchPostsWithLocation(
+                            location,
+                            maxDistance: String(distance),
+                            next: nil,
+                            orderBy: .createdAt
+                        )
+                    }
+                }
             }
             .store(in: &cancellables)
     }
@@ -116,7 +147,7 @@ extension PostViewModel {
 // MARK: - Private Functions
 private extension PostViewModel {
     @MainActor
-    private func fetchPostsWithLocation(_ location: CLLocation) async {
+    private func fetchPostsWithLocation(_ location: CLLocation, maxDistance: String? ,next: String?, orderBy: OrderBy) async {
         output.errorMessage = nil
         
         do {
@@ -125,10 +156,10 @@ private extension PostViewModel {
                 category: nil,
                 longitude: location.coordinate.longitude,
                 latitude: location.coordinate.latitude,
-                maxDistance: "100000000",
+                maxDistance: maxDistance,
                 limit: nil,
-                next: nil,
-                orderBy: "createdAt"
+                next: next,
+                orderBy: orderBy.rawValue
             )
             output.posts = response.data
         } catch {
@@ -137,5 +168,13 @@ private extension PostViewModel {
         }
         
         output.isLoading = false
+    }
+}
+
+// MARK: - Helper
+private extension PostViewModel {
+    enum OrderBy: String {
+        case createdAt
+        case likes
     }
 }

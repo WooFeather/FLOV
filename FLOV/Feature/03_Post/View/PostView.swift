@@ -81,7 +81,36 @@ private extension PostView {
     }
     
     func distanceView() -> some View {
-        Text("distanceView")
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 4) {
+                Text("Distance")
+                    .font(.Body.body3.bold())
+                    .foregroundColor(.gray45)
+                
+                Text("\(formatDistance(viewModel.output.selectedDistance))KM")
+                    .font(.Body.body3.bold())
+                    .foregroundColor(.colDeep)
+            }
+            
+            DistanceSlider(
+                selectedDistance: viewModel.output.selectedDistance,
+                onDistanceChanged: { distance in
+                    viewModel.action(.setDistance(distance))
+                }
+            )
+            .padding()
+            .asRoundedBackground(cornerRadius: 8, strokeColor: .gray45)
+        }
+        .padding()
+    }
+    
+    private func formatDistance(_ meters: Int) -> String {
+        let km = Double(meters) / 1000.0
+        if km == floor(km) {
+            return String(Int(km))
+        } else {
+            return String(format: "%.1f", km)
+        }
     }
     
     func listView() -> some View {
@@ -110,5 +139,66 @@ private extension PostView {
             .asButton {
                 pathModel.presentFullScreenCover(.postWrite)
             }
+    }
+}
+
+// MARK: - Distance Slider Component
+struct DistanceSlider: View {
+    let selectedDistance: Int
+    let onDistanceChanged: (Int) -> Void
+    
+    // 5km, 10km, 50km, 100km, 500km
+    private let distanceSteps = [5000, 10000, 50000, 100000, 500000]
+    
+    @State private var sliderValue: Double = 0
+    @State private var isDragging: Bool = false
+    
+    var body: some View {
+        // 슬라이더
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // 배경 트랙
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.gray30)
+                    .frame(height: 14)
+                
+                // 활성 트랙
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.colDeep)
+                    .frame(width: geometry.size.width * CGFloat(sliderValue / 4), height: 14)
+                
+                // 슬라이더 핸들
+                Circle()
+                    .fill(.white)
+                    .frame(width: 10, height: 10)
+                    .offset(x: geometry.size.width * CGFloat(sliderValue / 4) - 12)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                isDragging = true
+                                let newValue = min(max(0, value.location.x / geometry.size.width * 4), 4)
+                                let roundedValue = round(newValue)
+                                sliderValue = roundedValue
+                            }
+                            .onEnded { _ in
+                                isDragging = false
+                                let stepIndex = Int(sliderValue)
+                                let distance = distanceSteps[stepIndex]
+                                onDistanceChanged(distance)
+                            }
+                    )
+            }
+            .frame(height: 12)
+        }
+        .onAppear {
+            if let index = distanceSteps.firstIndex(of: selectedDistance) {
+                sliderValue = Double(index)
+            }
+        }
+        .onChange(of: selectedDistance) { newDistance in
+            if let index = distanceSteps.firstIndex(of: newDistance) {
+                sliderValue = Double(index)
+            }
+        }
     }
 }
