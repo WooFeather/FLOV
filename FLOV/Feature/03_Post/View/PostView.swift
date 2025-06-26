@@ -87,7 +87,7 @@ private extension PostView {
                     .font(.Body.body3.bold())
                     .foregroundColor(.gray45)
                 
-                Text("\(formatDistance(viewModel.output.selectedDistance))KM")
+                Text("\(viewModel.output.selectedDistance.formatDistance())KM")
                     .font(.Body.body3.bold())
                     .foregroundColor(.colDeep)
             }
@@ -102,15 +102,6 @@ private extension PostView {
             .asRoundedBackground(cornerRadius: 8, strokeColor: .gray45)
         }
         .padding()
-    }
-    
-    private func formatDistance(_ meters: Int) -> String {
-        let km = Double(meters) / 1000.0
-        if km == floor(km) {
-            return String(Int(km))
-        } else {
-            return String(format: "%.1f", km)
-        }
     }
     
     func listView() -> some View {

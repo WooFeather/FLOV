@@ -9,4 +9,13 @@ import Foundation
 
 extension Int {
     var twoDigits: String { String(format: "%02d", self) }
+    
+    func formatDistance() -> String {
+        let km = Double(self) / 1000.0
+        if km == floor(km) {
+            return String(Int(km))
+        } else {
+            return String(format: "%.1f", km)
+        }
+    }
 }
