@@ -107,10 +107,32 @@ private extension PostView {
     func listView() -> some View {
         LazyVStack(spacing: 16) {
             ForEach(viewModel.output.posts, id: \.postId) { post in
-                Text(post.title)
+                postRowView(post)
             }
         }
         .padding(.horizontal)
+    }
+    
+    func postRowView(_ post: PostEntity) -> some View {
+        VStack(alignment: .leading) {
+            KFRemoteImageView(
+                path: post.files[0],
+                aspectRatio: 1,
+                cachePolicy: .memoryAndDiskWithOriginal,
+                height: 160
+            )
+            
+            Text(post.title)
+                .font(.Body.body3.bold())
+                .foregroundStyle(.gray90)
+            
+            Text(post.content)
+                .font(.Caption.caption1.weight(.regular))
+                .foregroundStyle(.gray60)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
+                .frame(height: 40)
+        }
     }
 }
 
