@@ -8,11 +8,8 @@
 import SwiftUI
 
 struct PostDetailView: View {
+    @StateObject var viewModel: PostDetailViewModel
     var body: some View {
         Text("PostDetailView")
     }
-}
-
-#Preview {
-    PostDetailView()
 }

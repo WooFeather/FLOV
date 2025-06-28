@@ -108,6 +108,9 @@ private extension PostView {
         LazyVStack(spacing: 16) {
             ForEach(viewModel.output.posts, id: \.postId) { post in
                 postRowView(post)
+                    .asButton {
+                        pathModel.push(.postDetail(id: post.postId))
+                    }
             }
         }
         .padding(.horizontal)

@@ -30,7 +30,8 @@ extension PathModel {
             let vm = PostViewModel(postRepository: container.services.postRepository, locationService: container.services.locationService)
             PostView(viewModel: vm)
         case .postDetail:
-            PostDetailView()
+            let vm = PostDetailViewModel(postRepository: container.services.postRepository, locationService: container.services.locationService)
+            PostDetailView(viewModel: vm)
         case .search:
             SearchView()
         case .keep:

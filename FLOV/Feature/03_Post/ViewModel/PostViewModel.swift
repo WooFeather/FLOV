@@ -12,6 +12,7 @@ import CoreLocation
 final class PostViewModel: ViewModelType {
     private let postRepository: PostRepositoryType
     private let locationService: LocationServiceType
+    private let postId: String
     var cancellables: Set<AnyCancellable>
     var input: Input
     
@@ -20,12 +21,14 @@ final class PostViewModel: ViewModelType {
     init(
         postRepository: PostRepositoryType,
         locationService: LocationServiceType,
+        postId: String,
         cancellables: Set<AnyCancellable> = Set<AnyCancellable>(),
         input: Input = Input(),
         output: Output = Output()
     ) {
         self.postRepository = postRepository
         self.locationService = locationService
+        self.postId = postId
         self.cancellables = cancellables
         self.input = input
         self.output = output
