@@ -27,9 +27,11 @@ extension PathModel {
             let vm = ActivityDetailViewModel(activityRepository: container.services.activityRepository, orderRepository: container.services.orderRepository, paymentRepository: container.services.paymentRepository, activityId: id)
             ActivityDetailView(viewModel: vm)
         case .post:
-            PostView()
+            let vm = PostViewModel(postRepository: container.services.postRepository, locationService: container.services.locationService)
+            PostView(viewModel: vm)
         case .postDetail:
-            PostDetailView()
+            let vm = PostDetailViewModel(postRepository: container.services.postRepository, locationService: container.services.locationService)
+            PostDetailView(viewModel: vm)
         case .search:
             SearchView()
         case .keep:

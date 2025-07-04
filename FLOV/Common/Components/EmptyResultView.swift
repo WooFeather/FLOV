@@ -15,6 +15,7 @@ struct EmptyResultView: View {
             Text(text)
                 .font(.Caption.caption0)
                 .foregroundStyle(.gray60)
+                .multilineTextAlignment(.center)
         }
         .padding()
     }

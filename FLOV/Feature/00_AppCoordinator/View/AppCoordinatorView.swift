@@ -40,9 +40,6 @@ struct FlovTabView: View {
                         .navigationDestination(for: Screen.self) { screen in
                             pathModel.build(screen)
                         }
-                        .fullScreenCover(item: $pathModel.fullScreenCover) { fullScreen in
-                            pathModel.build(fullScreen)
-                        }
                 }
                 .tag(FlovTab.activity)
                 
@@ -50,9 +47,6 @@ struct FlovTabView: View {
                     pathModel.build(.post)
                         .navigationDestination(for: Screen.self) { screen in
                             pathModel.build(screen)
-                        }
-                        .fullScreenCover(item: $pathModel.fullScreenCover) { fullScreen in
-                            pathModel.build(fullScreen)
                         }
                 }
                 .tag(FlovTab.post)
@@ -62,9 +56,6 @@ struct FlovTabView: View {
                         .navigationDestination(for: Screen.self) { screen in
                             pathModel.build(screen)
                         }
-                        .fullScreenCover(item: $pathModel.fullScreenCover) { fullScreen in
-                            pathModel.build(fullScreen)
-                        }
                 }
                 .tag(FlovTab.keep)
                 
@@ -72,9 +63,6 @@ struct FlovTabView: View {
                     pathModel.build(.profile)
                         .navigationDestination(for: Screen.self) { screen in
                             pathModel.build(screen)
-                        }
-                        .fullScreenCover(item: $pathModel.fullScreenCover) { fullScreen in
-                            pathModel.build(fullScreen)
                         }
                 }
                 .tag(FlovTab.profile)
@@ -89,6 +77,14 @@ struct FlovTabView: View {
             .animation(.bouncy(duration: 0.5), value: pathModel.isAtRoot)
         }
         .ignoresSafeArea(edges: .bottom)
+        .fullScreenCover(item: $pathModel.fullScreenCover) { cover in
+            NavigationStack(path: $pathModel.coverNavigationPath) {
+                pathModel.build(cover)
+                    .navigationDestination(for: Screen.self) { screen in
+                        pathModel.build(screen)
+                    }
+            }
+        }
     }
 }
 

@@ -78,6 +78,7 @@ extension ActivitySummary {
             finalPrice: price.final,
             tags: tags,
             pointReward: pointReward,
+            isAdvertisement: nil,
             isKeep: isKeep,
             keepCount: keepCount
         )

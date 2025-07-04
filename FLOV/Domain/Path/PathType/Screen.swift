@@ -20,7 +20,7 @@ enum Screen: Identifiable, Hashable {
     
     // 03_Post
     case post
-    case postDetail
+    case postDetail(id: String)
     
     // 04_Search
     case search
